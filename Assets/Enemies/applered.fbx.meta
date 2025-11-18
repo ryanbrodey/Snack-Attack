@@ -3,7 +3,12 @@ guid: 0a2f4ebfa3f8849b7912dfa1d11b86e7
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: fruitB_Material
+    second: {fileID: 2100000, guid: 9376dc6e057214902b306180f6b80d49, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
