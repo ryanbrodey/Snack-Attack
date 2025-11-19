@@ -46,8 +46,16 @@ namespace SnackAttack.Weapons
         
         protected virtual void Start()
         {
+            // Force reset attack state - stop any running coroutines
+            StopAllCoroutines();
+            attacking = false;
+            canAttack = true;
+            lastAttackTime = 0f;
+            
             // start in idle
             PlayIdle();
+            
+            Debug.Log($"[{weaponName}] Started - FORCE RESET - CanAttack: {CanAttack}, Attacking: {attacking}");
         }
         
         protected virtual void Update()
@@ -62,6 +70,7 @@ namespace SnackAttack.Weapons
         // try to attack
         public virtual void Attack()
         {
+            Debug.Log($"[{weaponName}] Attack() called - CanAttack: {CanAttack}, attacking: {attacking}");
             if (!CanAttack) return;
             
             StartAttack();
@@ -70,6 +79,7 @@ namespace SnackAttack.Weapons
         // begin attack
         protected virtual void StartAttack()
         {
+            Debug.Log($"[{weaponName}] StartAttack() - Setting attacking=true");
             attacking = true;
             canAttack = false;
             lastAttackTime = Time.time;
@@ -183,6 +193,20 @@ namespace SnackAttack.Weapons
         public virtual void OnAttackImpact()
         {
             // override this in weapon classes
+        }
+        
+        // manual reset if weapon gets stuck
+        [ContextMenu("Force Reset Weapon State")]
+        public void ForceResetState()
+        {
+            Debug.Log($"[{weaponName}] MANUAL RESET - Was attacking: {attacking}, canAttack: {canAttack}");
+            StopAllCoroutines();
+            attacking = false;
+            canAttack = true;
+            lastAttackTime = 0f;
+            currentAnimationState = "";
+            PlayIdle();
+            Debug.Log($"[{weaponName}] MANUAL RESET COMPLETE - CanAttack: {CanAttack}, Attacking: {attacking}");
         }
     }
 }
