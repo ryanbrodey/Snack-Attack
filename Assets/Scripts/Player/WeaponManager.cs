@@ -18,6 +18,7 @@ namespace SnackAttack.Player
         // stuff we need
         private BaseWeapon currentWeapon;
         private FPSController player;
+        private float lastUpdateTime;
         
         // getters
         public BaseWeapon CurrentWeapon => currentWeapon;
@@ -83,6 +84,13 @@ namespace SnackAttack.Player
         void UpdateWeapon()
         {
             if (currentWeapon == null || player == null) return;
+            
+            // Only update animations every few frames to reduce jitter
+            if (Time.time - lastUpdateTime < 0.05f) return; // 20 FPS update rate for animations
+            lastUpdateTime = Time.time;
+            
+            // Don't update movement animations during attacks
+            if (currentWeapon.IsAttacking) return;
             
             // update weapon animations based on movement
             bool moving = player.HorizontalVelocity.magnitude > 0.1f;
