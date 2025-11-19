@@ -55,6 +55,9 @@ namespace SnackAttack.Weapons
             // switch between attack animations
             CycleAttackAnim();
             
+            // Play the attack animation immediately after cycling
+            PlayAttack();
+            
             // whoosh sound
             PlaySwingSound();
             
@@ -65,7 +68,14 @@ namespace SnackAttack.Weapons
         // handle attack timing since animation events dont work
         private System.Collections.IEnumerator HandleAttackTiming()
         {
+            // Wait one frame to ensure animation has started
+            yield return null;
+            
             float animLen = GetAnimLength();
+            
+            // Fallback if we can't get animation length
+            if (animLen <= 0f)
+                animLen = 1.0f;
             
             // wait for impact moment
             yield return new WaitForSeconds(animLen * impactTime);
@@ -74,7 +84,9 @@ namespace SnackAttack.Weapons
             OnAttackImpact();
             
             // wait for animation to finish
-            yield return new WaitForSeconds(animLen * (0.95f - impactTime));
+            float remainingTime = animLen * (0.95f - impactTime);
+            if (remainingTime > 0)
+                yield return new WaitForSeconds(remainingTime);
             
             // done attacking
             CompleteAttack();
@@ -85,8 +97,22 @@ namespace SnackAttack.Weapons
         {
             if (anim == null) return 1.0f;
             
+            // Try to get the specific animation clip length first
+            if (anim.runtimeAnimatorController != null)
+            {
+                AnimationClip[] clips = anim.runtimeAnimatorController.animationClips;
+                foreach (AnimationClip clip in clips)
+                {
+                    if (clip.name == attackAnim)
+                    {
+                        return clip.length;
+                    }
+                }
+            }
+            
+            // Fallback to current state info
             AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);
-            return info.length;
+            return info.length > 0 ? info.length : 1.0f;
         }
         
         // switch between different attack animations

@@ -232,11 +232,11 @@ MonoBehaviour:
   runSpeed: 8
   jumpHeight: 2
   gravity: -9.81
-  groundCheckDistance: 0.4
-  mouseSensitivity: 4
+  groundCheckDist: 0.4
+  mouseSens: 2
   maxLookAngle: 80
-  playerCamera: {fileID: 123458699}
-  groundCheck: {fileID: 494493808}
+  cam: {fileID: 123458699}
+  groundChecker: {fileID: 0}
   groundMask:
     serializedVersion: 2
     m_Bits: 1
@@ -280,10 +280,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weapons:
   - {fileID: 2048692732}
-  currentWeaponIndex: 0
+  currentWeaponIdx: 0
   weaponHolder: {fileID: 0}
   attackKey: 32
-  weaponSwitchKeys: 31000000320000003300000034000000
+  weaponKeys: 31000000320000003300000034000000
 --- !u!1 &494493807
 GameObject:
   m_ObjectHideFlags: 0
@@ -529,10 +529,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weapons:
   - {fileID: 0}
-  currentWeaponIndex: 0
+  currentWeaponIdx: 0
   weaponHolder: {fileID: 0}
   attackKey: 32
-  weaponSwitchKeys: 31000000320000003300000034000000
+  weaponKeys: 31000000320000003300000034000000
 --- !u!114 &1491385348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -549,11 +549,11 @@ MonoBehaviour:
   runSpeed: 8
   jumpHeight: 2
   gravity: -9.81
-  groundCheckDistance: 0.4
-  mouseSensitivity: 4
+  groundCheckDist: 0.4
+  mouseSens: 2
   maxLookAngle: 80
-  playerCamera: {fileID: 0}
-  groundCheck: {fileID: 0}
+  cam: {fileID: 0}
+  groundChecker: {fileID: 0}
   groundMask:
     serializedVersion: 2
     m_Bits: 1
@@ -722,27 +722,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponName: Base Weapon
-  attackCooldown: 1
-  damage: 10
-  range: 2
-  weaponAnimator: {fileID: 0}
-  idleAnimationName: Idle
-  attackAnimationName: Attack
-  walkAnimationName: Walk
-  runAnimationName: Run
-  attackLayerMask:
+  cooldown: 0.3
+  dmg: 10
+  reach: 2
+  anim: {fileID: 0}
+  idleAnim: Idle
+  attackAnim: Attack
+  walkAnim: Walk
+  runAnim: Run
+  hitMask:
     serializedVersion: 2
     m_Bits: 4294967295
   attackPoint: {fileID: 0}
   attackRadius: 1
-  showAttackGizmos: 1
-  attackAnimations:
+  showGizmos: 1
+  attackAnims:
   - axe_ATK1(hit)
   - axe_ATK2(hit)
-  currentAttackIndex: 0
+  currentAttackIdx: 0
   impactTime: 0.6
   hitEffect: {fileID: 0}
-  audioSource: {fileID: 0}
+  audioSrc: {fileID: 0}
   swingSound: {fileID: 0}
   hitSound: {fileID: 0}
 --- !u!1 &236869717108694780

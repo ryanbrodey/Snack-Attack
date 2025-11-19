@@ -22,6 +22,8 @@ namespace SnackAttack.Weapons
         protected bool canAttack = true;
         protected bool attacking = false;
         protected float lastAttackTime;
+        protected float lastAnimationTime;
+        protected string currentAnimationState;
         
         // events for other scripts
         public System.Action OnAttackStarted;
@@ -84,6 +86,9 @@ namespace SnackAttack.Weapons
         {
             attacking = false;
             OnAttackCompleted?.Invoke();
+            
+            // Reset animation state and return to idle
+            currentAnimationState = "";
             PlayIdle();
         }
         
@@ -95,16 +100,35 @@ namespace SnackAttack.Weapons
         {
             if (attacking) return; // dont interrupt attacks
             
+            // Determine what animation should be playing
+            string targetAnimation;
             if (moving)
             {
-                if (running)
-                    PlayRun();
-                else
-                    PlayWalk();
+                targetAnimation = running ? runAnim : walkAnim;
             }
             else
             {
-                PlayIdle();
+                targetAnimation = idleAnim;
+            }
+            
+            // Only change animation if it's different and enough time has passed
+            if (targetAnimation != currentAnimationState && 
+                Time.time - lastAnimationTime > 0.1f)
+            {
+                currentAnimationState = targetAnimation;
+                lastAnimationTime = Time.time;
+                
+                if (moving)
+                {
+                    if (running)
+                        PlayRun();
+                    else
+                        PlayWalk();
+                }
+                else
+                {
+                    PlayIdle();
+                }
             }
         }
         
@@ -112,25 +136,41 @@ namespace SnackAttack.Weapons
         protected virtual void PlayIdle()
         {
             if (anim != null && !string.IsNullOrEmpty(idleAnim))
+            {
                 anim.Play(idleAnim);
+                currentAnimationState = idleAnim;
+                lastAnimationTime = Time.time;
+            }
         }
         
         protected virtual void PlayAttack()
         {
             if (anim != null && !string.IsNullOrEmpty(attackAnim))
+            {
                 anim.Play(attackAnim);
+                currentAnimationState = attackAnim;
+                lastAnimationTime = Time.time;
+            }
         }
         
         protected virtual void PlayWalk()
         {
             if (anim != null && !string.IsNullOrEmpty(walkAnim))
+            {
                 anim.Play(walkAnim);
+                currentAnimationState = walkAnim;
+                lastAnimationTime = Time.time;
+            }
         }
         
         protected virtual void PlayRun()
         {
             if (anim != null && !string.IsNullOrEmpty(runAnim))
+            {
                 anim.Play(runAnim);
+                currentAnimationState = runAnim;
+                lastAnimationTime = Time.time;
+            }
         }
         
         // called by animation events
