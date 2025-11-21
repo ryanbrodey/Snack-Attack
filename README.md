@@ -23,7 +23,7 @@ Our current target is to build a kitchen / food-themed first-person shooter (FPS
 
 ## General Goals for Each Team Member
 
-- **Julian Jamil** —  Find assets for map building and UI components
+- **Julian Jamil** —  Help design map functionality and find assets for map building and UI components
 - **Ryan Brodey** —  Find/Design assets for player and enemies as well as write code for the enemies
-- **Jake Linnell** —  Design and build the Map 
-- **Connor Pham** —  Write functional code for player view as FPS
+- **Jake Linnell** —  Design/build the mapand help implement enemy assets
+- **Connor Pham** —  Write functional code for controls of player view as FPS  
