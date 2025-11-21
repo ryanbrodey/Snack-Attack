@@ -17,9 +17,9 @@ Our current target is to build a kitchen / food-themed first-person shooter (FPS
 
 The early prototype will include:
 
-Functional first-person movement and shooting
+Functional first-person movement and attack
 
-Basic enemy food models/behaviors
+1-2 enemy food models/behaviors
 
 A single playable kitchen-themed level
 
