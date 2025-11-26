@@ -27,3 +27,6 @@ Our current target is to build a kitchen / food-themed first-person shooter (FPS
 - **Ryan Brodey** —  Find/Design assets for player and enemies as well as write code for the enemies
 - **Jake Linnell** —  Design/build the mapand help implement enemy assets
 - **Connor Pham** —  Write functional code for controls of player view as FPS  
+
+## Halfway Project Review Video
+- https://youtu.be/4iM_WnU2kho
