@@ -30,11 +30,11 @@ namespace SnackAttack.Weapons
             dmg = 25f;
             reach = 2f;
             
-            // axe animations
+            // axe animations - using exact names from Animation Controller
             idleAnim = "axe_IDLE";
             walkAnim = "axe_WALK";
             runAnim = "axe_RUN";
-            attackAnim = "axe_ATK1(hit)";
+            attackAnim = "axe_ATK1(hit)"; // Will be overridden by CycleAttackAnim()
             
             // make sure we have an animator
             if (anim == null)

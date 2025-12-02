@@ -33,6 +33,7 @@ namespace SnackAttack.Player
         private Vector2 moveInput;
         private Vector2 lookInput;
         private bool jumpPressed;
+        private bool wasGroundedLastFrame;
         
         // getters for other scripts
         public bool IsGrounded => grounded;
@@ -101,6 +102,9 @@ namespace SnackAttack.Player
         
         void DoMovement()
         {
+            // store previous grounded state
+            wasGroundedLastFrame = grounded;
+            
             // check if on ground
             if (groundChecker != null)
             {
@@ -124,10 +128,15 @@ namespace SnackAttack.Player
             horizVel = move * speed;
             cc.Move(horizVel * Time.deltaTime);
             
-            // jumping
-            if (jumpPressed && grounded)
+            // jumping - only allow jump when grounded AND just landed (prevent spam)
+            if (jumpPressed && grounded && vel.y <= 0.1f)
             {
                 vel.y = Mathf.Sqrt(jumpHeight * -2f * gravity); // jump formula from physics class
+                Debug.Log($"[FPSController] Jump! Velocity Y: {vel.y}, Grounded: {grounded}");
+            }
+            else if (jumpPressed)
+            {
+                Debug.Log($"[FPSController] Jump blocked - Grounded: {grounded}, Vel.Y: {vel.y:F2}");
             }
             
             // gravity goes down

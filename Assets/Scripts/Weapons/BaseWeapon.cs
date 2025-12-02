@@ -65,6 +65,13 @@ namespace SnackAttack.Weapons
             {
                 canAttack = true;
             }
+            
+            // Debug key to reset weapon state if it gets stuck
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                Debug.Log($"[{weaponName}] R key pressed - Force resetting weapon state");
+                ForceResetState();
+            }
         }
         
         // try to attack
@@ -157,9 +164,33 @@ namespace SnackAttack.Weapons
         {
             if (anim != null && !string.IsNullOrEmpty(attackAnim))
             {
+                Debug.Log($"[{weaponName}] Playing attack animation: {attackAnim}");
+                
+                // Try using trigger first (better method)
+                if (anim.parameters != null)
+                {
+                    foreach (var param in anim.parameters)
+                    {
+                        if (param.name == "Attack" && param.type == AnimatorControllerParameterType.Trigger)
+                        {
+                            Debug.Log($"[{weaponName}] Using Attack trigger");
+                            anim.SetTrigger("Attack");
+                            currentAnimationState = attackAnim;
+                            lastAnimationTime = Time.time;
+                            return;
+                        }
+                    }
+                }
+                
+                // Fallback to direct animation play
+                Debug.Log($"[{weaponName}] No Attack trigger found, using Play() method");
                 anim.Play(attackAnim);
                 currentAnimationState = attackAnim;
                 lastAnimationTime = Time.time;
+            }
+            else
+            {
+                Debug.LogError($"[{weaponName}] Cannot play attack! Anim: {(anim != null ? "Found" : "NULL")}, AttackAnim: '{attackAnim}'");
             }
         }
         
