@@ -12,7 +12,7 @@ namespace SnackAttack.Player
         public Transform weaponHolder;
         
         [Header("Controls")]
-        public KeyCode attackKey = KeyCode.Space;
+        public KeyCode attackKey = KeyCode.F; // F key for attack
         public KeyCode[] weaponKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4 };
         
         // stuff we need
@@ -41,8 +41,11 @@ namespace SnackAttack.Player
         
         void Start()
         {
+            Debug.Log("[WeaponManager] Start() - Setting up weapons");
             SetupWeapons();
+            Debug.Log($"[WeaponManager] Weapons array length: {weapons?.Length ?? 0}");
             SwitchToWeapon(currentWeaponIdx);
+            Debug.Log($"[WeaponManager] Current weapon after setup: {(currentWeapon != null ? currentWeapon.WeaponName : "NULL")}");
         }
         
         void Update()
@@ -53,9 +56,10 @@ namespace SnackAttack.Player
         
         void CheckInput()
         {
-            // attack with space
+            // attack with F key
             if (Input.GetKeyDown(attackKey))
             {
+                Debug.Log("[WeaponManager] F key pressed - calling DoAttack()");
                 DoAttack();
             }
             
@@ -128,21 +132,37 @@ namespace SnackAttack.Player
         {
             if (currentWeapon != null)
             {
+                Debug.Log($"[WeaponManager] DoAttack - Current weapon: {currentWeapon.WeaponName}, Can Attack: {currentWeapon.CanAttack}");
                 currentWeapon.Attack();
+            }
+            else
+            {
+                Debug.LogWarning("[WeaponManager] DoAttack - No current weapon!");
             }
         }
         
         public void SwitchToWeapon(int idx)
         {
+            Debug.Log($"[WeaponManager] SwitchToWeapon({idx}) called");
+            
             if (weapons == null || idx < 0 || idx >= weapons.Length)
+            {
+                Debug.LogWarning($"[WeaponManager] Invalid weapon index {idx} or weapons array is null. Array length: {weapons?.Length ?? 0}");
                 return;
+            }
                 
             if (weapons[idx] == null)
+            {
+                Debug.LogWarning($"[WeaponManager] Weapon at index {idx} is null!");
                 return;
+            }
+            
+            Debug.Log($"[WeaponManager] Switching to weapon: {weapons[idx].WeaponName}");
             
             // turn off current weapon
             if (currentWeapon != null)
             {
+                Debug.Log($"[WeaponManager] Deactivating current weapon: {currentWeapon.WeaponName}");
                 currentWeapon.gameObject.SetActive(false);
             }
             
@@ -151,7 +171,7 @@ namespace SnackAttack.Player
             currentWeapon = weapons[currentWeaponIdx];
             currentWeapon.gameObject.SetActive(true);
             
-            Debug.Log("Switched to: " + currentWeapon.WeaponName);
+            Debug.Log($"[WeaponManager] Successfully switched to: {currentWeapon.WeaponName}");
         }
         
         public void NextWeapon()

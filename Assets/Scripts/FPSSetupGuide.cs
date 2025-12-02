@@ -56,7 +56,8 @@ namespace SnackAttack.Setup
 CONTROLS:
 - WASD: Move
 - Mouse: Look around
-- Space: Attack
+- F: Attack
+- Space: Jump
 - Shift: Run
 - Escape: Toggle cursor lock
 - 1-4: Switch weapons (when multiple weapons are added)

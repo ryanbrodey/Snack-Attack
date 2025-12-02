@@ -46,8 +46,16 @@ namespace SnackAttack.Weapons
         
         protected virtual void Start()
         {
+            // Force reset attack state - stop any running coroutines
+            StopAllCoroutines();
+            attacking = false;
+            canAttack = true;
+            lastAttackTime = 0f;
+            
             // start in idle
             PlayIdle();
+            
+            Debug.Log($"[{weaponName}] Started - FORCE RESET - CanAttack: {CanAttack}, Attacking: {attacking}");
         }
         
         protected virtual void Update()
@@ -57,11 +65,19 @@ namespace SnackAttack.Weapons
             {
                 canAttack = true;
             }
+            
+            // Debug key to reset weapon state if it gets stuck
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                Debug.Log($"[{weaponName}] R key pressed - Force resetting weapon state");
+                ForceResetState();
+            }
         }
         
         // try to attack
         public virtual void Attack()
         {
+            Debug.Log($"[{weaponName}] Attack() called - CanAttack: {CanAttack}, attacking: {attacking}");
             if (!CanAttack) return;
             
             StartAttack();
@@ -70,6 +86,7 @@ namespace SnackAttack.Weapons
         // begin attack
         protected virtual void StartAttack()
         {
+            Debug.Log($"[{weaponName}] StartAttack() - Setting attacking=true");
             attacking = true;
             canAttack = false;
             lastAttackTime = Time.time;
@@ -147,9 +164,33 @@ namespace SnackAttack.Weapons
         {
             if (anim != null && !string.IsNullOrEmpty(attackAnim))
             {
+                Debug.Log($"[{weaponName}] Playing attack animation: {attackAnim}");
+                
+                // Try using trigger first (better method)
+                if (anim.parameters != null)
+                {
+                    foreach (var param in anim.parameters)
+                    {
+                        if (param.name == "Attack" && param.type == AnimatorControllerParameterType.Trigger)
+                        {
+                            Debug.Log($"[{weaponName}] Using Attack trigger");
+                            anim.SetTrigger("Attack");
+                            currentAnimationState = attackAnim;
+                            lastAnimationTime = Time.time;
+                            return;
+                        }
+                    }
+                }
+                
+                // Fallback to direct animation play
+                Debug.Log($"[{weaponName}] No Attack trigger found, using Play() method");
                 anim.Play(attackAnim);
                 currentAnimationState = attackAnim;
                 lastAnimationTime = Time.time;
+            }
+            else
+            {
+                Debug.LogError($"[{weaponName}] Cannot play attack! Anim: {(anim != null ? "Found" : "NULL")}, AttackAnim: '{attackAnim}'");
             }
         }
         
@@ -183,6 +224,20 @@ namespace SnackAttack.Weapons
         public virtual void OnAttackImpact()
         {
             // override this in weapon classes
+        }
+        
+        // manual reset if weapon gets stuck
+        [ContextMenu("Force Reset Weapon State")]
+        public void ForceResetState()
+        {
+            Debug.Log($"[{weaponName}] MANUAL RESET - Was attacking: {attacking}, canAttack: {canAttack}");
+            StopAllCoroutines();
+            attacking = false;
+            canAttack = true;
+            lastAttackTime = 0f;
+            currentAnimationState = "";
+            PlayIdle();
+            Debug.Log($"[{weaponName}] MANUAL RESET COMPLETE - CanAttack: {CanAttack}, Attacking: {attacking}");
         }
     }
 }

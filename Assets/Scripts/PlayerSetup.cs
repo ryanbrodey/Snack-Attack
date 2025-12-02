@@ -77,7 +77,7 @@ namespace SnackAttack.Setup
             // Create test enemy
             CreateTestEnemy();
             
-            Debug.Log("Player setup complete! Use WASD to move, Mouse to look, Space to attack.");
+            Debug.Log("Player setup complete! Use WASD to move, Mouse to look, F to attack, Space to jump.");
         }
         
         private void SetupAxeWeapon(GameObject cameraGO, WeaponManager weaponManager)

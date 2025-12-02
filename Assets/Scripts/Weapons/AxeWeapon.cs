@@ -30,11 +30,25 @@ namespace SnackAttack.Weapons
             dmg = 25f;
             reach = 2f;
             
-            // axe animations
+            // axe animations - using exact names from Animation Controller
             idleAnim = "axe_IDLE";
             walkAnim = "axe_WALK";
             runAnim = "axe_RUN";
-            attackAnim = "axe_ATK1(hit)";
+            attackAnim = "axe_ATK1(hit)"; // Will be overridden by CycleAttackAnim()
+            
+            // make sure we have an animator
+            if (anim == null)
+            {
+                anim = GetComponent<Animator>();
+                if (anim == null)
+                {
+                    Debug.LogError($"[AxeWeapon] No Animator found on {gameObject.name}! Axe attacks won't work.");
+                }
+                else
+                {
+                    Debug.Log($"[AxeWeapon] Found Animator on {gameObject.name}");
+                }
+            }
             
             // make attack point if we dont have one
             if (attackPoint == null)

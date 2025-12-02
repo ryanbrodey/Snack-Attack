@@ -209,81 +209,13 @@ Transform:
   m_GameObject: {fileID: 123458697}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.46, y: 1.11, z: -13.06}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.58, z: -0.15}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 543450653052649200}
-  m_Father: {fileID: 0}
+  - {fileID: 798095807}
+  m_Father: {fileID: 543450653052649200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &345409635
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4831018559349111208}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5634d3c074414bb7a4991425855b29b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  walkSpeed: 5
-  runSpeed: 8
-  jumpHeight: 2
-  gravity: -9.81
-  groundCheckDist: 0.4
-  mouseSens: 2
-  maxLookAngle: 80
-  cam: {fileID: 123458699}
-  groundChecker: {fileID: 0}
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 1
---- !u!143 &345409636
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4831018559349111208}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 0.0040546637
-  m_Radius: 0.005811452
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &345409638
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4831018559349111208}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ed8bac57d8464995b6a5504187a5a90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weapons:
-  - {fileID: 2048692732}
-  currentWeaponIdx: 0
-  weaponHolder: {fileID: 0}
-  attackKey: 32
-  weaponKeys: 31000000320000003300000034000000
 --- !u!1 &494493807
 GameObject:
   m_ObjectHideFlags: 0
@@ -420,6 +352,38 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &798095806
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 798095807}
+  m_Layer: 0
+  m_Name: WeaponHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &798095807
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 798095806}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6303818256506323087}
+  m_Father: {fileID: 123458700}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &866223950
 GameObject:
@@ -688,63 +652,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &2048692731
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132148594140234}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: bb746d399aea44a99b1488b7a6783fa8, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2048692732
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132148594140234}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c46d0819fe20246439612261cf8068d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponName: Base Weapon
-  cooldown: 0.3
-  dmg: 10
-  reach: 2
-  anim: {fileID: 0}
-  idleAnim: Idle
-  attackAnim: Attack
-  walkAnim: Walk
-  runAnim: Run
-  hitMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  attackPoint: {fileID: 0}
-  attackRadius: 1
-  showGizmos: 1
-  attackAnims:
-  - axe_ATK1(hit)
-  - axe_ATK2(hit)
-  currentAttackIdx: 0
-  impactTime: 0.6
-  hitEffect: {fileID: 0}
-  audioSrc: {fileID: 0}
-  swingSound: {fileID: 0}
-  hitSound: {fileID: 0}
 --- !u!1 &236869717108694780
 GameObject:
   m_ObjectHideFlags: 0
@@ -803,14 +710,14 @@ Transform:
   m_GameObject: {fileID: 919132148594140234}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.00999999, y: -0.6, z: 0.3000002}
+  m_LocalPosition: {x: -2.45, y: 0.51, z: -12.76}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6303818256506323087}
+  - {fileID: 123458700}
   - {fileID: 2306921671565590462}
   - {fileID: 7024483452729479114}
-  m_Father: {fileID: 123458700}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &686011789267032081
 GameObject:
@@ -885,8 +792,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 543450653052649200}
-  - component: {fileID: 2048692731}
-  - component: {fileID: 2048692732}
+  - component: {fileID: 919132148594140237}
+  - component: {fileID: 919132148594140236}
+  - component: {fileID: 919132148594140235}
   m_Layer: 0
   m_Name: knife
   m_TagString: Untagged
@@ -894,6 +802,74 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &919132148594140235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148594140234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ed8bac57d8464995b6a5504187a5a90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapons:
+  - {fileID: 6303818256506323088}
+  currentWeaponIdx: 0
+  weaponHolder: {fileID: 798095807}
+  attackKey: 102
+  weaponKeys: 31000000320000003300000034000000
+--- !u!114 &919132148594140236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148594140234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5634d3c074414bb7a4991425855b29b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkSpeed: 5
+  runSpeed: 8
+  jumpHeight: 2
+  gravity: -9.81
+  groundCheckDist: 0.4
+  mouseSens: 2
+  maxLookAngle: 80
+  cam: {fileID: 123458699}
+  groundChecker: {fileID: 494493808}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 1
+--- !u!143 &919132148594140237
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148594140234}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &987564546747453724
 GameObject:
   m_ObjectHideFlags: 0
@@ -1464,9 +1440,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6303818256506323087}
   - component: {fileID: 5797384430258635917}
-  - component: {fileID: 345409636}
-  - component: {fileID: 345409635}
-  - component: {fileID: 345409638}
+  - component: {fileID: 6303818256506323088}
+  - component: {fileID: 6303818256506323089}
   m_Layer: 0
   m_Name: Arms
   m_TagString: Untagged
@@ -1817,14 +1792,71 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4831018559349111208}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071067}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 99.99999, y: 100, z: 100}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.4, y: -0.5, z: 0.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 494493808}
-  m_Father: {fileID: 543450653052649200}
+  m_Father: {fileID: 798095807}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6303818256506323088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4831018559349111208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c46d0819fe20246439612261cf8068d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponName: Base Weapon
+  cooldown: 0.3
+  dmg: 10
+  reach: 2
+  anim: {fileID: 0}
+  idleAnim: Idle
+  attackAnim: Attack
+  walkAnim: Walk
+  runAnim: Run
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  attackPoint: {fileID: 0}
+  attackRadius: 1
+  showGizmos: 1
+  attackAnims:
+  - axe_ATK1(hit)
+  - axe_ATK2(hit)
+  currentAttackIdx: 0
+  impactTime: 0.6
+  hitEffect: {fileID: 0}
+  audioSrc: {fileID: 0}
+  swingSound: {fileID: 0}
+  hitSound: {fileID: 0}
+--- !u!95 &6303818256506323089
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4831018559349111208}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bb746d399aea44a99b1488b7a6783fa8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &6651831235758341721
 Transform:
   m_ObjectHideFlags: 0
@@ -2386,7 +2418,7 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 123458700}
+  - {fileID: 543450653052649200}
   - {fileID: 866223952}
   - {fileID: 693302949}
   - {fileID: 1898875626}
