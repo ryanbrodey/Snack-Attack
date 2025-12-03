@@ -1,0 +1,60 @@
+
+
+Tuning Cheatsheet – Speeds, Ranges, Rates
+-----------------------------------------
+Movement (Chili root → NavMeshAgent)
+- **Speed**: forward move speed (m/s). Typical: 2–3.5.
+- **Angular Speed**: how fast the agent turns (deg/s). Typical: 540–900.
+- **Acceleration**: how quickly the agent reaches its speed. Typical: 6–12.
+- **Stopping Distance**: how close the agent attempts to get. The AI script sets this to ~0.9 × attackRange on Start.
+Tip: Keep **Angular Speed** high if enemies feel like they slide sideways.
+
+AI Distances (Chili root → ChiliAI)
+- **chaseRange**: start/keep chasing when the player is within this radius.
+- **attackRange**: play Attack while inside this radius.
+- **rotationSpeedDegPerSec**: how fast the root turns when our code rotates it (we use this because agent.updateRotation is off).
+
+Animation Playback
+- **Walk speed (visual)**: select the **walk** state in the Animator → in the Inspector, set **Speed Multiplier**. 1.0 = default tempo, 1.2 = 20% faster steps.
+- **Clip import speed**: select the FBX → **Animation** tab → **Speed** (rarely needed; use state multiplier first).
+Sync tip: If feet slide, either raise Agent **Speed** or raise the **walk state Speed Multiplier** slightly.
+
+Attack Tempo & Damage
+- With our current setup, Attack plays as long as InAttackRange is true. To change attack tempo:
+  1) Adjust the **attack state Speed Multiplier**, **or**
+  2) Add a Trigger (e.g., "Attack") fired on a timer in AI and set the attack state to require the Trigger (optional).
+- Damage amount and hit radius are on **ChiliAnimationReceiver** (on the Chili root).
+
+NavMesh Bake (NavMesh object → NavMeshSurface)
+- Re-bake whenever ground layout changes.
+- Useful knobs: Step Height (~0.3), Max Slope (~45°), Agent Radius/Height to match enemies.
+
+Player-side things
+- Player should be **Layer = Player** so the enemy’s **Player Mask** can filter for hits.
+- If you don’t want a new layer, set Player Mask to **Everything** while testing.
+
+AttackPoint – What to assign and how to place it
+------------------------------------------------
+The Animation Receiver uses a point + radius to detect the player when the attack event fires.
+
+1) In the Hierarchy, right-click the **Chili** root → **Create Empty**, name it **AttackPoint**.
+2) Make it a child of **Chili** (the root). Position it roughly in front of the face, e.g.:
+   - **Local Position**: X = 0.0, Y = 1.0, Z = 0.8 (tweak to taste)
+   - **Local Rotation**: (0, 0, 0)
+3) On the **ChiliAnimationReceiver** component (on Chili root):
+   - **Attack Point**: drag the **AttackPoint** transform here.
+   - **Hit Radius**: start ~1.2 (increase if fast enemies are missing)
+   - **Player Mask**: set to the **Player** layer (or **Everything** for quick testing).
+4) In Scene view, select the Chili root and enable **Gizmos**. With the enemy selected, you’ll see a red sphere at AttackPoint when the component is selected (OnDrawGizmosSelected). Adjust position/radius until it encloses where contact should register.
+
+Per-Enemy Variations
+--------------------
+To make each food enemy feel different without code changes:
+- **Speed** (NavMeshAgent) – movement pace
+- **Angular Speed** (Agent) – snappiness when turning
+- **attackRange** (ChiliAI) – reach/engagement distance
+- **walk state Speed Multiplier** (Animator) – leg tempo
+- **AttackPoint/Hit Radius/Damage** (AnimationReceiver) – hit box and damage
+- **Model Yaw Offset** (ChiliAI) – set to 90/-90/180 as needed per rig
+- Optional: create separate controllers if their clip names differ, but keep the same parameter names (`Speed`, `InAttackRange`).
+
