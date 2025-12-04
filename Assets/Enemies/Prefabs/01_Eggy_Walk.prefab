@@ -318,7 +318,7 @@ PrefabInstance:
     - target: {fileID: 9500000, guid: 0b9f20f2dc04f4b1b98f92fb30fd0393, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 2b17353e673b8496e96027450e66fac2, type: 2}
+      objectReference: {fileID: 9100000, guid: 8f4d2e1a9c7b4f5e8a3d6c2b1e9f4a7c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -382,7 +382,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5692911633990918263}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a530e9bd0ffc246c0bf315d3a96e9c25, type: 3}
+  m_Script: {fileID: 11500000, guid: 7bcd031cb832444288213baa8c7fe681, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
@@ -404,7 +404,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5692911633990918263}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e1c6a58ac945d41aea97499ecdca585c, type: 3}
+  m_Script: {fileID: 11500000, guid: 504515b348314490e94fb4d24ead6646, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
