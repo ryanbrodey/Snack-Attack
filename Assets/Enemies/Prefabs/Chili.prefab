@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4386518192248599811
+--- !u!1 &5967759449272867625
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,7 +8,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 617534268418695911}
+  - component: {fileID: 9220868811447669885}
   m_Layer: 0
   m_Name: AttackPoint
   m_TagString: Untagged
@@ -16,13 +16,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &617534268418695911
+--- !u!4 &9220868811447669885
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4386518192248599811}
+  m_GameObject: {fileID: 5967759449272867625}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.88, y: 1, z: 0.35}
@@ -104,17 +104,17 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 400000, guid: f494513d99f194dbf91c449ca35c98c3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 617534268418695911}
+      addedObject: {fileID: 9220868811447669885}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 100000, guid: f494513d99f194dbf91c449ca35c98c3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6802657631230958799}
     - targetCorrespondingSourceObject: {fileID: 100000, guid: f494513d99f194dbf91c449ca35c98c3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7964547483630334121}
+      addedObject: {fileID: 8938354650831942232}
     - targetCorrespondingSourceObject: {fileID: 100000, guid: f494513d99f194dbf91c449ca35c98c3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1562923347262223629}
+      addedObject: {fileID: 4683772901821518820}
   m_SourcePrefab: {fileID: 100100000, guid: f494513d99f194dbf91c449ca35c98c3, type: 3}
 --- !u!4 &9094780982019503249 stripped
 Transform:
@@ -153,7 +153,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &7964547483630334121
+--- !u!114 &8938354650831942232
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -175,7 +175,7 @@ MonoBehaviour:
   rotationSpeedDegPerSec: 720
   modelYawOffset: -90
   speedDampTime: 0.15
---- !u!114 &1562923347262223629
+--- !u!114 &4683772901821518820
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -189,7 +189,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 10
   hitRadius: 1.2
-  attackPoint: {fileID: 617534268418695911}
+  attackPoint: {fileID: 9220868811447669885}
   playerMask:
     serializedVersion: 2
     m_Bits: 0
