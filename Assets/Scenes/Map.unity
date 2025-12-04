@@ -453,7 +453,7 @@ Transform:
   m_GameObject: {fileID: 248466362}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 52, y: 107.18, z: -61.2}
+  m_LocalPosition: {x: 88.42, y: 107.43, z: -103.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1868,7 +1868,7 @@ GameObject:
   - component: {fileID: 776222219}
   - component: {fileID: 776222218}
   m_Layer: 0
-  m_Name: EnemySpawner
+  m_Name: ChiliSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
