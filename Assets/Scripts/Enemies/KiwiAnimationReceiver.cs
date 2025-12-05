@@ -33,3 +33,4 @@ public class KiwiAnimationReceiver : MonoBehaviour
         Gizmos.DrawWireSphere(attackPoint.position, hitRadius);
     }
 }
+

@@ -114,3 +114,4 @@ public class BulletCollisionSetup : MonoBehaviour
         return (collisionLayers & (1 << otherLayer)) != 0;
     }
 }
+

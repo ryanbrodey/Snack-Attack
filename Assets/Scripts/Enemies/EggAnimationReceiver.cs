@@ -33,3 +33,4 @@ public class EggAnimationReceiver : MonoBehaviour
         Gizmos.DrawWireSphere(attackPoint.position, hitRadius);
     }
 }
+

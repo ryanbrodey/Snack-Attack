@@ -218,7 +218,8 @@ public class FPSPlayerController : MonoBehaviour
         
         // HORIZONTAL (left/right): Rotate the player body so weapon stays visible
         // This is realistic - when you turn your head left/right, your body follows
-        transform.Rotate(Vector3.up * mouseX);
+        // Use RotateAround to ensure rotation happens around current position, not original pivot
+        transform.RotateAround(transform.position, Vector3.up, mouseX);
         
         // VERTICAL (up/down): Only rotate the camera for looking up/down
         // This is realistic - you can look up/down without turning your whole body
