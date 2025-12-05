@@ -6,9 +6,9 @@ public class FPSPlayerController : MonoBehaviour
     [Header("Movement Settings")]
     public float walkSpeed = 5f;
     public float runSpeed = 8f;
-    public float jumpHeight = 1.5f; // Realistic jump height
-    public float gravity = -19.62f; // Realistic gravity (2x Earth gravity for better feel)
-    public float groundCheckDistance = 0.4f;
+    public float jumpHeight = 1.2f; // Realistic jump height
+    public float gravity = -15f; // Adjusted gravity for better feel
+    public float groundCheckDistance = 0.2f;
     
     [Header("Mouse Look Settings")]
     public float mouseSensitivity = 2f;
@@ -29,6 +29,7 @@ public class FPSPlayerController : MonoBehaviour
     private bool isGrounded;
     private bool wasGroundedLastFrame;
     private float xRotation = 0f;
+    private float yRotation = 0f;
     
     // Auto-run system
     private bool autoRunning = false;
@@ -64,7 +65,7 @@ public class FPSPlayerController : MonoBehaviour
         {
             GameObject gc = new GameObject("GroundCheck");
             gc.transform.SetParent(transform);
-            gc.transform.localPosition = new Vector3(0, -1f, 0);
+            gc.transform.localPosition = new Vector3(0, -0.9f, 0); // Position it at the bottom of character controller
             groundCheck = gc.transform;
         }
         
@@ -150,13 +151,20 @@ public class FPSPlayerController : MonoBehaviour
         // Store previous grounded state
         wasGroundedLastFrame = isGrounded;
         
-        // Ground check
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckDistance, groundMask);
+        // Ground check - check slightly below the character controller
+        isGrounded = characterController.isGrounded;
         
-        // Reset vertical velocity when grounded and falling
+        // Additional ground check for more reliable detection
+        if (groundCheck != null)
+        {
+            bool sphereCheck = Physics.CheckSphere(groundCheck.position, groundCheckDistance, groundMask);
+            isGrounded = isGrounded || sphereCheck;
+        }
+        
+        // Reset vertical velocity when grounded
         if (isGrounded && velocity.y < 0)
         {
-            velocity.y = -2f; // Small downward force to stay grounded
+            velocity.y = -0.5f; // Small downward force to stay grounded
             
             // Reset jumping state when we land
             if (isJumping)
@@ -166,7 +174,7 @@ public class FPSPlayerController : MonoBehaviour
             }
         }
         
-        // Calculate movement direction relative to player rotation
+        // Calculate movement direction relative to body rotation (since body follows head)
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
         move = Vector3.ClampMagnitude(move, 1f); // Prevent faster diagonal movement
         
@@ -174,21 +182,17 @@ public class FPSPlayerController : MonoBehaviour
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
         characterController.Move(move * currentSpeed * Time.deltaTime);
         
-        // Jumping - only allow when grounded and not already jumping
-        if (jumpPressed && isGrounded && !isJumping)
+        // Jumping - only allow when grounded
+        if (jumpPressed && isGrounded)
         {
             // Calculate jump velocity using physics formula: v = sqrt(2 * g * h)
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             isJumping = true;
-            Debug.Log($"Jump! Initial velocity: {velocity.y:F2}");
+            Debug.Log($"Jump! Initial velocity: {velocity.y:F2}, Grounded: {isGrounded}");
         }
         else if (jumpPressed && !isGrounded)
         {
             Debug.Log("Cannot jump - not grounded");
-        }
-        else if (jumpPressed && isJumping)
-        {
-            Debug.Log("Cannot jump - already jumping");
         }
         
         // Apply gravity continuously
@@ -212,13 +216,18 @@ public class FPSPlayerController : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
         
-        // Rotate the player body left/right
+        // HORIZONTAL (left/right): Rotate the player body so weapon stays visible
+        // This is realistic - when you turn your head left/right, your body follows
         transform.Rotate(Vector3.up * mouseX);
         
-        // Rotate the camera up/down
+        // VERTICAL (up/down): Only rotate the camera for looking up/down
+        // This is realistic - you can look up/down without turning your whole body
+        // Body stays upright, only head/camera tilts
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -maxLookAngle, maxLookAngle);
         playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        
+        Debug.Log($"Body Y rotation: {transform.eulerAngles.y:F1}, Camera pitch: {xRotation:F1}");
     }
     
     void UpdateAnimations()

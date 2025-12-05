@@ -6,6 +6,7 @@ public class SimpleBullet : MonoBehaviour
     public float lifeTime = 3f;
     public float damage = 10f;
     public LayerMask hitLayers = -1; // What layers can this bullet hit
+    public float bulletSpeed = 40f; // Speed for consistent movement
     
     [Header("Effects (Optional)")]
     public GameObject hitEffectPrefab; // Particle effect on impact
@@ -17,6 +18,21 @@ public class SimpleBullet : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        
+        // Configure bullet physics if not already done
+        if (rb != null)
+        {
+            rb.useGravity = false; // Bullets shouldn't fall
+            rb.drag = 0f; // No air resistance
+            rb.interpolation = RigidbodyInterpolation.Interpolate; // Smooth movement
+        }
+        
+        // Ensure bullet has proper collision setup
+        BulletCollisionSetup collisionSetup = GetComponent<BulletCollisionSetup>();
+        if (collisionSetup != null)
+        {
+            collisionSetup.SetupBulletPhysics();
+        }
         
         // Destroy after lifetime to prevent bullet buildup
         Destroy(gameObject, lifeTime);
