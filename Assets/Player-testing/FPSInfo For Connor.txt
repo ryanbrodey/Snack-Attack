@@ -1,0 +1,405 @@
+﻿Snack Attack - FPS Player / Ketchup Gun Setup
+=============================================
+
+
+Author: [your name]
+Branch: player-testing
+
+
+Overview
+--------
+This prefab is the first-person player rig for Snack Attack.
+
+
+It includes:
+- Mixamo "Y Bot" arms in first-person
+- Pistol locomotion animations (idle, walk, run, jump, shoot)
+- Food-themed weapon (ketchup bottle) held like a pistol
+- Bullet spawn point at the bottle tip
+- A test gun script for firing bullets on left click
+
+
+You can plug this into your movement + combat code without touching the rig.
+
+
+
+
+----------------------------------------
+1. Prefab and Important Assets
+----------------------------------------
+
+
+Main prefab to use:
+    Assets/Player-testing/Prefabs/FPS_Player_Pistol.prefab   (name may be FPS_Player)
+
+
+Animator controller on the arms:
+    Assets/Player-testing/Animations/PistolPlayer_Controller.controller
+
+
+Pistol locomotion / shooting animations (from Mixamo pack):
+    - pistol idle
+    - pistol walk
+    - pistol run
+    - pistol jump (uses "pistol jump 2" clip from pack)
+    - pistol shooting
+
+
+All of these FBXs are imported as:
+    Rig → Animation Type: Humanoid
+          Avatar Definition: Copy From Other Avatar
+          Source: Y BotAvatar
+
+
+Make sure if you add new pistol animations you also use Y BotAvatar.
+
+
+
+
+----------------------------------------
+2. Hierarchy / Structure
+----------------------------------------
+
+
+Inside the FPS_Player prefab, the important structure is:
+
+
+FPS_Player
+  └── PistolArms                      (Y Bot model)
+        ├── Alpha_Joints
+        ├── Alpha_Surface
+        └── mixamorig:Hips
+             ├── ... (standard Mixamo skeleton)
+             ├── mixamorig:Spine2
+             │     └── mixamorig:Neck
+             │           └── mixamorig:Head
+             │                 └── mixamorig:HeadTop_End
+             │                       └── CameraAnchor
+             │                             └── Main Camera (1)   <-- first person camera
+             └── mixamorig:RightArm
+                   └── mixamorig:RightForeArm
+                         └── mixamorig:RightHand
+                               └── WeaponSocket
+                                     └── Ketchup               <-- weapon root
+                                           ├── _Ketchup        <-- mesh from asset
+                                           └── BulletSpawn     <-- transform at bottle tip
+
+
+Notes:
+- Main Camera is parented under CameraAnchor, which is under the neck/head so the camera
+  follows head motion from the animations.
+- WeaponSocket is a child of the right hand bone. Any weapon should be parented to this.
+- BulletSpawn is a child of Ketchup and is positioned/rotated so its blue forward axis
+  points out of the bottle nozzle.
+
+
+
+
+----------------------------------------
+3. Animator Setup (PistolPlayer_Controller)
+----------------------------------------
+
+
+Animator controller path:
+    Assets/Player-testing/Animations/PistolPlayer_Controller.controller
+
+
+The Animator component is on:
+    PistolArms
+
+
+Parameters
+----------
+Float:
+    MoveSpeed
+        - 0.0          -> idle
+        - > 0.1        -> walking/running
+
+
+Bool:
+    IsRunning
+        - false        -> walk speed animation when MoveSpeed > 0.1
+        - true         -> run animation when MoveSpeed > 0.1
+
+
+    IsJumping
+        - true         -> play jump animation
+        - false        -> go back to locomotion
+
+
+Trigger:
+    Shoot
+        - triggers the pistol shooting animation once
+
+
+States
+------
+    pistol idle      (default)
+    pistol walk
+    pistol run
+    pistol jump      (wired to "pistol jump 2" clip)
+    pistol shooting  (one-shot fire animation)
+
+
+Main transitions
+----------------
+Entry -> pistol idle
+
+
+Idle <-> Walk:
+    pistol idle -> pistol walk
+        - Has Exit Time: false
+        - Conditions:
+            MoveSpeed > 0.1
+
+
+    pistol walk -> pistol idle
+        - Has Exit Time: false
+        - Conditions:
+            MoveSpeed < 0.1
+
+
+Run:
+    pistol idle -> pistol run
+        - Has Exit Time: false
+        - Conditions:
+            IsRunning == true
+            MoveSpeed > 0.1
+
+
+    pistol walk -> pistol run
+        - Has Exit Time: false
+        - Conditions:
+            IsRunning == true
+            MoveSpeed > 0.1
+
+
+    pistol run -> pistol walk
+        - Has Exit Time: false
+        - Conditions:
+            IsRunning == false
+            MoveSpeed > 0.1
+
+
+    pistol run -> pistol idle
+        - Has Exit Time: false
+        - Conditions:
+            MoveSpeed < 0.1
+
+
+Jump:
+    Any State -> pistol jump
+        - Has Exit Time: false
+        - Conditions:
+            IsJumping == true
+
+
+    pistol jump -> pistol idle
+        - Has Exit Time: true (plays full jump)
+        - Conditions:
+            IsJumping == false  (optional but recommended)
+
+
+Shoot:
+    Any State -> pistol shooting
+        - Has Exit Time: false
+        - Conditions:
+            Shoot (trigger)
+
+
+    pistol shooting -> pistol idle
+        - Has Exit Time: true (one-shot back to idle)
+        - No extra conditions
+
+
+
+
+How to drive animations from code
+---------------------------------
+Movement (example):
+    float speed = controller.velocity.magnitude;
+    animator.SetFloat("MoveSpeed", speed);
+
+
+    bool isRunning = Input.GetKey(KeyCode.LeftShift);
+    animator.SetBool("IsRunning", isRunning);
+
+
+Jumping (example):
+    // When jump starts
+    animator.SetBool("IsJumping", true);
+
+
+    // When we detect landing
+    animator.SetBool("IsJumping", false);
+
+
+Shooting (example):
+    if (Input.GetButtonDown("Fire1"))
+    {
+        animator.SetTrigger("Shoot");
+    }
+
+
+
+
+----------------------------------------
+4. Bullet / Shooting Setup
+----------------------------------------
+
+
+BulletSpawn
+-----------
+BulletSpawn is a Transform under Ketchup that marks the shooting origin.
+
+
+Path:
+    FPS_Player
+      PistolArms
+        mixamorig:Hips
+          ...
+          mixamorig:RightHand
+            WeaponSocket
+              Ketchup
+                BulletSpawn
+
+
+Use this Transform for:
+    - bullet spawn position
+    - bullet forward direction (BulletSpawn.forward)
+    - raycast origin if you implement hitscan
+
+
+Simple Bullet Prefab (for testing)
+----------------------------------
+Example location:
+    Assets/Player-testing/Prefabs/Bullet.prefab
+
+
+Components:
+    - Transform (small scale, e.g. 0.1 on each axis)
+    - Sphere Mesh or similar
+    - Rigidbody (Use Gravity: off)
+    - SphereCollider
+    - SimpleBullet.cs:
+
+
+        using UnityEngine;
+
+
+        public class SimpleBullet : MonoBehaviour
+        {
+            public float lifeTime = 3f;
+
+
+            void Start()
+            {
+                // destroy after a few seconds so we do not leak bullets
+                Destroy(gameObject, lifeTime);
+            }
+
+
+            void OnCollisionEnter(Collision collision)
+            {
+                // TODO: hook up damage vs "Enemy" etc.
+                Destroy(gameObject);
+            }
+        }
+
+
+KetchupGunTest (current test script)
+------------------------------------
+Script attached to:
+    PistolArms
+
+
+Fields (wired in Inspector):
+    - armsAnimator  -> Animator on PistolArms
+    - bulletSpawn   -> BulletSpawn transform under Ketchup
+    - bulletPrefab  -> Bullet prefab (see above)
+
+
+Script logic:
+
+
+    using UnityEngine;
+
+
+    public class KetchupGunTest : MonoBehaviour
+    {
+        public Animator armsAnimator;
+        public Transform bulletSpawn;
+        public GameObject bulletPrefab;
+        public float bulletSpeed = 40f;
+
+
+        void Update()
+        {
+            // basic test: left mouse button / Ctrl (default Fire1)
+            if (Input.GetButtonDown("Fire1"))
+            {
+                Shoot();
+            }
+        }
+
+
+        void Shoot()
+        {
+            if (armsAnimator != null)
+            {
+                armsAnimator.SetTrigger("Shoot");
+            }
+
+
+            if (bulletPrefab != null && bulletSpawn != null)
+            {
+                GameObject bullet = Instantiate(
+                    bulletPrefab,
+                    bulletSpawn.position,
+                    bulletSpawn.rotation
+                );
+
+
+                Rigidbody rb = bullet.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.velocity = bulletSpawn.forward * bulletSpeed;
+                }
+            }
+        }
+    }
+
+
+You can replace this script with your own gun logic, but the important part is:
+    - Use BulletSpawn.position/rotation for shooting
+    - Trigger the "Shoot" animation parameter when firing
+
+
+
+
+----------------------------------------
+5. How to reuse / extend this rig
+----------------------------------------
+
+
+Drop-in usage:
+    - Drag FPS_Player_Pistol prefab into any scene.
+    - Hook your character controller script to move the FPS_Player root.
+    - Use the Animator parameters described above to drive arms.
+
+
+Changing weapons:
+    - Put any other food/gun model under WeaponSocket.
+    - Adjust its local position/rotation so it sits correctly in the hands.
+    - Move BulletSpawn so it sits at the new muzzle/nozzle.
+    - All animator parameters and scripts can stay the same.
+
+
+Adding more pistol animations:
+    - Import new Mixamo clips.
+    - Rig → Humanoid, Copy From Other Avatar, Source = Y BotAvatar.
+    - Drag the new clips onto existing states or create new states/transitions
+      as needed.
+
+
+End of file.
