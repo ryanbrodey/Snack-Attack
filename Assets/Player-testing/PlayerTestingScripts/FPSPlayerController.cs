@@ -29,7 +29,6 @@ public class FPSPlayerController : MonoBehaviour
     private bool isGrounded;
     private bool wasGroundedLastFrame;
     private float xRotation = 0f;
-    private float yRotation = 0f;
     
     // Auto-run system
     private bool autoRunning = false;
@@ -218,8 +217,7 @@ public class FPSPlayerController : MonoBehaviour
         
         // HORIZONTAL (left/right): Rotate the player body so weapon stays visible
         // This is realistic - when you turn your head left/right, your body follows
-        // Use RotateAround to ensure rotation happens around current position, not original pivot
-        transform.RotateAround(transform.position, Vector3.up, mouseX);
+        transform.Rotate(Vector3.up * mouseX);
         
         // VERTICAL (up/down): Only rotate the camera for looking up/down
         // This is realistic - you can look up/down without turning your whole body
@@ -227,8 +225,6 @@ public class FPSPlayerController : MonoBehaviour
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -maxLookAngle, maxLookAngle);
         playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        
-        Debug.Log($"Body Y rotation: {transform.eulerAngles.y:F1}, Camera pitch: {xRotation:F1}");
     }
     
     void UpdateAnimations()
