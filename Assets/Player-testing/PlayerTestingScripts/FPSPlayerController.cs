@@ -45,30 +45,100 @@ public class FPSPlayerController : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         
+        if (characterController == null)
+        {
+            Debug.LogError("FPSPlayerController requires a CharacterController component! Please add one to " + gameObject.name);
+            enabled = false;
+            return;
+        }
+        
         // Lock cursor to center of screen
         Cursor.lockState = CursorLockMode.Locked;
         
         // Auto-find references if not assigned
         if (playerCamera == null)
+        {
             playerCamera = GetComponentInChildren<Camera>();
+            if (playerCamera == null)
+            {
+                playerCamera = Camera.main;
+                Debug.LogWarning("No camera found in children, using Camera.main. Make sure camera is a child of the player!");
+            }
+        }
+        
+        // Ensure camera is properly parented (should be child of player or CameraAnchor)
+        if (playerCamera != null)
+        {
+            // Check if camera is a child of this transform or CameraAnchor
+            if (!playerCamera.transform.IsChildOf(transform))
+            {
+                Debug.LogWarning($"Camera '{playerCamera.name}' is not a child of '{gameObject.name}'. Camera may not move with player!");
+            }
+        }
         
         if (armsAnimator == null)
         {
-            Transform pistolArms = transform.Find("PistolArms");
-            if (pistolArms != null)
-                armsAnimator = pistolArms.GetComponent<Animator>();
+            // Try to find arms by common names (PistolArms, RifleArms, etc.)
+            Transform arms = transform.Find("PistolArms");
+            if (arms == null)
+                arms = transform.Find("RifleArms");
+            if (arms == null)
+                arms = transform.Find("Arms");
+            
+            if (arms != null)
+                armsAnimator = arms.GetComponent<Animator>();
+            
+            // If still not found, try to find any child with an Animator
+            if (armsAnimator == null)
+            {
+                Animator[] animators = GetComponentsInChildren<Animator>();
+                if (animators.Length > 0)
+                    armsAnimator = animators[0];
+            }
         }
         
         // Create ground check if not assigned
         if (groundCheck == null)
         {
-            GameObject gc = new GameObject("GroundCheck");
-            gc.transform.SetParent(transform);
-            gc.transform.localPosition = new Vector3(0, -0.9f, 0); // Position it at the bottom of character controller
-            groundCheck = gc.transform;
+            // Try to find existing GroundCheck
+            groundCheck = transform.Find("GroundCheck");
+            if (groundCheck == null)
+            {
+                // Search in all children
+                Transform[] children = GetComponentsInChildren<Transform>();
+                foreach (Transform child in children)
+                {
+                    if (child.name == "GroundCheck")
+                    {
+                        groundCheck = child;
+                        break;
+                    }
+                }
+            }
+            
+            // Create if still not found
+            if (groundCheck == null)
+            {
+                GameObject gc = new GameObject("GroundCheck");
+                gc.transform.SetParent(transform);
+                // Position at bottom of character controller (center is at y=1, height=2, so bottom is at y=0)
+                // Place it slightly below to ensure ground detection
+                gc.transform.localPosition = new Vector3(0, -0.9f, 0);
+                groundCheck = gc.transform;
+            }
         }
         
-        Debug.Log("FPS Player Controller initialized. Controls: WASD to move, Double-tap W for auto-run, Space to jump, Mouse to look around.");
+        // Ensure player starts on the ground (if CharacterController center is (0,1,0) and height is 2, bottom is at y=0)
+        if (transform.position.y > 0.1f)
+        {
+            Vector3 pos = transform.position;
+            pos.y = 0f;
+            transform.position = pos;
+            Debug.Log($"Reset player Y position to 0 to ensure it's on the ground");
+        }
+        
+        Debug.Log($"FPS Player Controller initialized. Camera: {(playerCamera != null ? playerCamera.name : "NULL")}, GroundCheck: {(groundCheck != null ? groundCheck.name : "NULL")}");
+        Debug.Log("Controls: WASD to move, Double-tap W for auto-run, Space to jump, Mouse to look around.");
     }
     
     void Update()
