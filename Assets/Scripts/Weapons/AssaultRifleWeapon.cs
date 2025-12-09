@@ -74,7 +74,7 @@ namespace SnackAttack.Weapons
                 
                 if (bulletSpawn == null)
                 {
-                    Debug.LogWarning($"[{weaponName}] BulletSpawn not found! Please assign it in the inspector.");
+                    // BulletSpawn not found
                 }
             }
         }
@@ -109,14 +109,14 @@ namespace SnackAttack.Weapons
             // Check if we can shoot
             if (isReloading)
             {
-                Debug.Log($"[{weaponName}] Cannot shoot while reloading!");
+                // Cannot shoot while reloading
                 return;
             }
             
             if (currentAmmo <= 0)
             {
                 PlaySound(emptySound);
-                Debug.Log($"[{weaponName}] Out of ammo! Press R to reload.");
+                // Out of ammo
                 if (!isReloading)
                     StartReload();
                 return;
@@ -131,7 +131,7 @@ namespace SnackAttack.Weapons
         {
             if (isFullAutoFiring || isReloading) return;
             
-            Debug.Log($"[{weaponName}] Full-auto mode activated!");
+            // Full-auto mode activated
             isFullAutoFiring = true;
             cooldown = fullAutoRate; // Switch to full-auto rate
             
@@ -143,7 +143,7 @@ namespace SnackAttack.Weapons
         {
             if (!isFullAutoFiring) return;
             
-            Debug.Log($"[{weaponName}] Full-auto mode deactivated!");
+            // Full-auto mode deactivated
             isFullAutoFiring = false;
             cooldown = semiAutoRate; // Switch back to semi-auto rate
             
@@ -206,11 +206,11 @@ namespace SnackAttack.Weapons
                     rb.velocity = bulletSpawn.forward * bulletSpeed;
                 }
                 
-                Debug.Log($"[{weaponName}] Shot fired! Ammo: {currentAmmo}/{maxAmmo}");
+                // Shot fired
             }
             else
             {
-                Debug.LogWarning($"[{weaponName}] Missing bullet prefab or spawn point!");
+                // Missing bullet prefab or spawn point
             }
             
             // Play shoot sound
@@ -237,7 +237,7 @@ namespace SnackAttack.Weapons
             StopFullAuto();
             
             isReloading = true;
-            Debug.Log($"[{weaponName}] Reloading... ({reloadTime}s)");
+            // Reloading weapon
             
             PlaySound(reloadSound);
             StartCoroutine(ReloadCoroutine());
@@ -250,7 +250,7 @@ namespace SnackAttack.Weapons
             currentAmmo = maxAmmo;
             isReloading = false;
             
-            Debug.Log($"[{weaponName}] Reload complete! {maxAmmo} rounds loaded.");
+            // Reload complete
         }
         
         private void PlaySound(AudioClip clip)

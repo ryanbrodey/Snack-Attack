@@ -19,6 +19,7 @@ namespace SnackAttack.Player
         // stuff we need
         private BaseWeapon currentWeapon;
         private FPSController player;
+        private FPSPlayerController playerController; // Support for FPSPlayerController
         private float lastUpdateTime;
         
         // getters
@@ -28,12 +29,27 @@ namespace SnackAttack.Player
         void Awake()
         {
             player = GetComponent<FPSController>();
+            playerController = GetComponent<FPSPlayerController>();
+            
+            // Find camera for weapon holder
+            Camera playerCamera = null;
+            if (player != null && player.PlayerCamera != null)
+            {
+                playerCamera = player.PlayerCamera;
+            }
+            else if (playerController != null)
+            {
+                // Find camera in FPSPlayerController setup
+                playerCamera = GetComponentInChildren<Camera>();
+                if (playerCamera == null)
+                    playerCamera = Camera.main;
+            }
             
             // make weapon holder if we dont have one
-            if (weaponHolder == null && player != null && player.PlayerCamera != null)
+            if (weaponHolder == null && playerCamera != null)
             {
                 GameObject holder = new GameObject("WeaponHolder");
-                holder.transform.SetParent(player.PlayerCamera.transform);
+                holder.transform.SetParent(playerCamera.transform);
                 holder.transform.localPosition = Vector3.zero;
                 holder.transform.localRotation = Quaternion.identity;
                 weaponHolder = holder.transform;
@@ -99,7 +115,7 @@ namespace SnackAttack.Player
         
         void UpdateWeapon()
         {
-            if (currentWeapon == null || player == null) return;
+            if (currentWeapon == null) return;
             
             // Only update animations every few frames to reduce jitter
             if (Time.time - lastUpdateTime < 0.05f) return; // 20 FPS update rate for animations
@@ -109,8 +125,20 @@ namespace SnackAttack.Player
             if (currentWeapon.IsAttacking) return;
             
             // update weapon animations based on movement
-            bool moving = player.HorizontalVelocity.magnitude > 0.1f;
-            bool running = Input.GetKey(KeyCode.LeftShift) && moving;
+            bool moving = false;
+            bool running = false;
+            
+            if (player != null)
+            {
+                moving = player.HorizontalVelocity.magnitude > 0.1f;
+                running = Input.GetKey(KeyCode.LeftShift) && moving;
+            }
+            else if (playerController != null)
+            {
+                // For FPSPlayerController, check input directly
+                moving = Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0;
+                running = Input.GetKey(KeyCode.LeftShift) && moving;
+            }
             
             currentWeapon.UpdateMovementAnimation(moving, running);
         }

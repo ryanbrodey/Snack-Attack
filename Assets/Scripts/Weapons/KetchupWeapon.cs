@@ -63,7 +63,7 @@ namespace SnackAttack.Weapons
                 
                 if (bulletSpawn == null)
                 {
-                    Debug.LogWarning($"[{weaponName}] BulletSpawn not found! Please assign it in the inspector.");
+                    // BulletSpawn not found
                 }
             }
         }
@@ -84,14 +84,12 @@ namespace SnackAttack.Weapons
             // Check if we can shoot
             if (isReloading)
             {
-                Debug.Log($"[{weaponName}] Cannot shoot while reloading!");
                 return;
             }
             
             if (currentAmmo <= 0)
             {
                 PlaySound(emptySound);
-                Debug.Log($"[{weaponName}] Out of ammo! Press R to reload.");
                 // Auto-reload when empty
                 if (!isReloading)
                     StartReload();
@@ -118,11 +116,11 @@ namespace SnackAttack.Weapons
                     rb.velocity = bulletSpawn.forward * bulletSpeed;
                 }
                 
-                Debug.Log($"[{weaponName}] Ketchup shot fired! Ammo: {currentAmmo}/{maxAmmo}");
+                // Shot fired successfully
             }
             else
             {
-                Debug.LogWarning($"[{weaponName}] Missing bullet prefab or spawn point!");
+                // Missing bullet prefab or spawn point
             }
             
             // Play shoot sound
@@ -144,7 +142,7 @@ namespace SnackAttack.Weapons
             if (isReloading) return;
             
             isReloading = true;
-            Debug.Log($"[{weaponName}] Reloading... ({reloadTime}s)");
+            // Reloading weapon
             
             PlaySound(reloadSound);
             StartCoroutine(ReloadCoroutine());
@@ -157,7 +155,7 @@ namespace SnackAttack.Weapons
             currentAmmo = maxAmmo;
             isReloading = false;
             
-            Debug.Log($"[{weaponName}] Reload complete! {maxAmmo} rounds loaded.");
+            // Reload complete
         }
         
         private void PlaySound(AudioClip clip)

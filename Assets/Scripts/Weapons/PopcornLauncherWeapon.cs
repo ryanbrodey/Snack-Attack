@@ -77,7 +77,7 @@ namespace SnackAttack.Weapons
                 
                 if (bulletSpawn == null)
                 {
-                    Debug.LogWarning($"[{weaponName}] BulletSpawn not found! Please assign it in the inspector.");
+                    // BulletSpawn not found
                 }
             }
         }
@@ -98,14 +98,14 @@ namespace SnackAttack.Weapons
             // Check if we can shoot
             if (isReloading)
             {
-                Debug.Log($"[{weaponName}] Cannot shoot while reloading!");
+                // Cannot shoot while reloading
                 return;
             }
             
             if (currentAmmo <= 0)
             {
                 PlaySound(emptySound);
-                Debug.Log($"[{weaponName}] Out of ammo! Press R to reload.");
+                // Out of ammo
                 if (!isReloading)
                     StartReload();
                 return;
@@ -146,11 +146,11 @@ namespace SnackAttack.Weapons
                     rb.velocity = bulletSpawn.forward * bulletSpeed;
                 }
                 
-                Debug.Log($"[{weaponName}] POPCORN ROCKET FIRED! Ammo: {currentAmmo}/{maxAmmo}");
+                // Popcorn rocket fired
             }
             else
             {
-                Debug.LogWarning($"[{weaponName}] Missing bullet prefab or spawn point!");
+                // Missing bullet prefab or spawn point
             }
             
             // Play shoot sound
@@ -172,7 +172,7 @@ namespace SnackAttack.Weapons
             if (isReloading) return;
             
             isReloading = true;
-            Debug.Log($"[{weaponName}] Reloading rocket launcher... ({reloadTime}s)");
+            // Reloading rocket launcher
             
             PlaySound(reloadSound);
             StartCoroutine(ReloadCoroutine());
@@ -185,7 +185,7 @@ namespace SnackAttack.Weapons
             currentAmmo = maxAmmo;
             isReloading = false;
             
-            Debug.Log($"[{weaponName}] Reload complete! {maxAmmo} rockets loaded.");
+            // Reload complete
         }
         
         private void PlaySound(AudioClip clip)
@@ -232,7 +232,7 @@ namespace SnackAttack.Weapons
         {
             hasExploded = true;
             
-            Debug.Log($"[PopcornProjectile] EXPLOSION at {explosionPoint}!");
+            // Explosion triggered
             
             // Play explosion sound
             if (explosionSound != null && launcher != null)
@@ -265,7 +265,7 @@ namespace SnackAttack.Weapons
                 if (target != null)
                 {
                     target.TakeDamage(finalDamage);
-                    Debug.Log($"[PopcornProjectile] Dealt {finalDamage} explosion damage to {hit.name}");
+                    // Explosion damage dealt
                 }
                 
                 // Add explosion force to rigidbodies
