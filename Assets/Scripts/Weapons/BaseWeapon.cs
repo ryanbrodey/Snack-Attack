@@ -66,10 +66,10 @@ namespace SnackAttack.Weapons
                 canAttack = true;
             }
             
-            // Debug key to reset weapon state if it gets stuck
-            if (Input.GetKeyDown(KeyCode.R))
+            // Debug key to reset weapon state if it gets stuck (using Backspace instead of R)
+            if (Input.GetKeyDown(KeyCode.Backspace))
             {
-                Debug.Log($"[{weaponName}] R key pressed - Force resetting weapon state");
+                Debug.Log($"[{weaponName}] Backspace pressed - Force resetting weapon state");
                 ForceResetState();
             }
         }
