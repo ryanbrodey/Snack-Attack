@@ -12,7 +12,8 @@ namespace SnackAttack.Player
         public Transform weaponHolder;
         
         [Header("Controls")]
-        public KeyCode attackKey = KeyCode.F; // F key for attack
+        public KeyCode semiAutoKey = KeyCode.F; // F key for semi-auto
+        public KeyCode fullAutoKey = KeyCode.G; // G key for full-auto (assault rifle only)
         public KeyCode[] weaponKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4 };
         
         // stuff we need
@@ -56,24 +57,35 @@ namespace SnackAttack.Player
         
         void CheckInput()
         {
-            // attack with F key
-            if (Input.GetKeyDown(attackKey))
+            // Semi-auto attack with F key
+            if (Input.GetKeyDown(semiAutoKey))
             {
                 Debug.Log("[WeaponManager] F key pressed - calling DoAttack()");
                 DoAttack();
             }
             
-            // number keys for weapons
+            // Left mouse click for attack (Unity's default Fire1)
+            if (Input.GetButtonDown("Fire1"))
+            {
+                Debug.Log("[WeaponManager] Mouse click - calling DoAttack()");
+                DoAttack();
+            }
+            
+            // Full-auto is handled by individual weapons (G key)
+            // AssaultRifleWeapon will handle the G key input directly
+            
+            // Number keys for weapon switching (1, 2, 3)
             for (int i = 0; i < weaponKeys.Length && i < weapons.Length; i++)
             {
                 if (Input.GetKeyDown(weaponKeys[i]))
                 {
+                    Debug.Log($"[WeaponManager] Number key {i+1} pressed - switching to weapon {i}");
                     SwitchToWeapon(i);
                     break;
                 }
             }
             
-            // scroll wheel to change weapons
+            // Keep scroll wheel for convenience
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (scroll > 0f)
             {
