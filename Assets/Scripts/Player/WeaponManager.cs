@@ -101,7 +101,7 @@ namespace SnackAttack.Player
                 }
             }
             
-            // Keep scroll wheel for convenience
+            // Scroll wheel to change weapons
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (scroll > 0f)
             {
@@ -115,7 +115,7 @@ namespace SnackAttack.Player
         
         void UpdateWeapon()
         {
-            if (currentWeapon == null) return;
+            if (currentWeapon == null || (player == null && playerController == null)) return;
             
             // Only update animations every few frames to reduce jitter
             if (Time.time - lastUpdateTime < 0.05f) return; // 20 FPS update rate for animations
