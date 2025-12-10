@@ -121,10 +121,24 @@ public class FPSPlayerController : MonoBehaviour
             {
                 GameObject gc = new GameObject("GroundCheck");
                 gc.transform.SetParent(transform);
-                // Position at bottom of character controller (center is at y=1, height=2, so bottom is at y=0)
-                // Place it slightly below to ensure ground detection
-                gc.transform.localPosition = new Vector3(0, -0.9f, 0);
+                
+                // Calculate proper position based on CharacterController dimensions
+                // Ground check should be at the bottom of the character controller
+                float groundCheckY = characterController.center.y - (characterController.height / 2f);
+                gc.transform.localPosition = new Vector3(0, groundCheckY, 0);
                 groundCheck = gc.transform;
+                
+                Debug.Log($"Created GroundCheck at local Y: {groundCheckY} (CC center: {characterController.center.y}, height: {characterController.height})");
+            }
+        }
+        else
+        {
+            // Verify existing ground check position is reasonable
+            float expectedY = characterController.center.y - (characterController.height / 2f);
+            float actualY = groundCheck.localPosition.y;
+            if (Mathf.Abs(expectedY - actualY) > 0.5f)
+            {
+                Debug.LogWarning($"GroundCheck position may be incorrect. Expected Y ~{expectedY:F2}, actual Y: {actualY:F2}");
             }
         }
         
@@ -220,57 +234,65 @@ public class FPSPlayerController : MonoBehaviour
         // Store previous grounded state
         wasGroundedLastFrame = isGrounded;
         
-        // Ground check - check slightly below the character controller
-        isGrounded = characterController.isGrounded;
-        
-        // Additional ground check for more reliable detection
+        // Ground check - use ONLY sphere check for reliable detection
+        // Don't use characterController.isGrounded as it's unreliable
         if (groundCheck != null)
         {
-            bool sphereCheck = Physics.CheckSphere(groundCheck.position, groundCheckDistance, groundMask);
-            isGrounded = isGrounded || sphereCheck;
+            isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckDistance, groundMask);
         }
-        
-        // Reset vertical velocity when grounded
-        if (isGrounded && velocity.y < 0)
+        else
         {
-            velocity.y = -0.5f; // Small downward force to stay grounded
-            
-            // Reset jumping state when we land
-            if (isJumping)
-            {
-                isJumping = false;
-                Debug.Log("Landed");
-            }
+            // Fallback to raycast if no ground check transform
+            isGrounded = Physics.Raycast(transform.position, Vector3.down, 
+                characterController.height / 2 + 0.1f, groundMask);
         }
         
-        // Calculate movement direction relative to body rotation (since body follows head)
+        // Calculate movement direction relative to body rotation
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
         move = Vector3.ClampMagnitude(move, 1f); // Prevent faster diagonal movement
         
-        // Apply speed
+        // Apply horizontal speed
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
         characterController.Move(move * currentSpeed * Time.deltaTime);
         
-        // Jumping - only allow when grounded
-        if (jumpPressed && isGrounded)
+        // Apply gravity FIRST before any ground checks affect velocity
+        if (!isGrounded)
+        {
+            velocity.y += gravity * Time.deltaTime;
+            
+            // Terminal velocity cap to prevent extreme speeds
+            velocity.y = Mathf.Max(velocity.y, -50f);
+        }
+        else
+        {
+            // When grounded, use small constant downward velocity to stay grounded
+            // Only apply if we're not trying to jump
+            if (velocity.y < 0)
+            {
+                velocity.y = -2f;
+                
+                // Reset jumping state when we land
+                if (isJumping)
+                {
+                    isJumping = false;
+                    Debug.Log("Landed");
+                }
+            }
+        }
+        
+        // Jumping - only allow when grounded and not already jumping
+        if (jumpPressed && isGrounded && !isJumping)
         {
             // Calculate jump velocity using physics formula: v = sqrt(2 * g * h)
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             isJumping = true;
-            Debug.Log($"Jump! Initial velocity: {velocity.y:F2}, Grounded: {isGrounded}");
+            Debug.Log($"Jump! Initial velocity: {velocity.y:F2}");
         }
-        else if (jumpPressed && !isGrounded)
-        {
-            Debug.Log("Cannot jump - not grounded");
-        }
-        
-        // Apply gravity continuously
-        velocity.y += gravity * Time.deltaTime;
         
         // Apply vertical movement
         characterController.Move(velocity * Time.deltaTime);
         
-        // Debug ground state changes
+        // Debug ground state changes (only log occasionally to reduce spam)
         if (wasGroundedLastFrame != isGrounded)
         {
             Debug.Log($"Ground state changed: {(isGrounded ? "Grounded" : "Airborne")}");
