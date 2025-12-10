@@ -12,21 +12,14 @@ namespace SnackAttack.Player
         public Transform weaponHolder;
         
         [Header("Controls")]
-<<<<<<< HEAD
         public KeyCode semiAutoKey = KeyCode.F; // F key for semi-auto
         public KeyCode fullAutoKey = KeyCode.G; // G key for full-auto (assault rifle only)
-=======
-        public KeyCode attackKey = KeyCode.F; // F key for attack
->>>>>>> map_building
         public KeyCode[] weaponKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4 };
         
         // stuff we need
         private BaseWeapon currentWeapon;
         private FPSController player;
-<<<<<<< HEAD
         private FPSPlayerController playerController; // Support for FPSPlayerController
-=======
->>>>>>> map_building
         private float lastUpdateTime;
         
         // getters
@@ -36,7 +29,6 @@ namespace SnackAttack.Player
         void Awake()
         {
             player = GetComponent<FPSController>();
-<<<<<<< HEAD
             playerController = GetComponent<FPSPlayerController>();
             
             // Find camera for weapon holder
@@ -58,14 +50,6 @@ namespace SnackAttack.Player
             {
                 GameObject holder = new GameObject("WeaponHolder");
                 holder.transform.SetParent(playerCamera.transform);
-=======
-            
-            // make weapon holder if we dont have one
-            if (weaponHolder == null && player != null && player.PlayerCamera != null)
-            {
-                GameObject holder = new GameObject("WeaponHolder");
-                holder.transform.SetParent(player.PlayerCamera.transform);
->>>>>>> map_building
                 holder.transform.localPosition = Vector3.zero;
                 holder.transform.localRotation = Quaternion.identity;
                 weaponHolder = holder.transform;
@@ -89,19 +73,13 @@ namespace SnackAttack.Player
         
         void CheckInput()
         {
-<<<<<<< HEAD
             // Semi-auto attack with F key
             if (Input.GetKeyDown(semiAutoKey))
-=======
-            // attack with F key
-            if (Input.GetKeyDown(attackKey))
->>>>>>> map_building
             {
                 Debug.Log("[WeaponManager] F key pressed - calling DoAttack()");
                 DoAttack();
             }
             
-<<<<<<< HEAD
             // Left mouse click for attack (Unity's default Fire1)
             if (Input.GetButtonDown("Fire1"))
             {
@@ -113,27 +91,17 @@ namespace SnackAttack.Player
             // AssaultRifleWeapon will handle the G key input directly
             
             // Number keys for weapon switching (1, 2, 3)
-=======
-            // number keys for weapons
->>>>>>> map_building
             for (int i = 0; i < weaponKeys.Length && i < weapons.Length; i++)
             {
                 if (Input.GetKeyDown(weaponKeys[i]))
                 {
-<<<<<<< HEAD
                     Debug.Log($"[WeaponManager] Number key {i+1} pressed - switching to weapon {i}");
-=======
->>>>>>> map_building
                     SwitchToWeapon(i);
                     break;
                 }
             }
             
-<<<<<<< HEAD
-            // Keep scroll wheel for convenience
-=======
-            // scroll wheel to change weapons
->>>>>>> map_building
+            // Scroll wheel to change weapons
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (scroll > 0f)
             {
@@ -147,11 +115,7 @@ namespace SnackAttack.Player
         
         void UpdateWeapon()
         {
-<<<<<<< HEAD
-            if (currentWeapon == null) return;
-=======
-            if (currentWeapon == null || player == null) return;
->>>>>>> map_building
+            if (currentWeapon == null || (player == null && playerController == null)) return;
             
             // Only update animations every few frames to reduce jitter
             if (Time.time - lastUpdateTime < 0.05f) return; // 20 FPS update rate for animations
@@ -161,7 +125,6 @@ namespace SnackAttack.Player
             if (currentWeapon.IsAttacking) return;
             
             // update weapon animations based on movement
-<<<<<<< HEAD
             bool moving = false;
             bool running = false;
             
@@ -176,10 +139,6 @@ namespace SnackAttack.Player
                 moving = Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0;
                 running = Input.GetKey(KeyCode.LeftShift) && moving;
             }
-=======
-            bool moving = player.HorizontalVelocity.magnitude > 0.1f;
-            bool running = Input.GetKey(KeyCode.LeftShift) && moving;
->>>>>>> map_building
             
             currentWeapon.UpdateMovementAnimation(moving, running);
         }
