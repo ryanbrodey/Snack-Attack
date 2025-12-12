@@ -1,6 +1,16 @@
 using UnityEngine;
 using SnackAttack.Weapons;
 
+[System.Serializable]
+public class WeaponConfigData
+{
+    public string weaponName;
+    public Vector3 cameraPosition;
+    public Vector3 cameraRotation;
+    public RuntimeAnimatorController animatorController;
+    public BaseWeapon weaponScript;
+}
+
 [RequireComponent(typeof(CharacterController))]
 public class FPSPlayerControllerWithWeapons : MonoBehaviour
 {
@@ -23,11 +33,16 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     public Transform groundCheck;
     public LayerMask groundMask = 1;
     public Animator armsAnimator;
+    public Transform cameraAnchor; // The CameraAnchor that moves for different weapons
+    public UnifiedWeaponAnimator unifiedWeaponAnimator; // New unified animator system
     
     [Header("Weapon System")]
     public BaseWeapon[] weapons;
     public Transform weaponHolder;
     public int currentWeaponIdx = 0;
+    
+    [Header("Weapon Configuration")]
+    public WeaponConfigurationManager weaponConfigManager;
     
     [Header("Weapon Controls")]
     public KeyCode semiAutoKey = KeyCode.F;
@@ -55,6 +70,9 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     // Weapon system
     private BaseWeapon currentWeapon;
     
+    // Weapon configuration data
+    private WeaponConfigData[] weaponConfigs;
+    
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -76,6 +94,12 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
                 playerCamera = Camera.main;
         }
         
+        // Auto-find camera anchor
+        if (cameraAnchor == null)
+        {
+            cameraAnchor = transform.Find("CameraAnchor");
+        }
+        
         // Auto-find arms animator
         if (armsAnimator == null)
         {
@@ -86,6 +110,33 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             if (arms != null)
                 armsAnimator = arms.GetComponent<Animator>();
         }
+        
+        // Auto-find unified weapon animator
+        if (unifiedWeaponAnimator == null)
+        {
+            unifiedWeaponAnimator = GetComponent<UnifiedWeaponAnimator>();
+            if (unifiedWeaponAnimator == null)
+            {
+                // Try to find it in arms
+                if (armsAnimator != null)
+                {
+                    unifiedWeaponAnimator = armsAnimator.GetComponent<UnifiedWeaponAnimator>();
+                }
+            }
+        }
+        
+        // Setup weapon configuration manager
+        if (weaponConfigManager == null)
+        {
+            weaponConfigManager = GetComponent<WeaponConfigurationManager>();
+            if (weaponConfigManager == null)
+            {
+                weaponConfigManager = gameObject.AddComponent<WeaponConfigurationManager>();
+            }
+        }
+        
+        // Initialize weapon configurations
+        InitializeWeaponConfigurations();
         
         // Create ground check
         if (groundCheck == null)
@@ -201,22 +252,30 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     
     void HandleMovement()
     {
-        // Ground check
+        // Ground check - use CharacterController.isGrounded for more reliable detection
         wasGroundedLastFrame = isGrounded;
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckDistance, groundMask);
+        isGrounded = characterController.isGrounded;
+        
+        // Additional ground check with sphere cast for better reliability
+        if (!isGrounded)
+        {
+            isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckDistance, groundMask);
+        }
         
         // Landing detection
         if (isGrounded && !wasGroundedLastFrame)
         {
             isJumping = false;
+            velocity.y = -2f; // Small negative value to keep grounded
         }
         
-        // Jump
-        if (jumpPressed && isGrounded)
+        // Jump - only allow jumping when grounded and not already jumping
+        if (jumpPressed && isGrounded && !isJumping)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             isJumping = true;
-            Debug.Log("Jump!");
+            isGrounded = false; // Immediately set to false to prevent double jumping
+            Debug.Log("Jump executed!");
         }
         
         // Movement
@@ -224,15 +283,18 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
         characterController.Move(move * currentSpeed * Time.deltaTime);
         
-        // Gravity
-        velocity.y += gravity * Time.deltaTime;
-        characterController.Move(velocity * Time.deltaTime);
-        
-        // Reset Y velocity when grounded
-        if (isGrounded && velocity.y < 0)
+        // Apply gravity
+        if (!isGrounded)
         {
-            velocity.y = -2f;
+            velocity.y += gravity * Time.deltaTime;
         }
+        else if (velocity.y < 0)
+        {
+            velocity.y = -2f; // Small negative value to keep grounded
+        }
+        
+        // Apply vertical movement
+        characterController.Move(velocity * Time.deltaTime);
     }
     
     void HandleMouseLook()
@@ -251,14 +313,42 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     
     void UpdateAnimations()
     {
-        if (armsAnimator == null) return;
-        
         bool moving = moveInput.magnitude > 0.1f;
         
-        armsAnimator.SetBool("IsWalking", moving && !isRunning);
-        armsAnimator.SetBool("IsRunning", moving && isRunning);
-        armsAnimator.SetBool("IsGrounded", isGrounded);
-        armsAnimator.SetBool("IsJumping", isJumping);
+        // Use unified weapon animator if available
+        if (unifiedWeaponAnimator != null)
+        {
+            unifiedWeaponAnimator.UpdateMovement(
+                moving && !isRunning,  // isWalking
+                moving && isRunning,   // isRunning
+                isGrounded,            // isGrounded
+                isJumping              // isJumping
+            );
+        }
+        // Fallback to old system
+        else if (armsAnimator != null && armsAnimator.runtimeAnimatorController != null)
+        {
+            // Check if parameters exist before setting them
+            if (HasAnimatorParameter("IsWalking"))
+                armsAnimator.SetBool("IsWalking", moving && !isRunning);
+            if (HasAnimatorParameter("IsRunning"))
+                armsAnimator.SetBool("IsRunning", moving && isRunning);
+            if (HasAnimatorParameter("IsGrounded"))
+                armsAnimator.SetBool("IsGrounded", isGrounded);
+            if (HasAnimatorParameter("IsJumping"))
+                armsAnimator.SetBool("IsJumping", isJumping);
+        }
+    }
+    
+    bool HasAnimatorParameter(string paramName)
+    {
+        if (armsAnimator == null || armsAnimator.runtimeAnimatorController == null) return false;
+        
+        foreach (AnimatorControllerParameter param in armsAnimator.parameters)
+        {
+            if (param.name == paramName) return true;
+        }
+        return false;
     }
     
     // WEAPON SYSTEM METHODS
@@ -320,6 +410,23 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         currentWeapon = weapons[currentWeaponIdx];
         currentWeapon.gameObject.SetActive(true);
         
+        // Update unified weapon animator
+        if (unifiedWeaponAnimator != null)
+        {
+            unifiedWeaponAnimator.SetWeaponType(idx);
+        }
+        
+        // Switch weapon configuration (camera position, animations, etc.)
+        if (weaponConfigManager != null)
+        {
+            weaponConfigManager.SwitchToWeapon(idx);
+        }
+        else
+        {
+            // Fallback: Apply weapon configuration directly
+            ApplyWeaponConfiguration(idx);
+        }
+        
         Debug.Log($"Successfully switched to: {currentWeapon.WeaponName}");
     }
     
@@ -340,9 +447,77 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         currentWeapon.UpdateMovementAnimation(moving, isRunning);
     }
     
+    void InitializeWeaponConfigurations()
+    {
+        // Initialize weapon configuration data
+        weaponConfigs = new WeaponConfigData[3];
+        
+        // Load animation controllers (you'll need to assign these in the inspector)
+        RuntimeAnimatorController pistolController = Resources.Load<RuntimeAnimatorController>("Animations/PistolPlayer_Controller");
+        RuntimeAnimatorController rifleController = Resources.Load<RuntimeAnimatorController>("Animations/RiflelPlayer_Controller");
+        RuntimeAnimatorController shotgunController = Resources.Load<RuntimeAnimatorController>("Animations/ShotgunPlayer_Controller");
+        
+        // Ketchup/Pistol configuration (index 0)
+        weaponConfigs[0] = new WeaponConfigData
+        {
+            weaponName = "Ketchup Pistol",
+            cameraPosition = new Vector3(-0.199f, 1.564f, 0.155f),
+            cameraRotation = new Vector3(7.086f, -7.197f, -0.066f),
+            animatorController = pistolController
+        };
+        
+        // Rifle configuration (index 1)
+        weaponConfigs[1] = new WeaponConfigData
+        {
+            weaponName = "Assault Rifle",
+            cameraPosition = new Vector3(-0.004f, 1.505f, 0.221f),
+            cameraRotation = new Vector3(5.624f, -44.278f, -0.456f),
+            animatorController = rifleController
+        };
+        
+        // Shotgun configuration (index 2)
+        weaponConfigs[2] = new WeaponConfigData
+        {
+            weaponName = "Shotgun",
+            cameraPosition = new Vector3(-0.004f, 1.505f, 0.221f),
+            cameraRotation = new Vector3(5.624f, -44.278f, -0.456f),
+            animatorController = shotgunController
+        };
+        
+        Debug.Log("Weapon configurations initialized");
+    }
+    
+    void ApplyWeaponConfiguration(int weaponIndex)
+    {
+        if (weaponConfigs == null || weaponIndex < 0 || weaponIndex >= weaponConfigs.Length)
+        {
+            Debug.LogWarning($"Invalid weapon configuration index: {weaponIndex}");
+            return;
+        }
+        
+        WeaponConfigData config = weaponConfigs[weaponIndex];
+        
+        // Apply camera position
+        if (cameraAnchor != null)
+        {
+            cameraAnchor.localPosition = config.cameraPosition;
+            cameraAnchor.localEulerAngles = config.cameraRotation;
+            Debug.Log($"Applied camera position: {config.cameraPosition} and rotation: {config.cameraRotation}");
+        }
+        
+        // Apply animation controller
+        if (armsAnimator != null && config.animatorController != null)
+        {
+            armsAnimator.runtimeAnimatorController = config.animatorController;
+            Debug.Log($"Applied animation controller: {config.animatorController.name}");
+        }
+    }
+    
     // Public getters
     public BaseWeapon CurrentWeapon => currentWeapon;
     public int CurrentWeaponIndex => currentWeaponIdx;
     public bool IsGrounded => isGrounded;
     public Vector2 MoveInput => moveInput;
+    public WeaponConfigData GetWeaponConfig(int index) => 
+        (weaponConfigs != null && index >= 0 && index < weaponConfigs.Length) ? weaponConfigs[index] : null;
 }

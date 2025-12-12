@@ -13,6 +13,7 @@ namespace SnackAttack.Weapons
         
         [Header("Animations")]
         public Animator anim;
+        public UnifiedWeaponAnimator unifiedAnimator; // Reference to unified animator
         public string idleAnim = "Idle";
         public string attackAnim = "Attack";
         public string walkAnim = "Walk";
@@ -42,6 +43,22 @@ namespace SnackAttack.Weapons
             // find animator if we dont have one
             if (anim == null)
                 anim = GetComponent<Animator>();
+                
+            // Auto-find unified animator
+            if (unifiedAnimator == null)
+            {
+                // Try to find it in parent objects
+                unifiedAnimator = GetComponentInParent<UnifiedWeaponAnimator>();
+                if (unifiedAnimator == null)
+                {
+                    // Try to find it in the player
+                    FPSPlayerControllerWithWeapons player = FindObjectOfType<FPSPlayerControllerWithWeapons>();
+                    if (player != null)
+                    {
+                        unifiedAnimator = player.GetComponent<UnifiedWeaponAnimator>();
+                    }
+                }
+            }
         }
         
         protected virtual void Start()
@@ -162,10 +179,21 @@ namespace SnackAttack.Weapons
         
         protected virtual void PlayAttack()
         {
+            Debug.Log($"[{weaponName}] Playing attack animation: {attackAnim}");
+            
+            // Use unified animator if available
+            if (unifiedAnimator != null)
+            {
+                Debug.Log($"[{weaponName}] Using unified animator for attack");
+                unifiedAnimator.TriggerAttack();
+                currentAnimationState = attackAnim;
+                lastAnimationTime = Time.time;
+                return;
+            }
+            
+            // Fallback to individual animator
             if (anim != null && !string.IsNullOrEmpty(attackAnim))
             {
-                Debug.Log($"[{weaponName}] Playing attack animation: {attackAnim}");
-                
                 // Try using trigger first (better method)
                 if (anim.parameters != null)
                 {
