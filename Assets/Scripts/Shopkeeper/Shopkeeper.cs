@@ -1,0 +1,243 @@
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+
+public class Shopkeeper : MonoBehaviour
+{
+    [Header("Player & Distance")]
+    public Transform player;
+    public float interactionRadius = 3f;
+
+    [Header("UI References")]
+    public GameObject promptUI;      // "Press P to interact..." text object
+    public GameObject shopPanel;     // The whole shop UI panel
+
+    public TMP_Text pointsText;
+    public TMP_Text[] optionTexts;
+    // 0: Glizzy Rifle, 1: Shotgun, 2: Pistol Upgrade, 3: Shotgun Upgrade, 4: Rifle Upgrade
+
+    [Header("Keybinds")]
+    public KeyCode interactKey = KeyCode.P;
+    public KeyCode confirmKey = KeyCode.Return;
+
+    [Header("Costs")]
+    public int glizzyRifleCost = 2000;
+    public int shotgunCost = 1000;
+    public int pistolUpgradeCost = 500;
+    public int shotgunUpgradeCost = 750;
+    public int rifleUpgradeCost = 1000;
+
+    [Header("References")]
+    public PlayerPoints playerPoints; // script that holds current points
+    public WeaponStats weaponStats;   // script we made above
+
+    private bool isPlayerInRange = false;
+    private bool isShopOpen = false;
+    private int selectedIndex = 0;
+
+    private void Start()
+    {
+        if (promptUI != null) promptUI.SetActive(false);
+        if (shopPanel != null) shopPanel.SetActive(false);
+
+        UpdateOptionTexts();
+    }
+
+    private void Update()
+    {
+        CheckDistance();
+
+        if (!isShopOpen && isPlayerInRange)
+        {
+            if (promptUI != null) promptUI.SetActive(true);
+
+            if (Input.GetKeyDown(interactKey))
+            {
+                OpenShop();
+            }
+        }
+        else
+        {
+            if (promptUI != null) promptUI.SetActive(false);
+        }
+
+        if (isShopOpen)
+        {
+            HandleShopInput();
+        }
+    }
+
+    private void CheckDistance()
+    {
+        if (player == null) return;
+
+        float dist = Vector3.Distance(player.position, transform.position);
+        isPlayerInRange = dist <= interactionRadius;
+    }
+
+    private void OpenShop()
+    {
+        isShopOpen = true;
+        if (shopPanel != null) shopPanel.SetActive(true);
+
+        selectedIndex = 0;
+        HighlightSelection();
+
+        UpdatePointsText();
+
+        // Optionally lock player movement here
+        // e.g. playerController.enabled = false;
+    }
+
+    private void CloseShop()
+    {
+        isShopOpen = false;
+        if (shopPanel != null) shopPanel.SetActive(false);
+
+        // Unlock player movement if locked
+        // playerController.enabled = true;
+    }
+
+    private void HandleShopInput()
+    {
+        // Navigate options with arrow keys
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            selectedIndex++;
+            if (selectedIndex >= optionTexts.Length) selectedIndex = 0;
+            HighlightSelection();
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            selectedIndex--;
+            if (selectedIndex < 0) selectedIndex = optionTexts.Length - 1;
+            HighlightSelection();
+        }
+
+        // Confirm purchase
+        if (Input.GetKeyDown(confirmKey))
+        {
+            TryPurchase(selectedIndex);
+            UpdatePointsText();
+        }
+
+        // Exit shop with P or Escape
+        if (Input.GetKeyDown(interactKey) || Input.GetKeyDown(KeyCode.Escape))
+        {
+            CloseShop();
+        }
+    }
+
+    private void HighlightSelection()
+    {
+        for (int i = 0; i < optionTexts.Length; i++)
+        {
+            if (optionTexts[i] == null) continue;
+
+            if (i == selectedIndex)
+                optionTexts[i].fontStyle = FontStyles.Bold;    // <-- changed
+            else
+                optionTexts[i].fontStyle = FontStyles.Normal;  // <-- changed
+        }
+    }
+
+    private void UpdatePointsText()
+    {
+        if (pointsText != null && playerPoints != null)
+        {
+            pointsText.text = "Points: " + playerPoints.points;
+        }
+    }
+
+    private void UpdateOptionTexts()
+    {
+        if (optionTexts.Length > 0 && optionTexts[0] != null)
+            optionTexts[0].text = $"Buy Glizzy Rifle - {glizzyRifleCost} pts";
+
+        if (optionTexts.Length > 1 && optionTexts[1] != null)
+            optionTexts[1].text = $"Buy Shotgun - {shotgunCost} pts";
+
+        if (optionTexts.Length > 2 && optionTexts[2] != null)
+            optionTexts[2].text = $"Upgrade Pistol Damage - {pistolUpgradeCost} pts";
+
+        if (optionTexts.Length > 3 && optionTexts[3] != null)
+            optionTexts[3].text = $"Upgrade Shotgun Damage - {shotgunUpgradeCost} pts";
+
+        if (optionTexts.Length > 4 && optionTexts[4] != null)
+            optionTexts[4].text = $"Upgrade Rifle Damage - {rifleUpgradeCost} pts";
+    }
+
+    private void TryPurchase(int index)
+    {
+        if (playerPoints == null || weaponStats == null) return;
+
+        switch (index)
+        {
+            case 0: // Glizzy Rifle
+                if (playerPoints.points >= glizzyRifleCost)
+                {
+                    playerPoints.points -= glizzyRifleCost;
+                    // Give player the rifle here (enable weapon, unlock in inventory, etc.)
+                    Debug.Log("Purchased Glizzy Rifle!");
+                }
+                else
+                {
+                    Debug.Log("Not enough points for Glizzy Rifle.");
+                }
+                break;
+
+            case 1: // Shotgun
+                if (playerPoints.points >= shotgunCost)
+                {
+                    playerPoints.points -= shotgunCost;
+                    // Give player the shotgun here
+                    Debug.Log("Purchased Shotgun!");
+                }
+                else
+                {
+                    Debug.Log("Not enough points for Shotgun.");
+                }
+                break;
+
+            case 2: // Pistol damage upgrade
+                if (playerPoints.points >= pistolUpgradeCost)
+                {
+                    playerPoints.points -= pistolUpgradeCost;
+                    weaponStats.UpgradePistol();
+                    Debug.Log("Upgraded Pistol Damage to: " + weaponStats.pistolDamage);
+                }
+                else
+                {
+                    Debug.Log("Not enough points for Pistol upgrade.");
+                }
+                break;
+
+            case 3: // Shotgun damage upgrade
+                if (playerPoints.points >= shotgunUpgradeCost)
+                {
+                    playerPoints.points -= shotgunUpgradeCost;
+                    weaponStats.UpgradeShotgun();
+                    Debug.Log("Upgraded Shotgun Damage to: " + weaponStats.shotgunDamage);
+                }
+                else
+                {
+                    Debug.Log("Not enough points for Shotgun upgrade.");
+                }
+                break;
+
+            case 4: // Rifle damage upgrade
+                if (playerPoints.points >= rifleUpgradeCost)
+                {
+                    playerPoints.points -= rifleUpgradeCost;
+                    weaponStats.UpgradeRifle();
+                    Debug.Log("Upgraded Rifle Damage to: " + weaponStats.rifleDamage);
+                }
+                else
+                {
+                    Debug.Log("Not enough points for Rifle upgrade.");
+                }
+                break;
+        }
+    }
+}
