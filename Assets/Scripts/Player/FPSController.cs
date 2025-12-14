@@ -22,6 +22,9 @@ namespace SnackAttack.Player
         public Transform groundChecker;
         public LayerMask groundMask = 1;
         
+        [Header("UI")]
+        public bool enableCrosshair = true;
+        
         // vars
         private CharacterController cc;
         private Vector3 vel;
@@ -34,6 +37,9 @@ namespace SnackAttack.Player
         private Vector2 lookInput;
         private bool jumpPressed;
         private bool wasGroundedLastFrame;
+        
+        // crosshair system
+        private CrosshairManager crosshairManager;
         
         // getters for other scripts
         public bool IsGrounded => grounded;
@@ -68,6 +74,9 @@ namespace SnackAttack.Player
             }
                 
             Cursor.lockState = CursorLockMode.Locked; // lock mouse
+            
+            // Setup crosshair
+            SetupCrosshair();
         }
         
         void Update()
@@ -156,6 +165,19 @@ namespace SnackAttack.Player
             xRot -= lookInput.y * mouseSens;
             xRot = Mathf.Clamp(xRot, -maxLookAngle, maxLookAngle);
             cam.transform.localRotation = Quaternion.Euler(xRot, 0f, 0f);
+        }
+        
+        void SetupCrosshair()
+        {
+            if (!enableCrosshair) return;
+            
+            // Add CrosshairManager if it doesn't exist
+            crosshairManager = GetComponent<CrosshairManager>();
+            if (crosshairManager == null)
+            {
+                crosshairManager = gameObject.AddComponent<CrosshairManager>();
+                Debug.Log("[FPSController] CrosshairManager added automatically");
+            }
         }
         
         void OnDrawGizmosSelected()

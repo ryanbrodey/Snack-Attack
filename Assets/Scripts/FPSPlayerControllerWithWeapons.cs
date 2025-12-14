@@ -24,6 +24,9 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     public LayerMask groundMask = 1;
     public Animator armsAnimator;
     
+    [Header("UI")]
+    public bool enableCrosshair = true;
+    
     [Header("Weapon System")]
     public BaseWeapon[] weapons;
     public Transform weaponHolder;
@@ -55,6 +58,9 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     // Weapon system
     private BaseWeapon currentWeapon;
     
+    // Crosshair system
+    private SnackAttack.Player.CrosshairManager crosshairManager;
+    
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -66,7 +72,10 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             return;
         }
         
+        // Properly lock and hide cursor for FPS gameplay
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        Debug.Log("[FPSPlayerControllerWithWeapons] Cursor locked and hidden for FPS gameplay");
         
         // Auto-find camera
         if (playerCamera == null)
@@ -106,6 +115,13 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     
     void Update()
     {
+        // Ensure cursor stays locked during gameplay
+        if (Cursor.lockState != CursorLockMode.Locked)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        
         HandleInput();
         HandleWeaponInput();
         HandleMovement();
@@ -115,8 +131,18 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? 
-                CursorLockMode.None : CursorLockMode.Locked;
+            if (Cursor.lockState == CursorLockMode.Locked)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                Debug.Log("[FPSPlayerControllerWithWeapons] Cursor unlocked and visible");
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                Debug.Log("[FPSPlayerControllerWithWeapons] Cursor locked and hidden");
+            }
         }
     }
     
@@ -297,6 +323,9 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         {
             SwitchToWeapon(currentWeaponIdx);
         }
+        
+        // Setup crosshair
+        SetupCrosshair();
     }
     
     public void SwitchToWeapon(int idx)
@@ -338,6 +367,19 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         // Update weapon animations based on movement
         bool moving = moveInput.magnitude > 0.1f;
         currentWeapon.UpdateMovementAnimation(moving, isRunning);
+    }
+    
+    void SetupCrosshair()
+    {
+        if (!enableCrosshair) return;
+        
+        // Add CrosshairManager if it doesn't exist
+        crosshairManager = GetComponent<SnackAttack.Player.CrosshairManager>();
+        if (crosshairManager == null)
+        {
+            crosshairManager = gameObject.AddComponent<SnackAttack.Player.CrosshairManager>();
+            Debug.Log("[FPSPlayerControllerWithWeapons] CrosshairManager added automatically");
+        }
     }
     
     // Public getters
