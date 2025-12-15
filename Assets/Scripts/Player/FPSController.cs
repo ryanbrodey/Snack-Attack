@@ -51,6 +51,10 @@ namespace SnackAttack.Player
         {
             cc = GetComponent<CharacterController>();
             
+            // Initialize velocity to zero
+            vel = Vector3.zero;
+            horizVel = Vector3.zero;
+            
             // find camera if we dont have one
             if (cam == null)
                 cam = GetComponentInChildren<Camera>();
@@ -88,9 +92,22 @@ namespace SnackAttack.Player
         
         void GetInput()
         {
-            // get wasd input
-            moveInput.x = Input.GetAxis("Horizontal");
-            moveInput.y = Input.GetAxis("Vertical");
+            // get wasd input with dead zone
+            float h = Input.GetAxis("Horizontal");
+            float v = Input.GetAxis("Vertical");
+            
+            // Apply dead zone to prevent joystick drift
+            if (Mathf.Abs(h) < 0.2f) h = 0f;
+            if (Mathf.Abs(v) < 0.2f) v = 0f;
+            
+            // Also check direct key input for more responsive controls
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) v = Mathf.Max(v, 1f);
+            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) v = Mathf.Min(v, -1f);
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) h = Mathf.Min(h, -1f);
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) h = Mathf.Max(h, 1f);
+            
+            moveInput.x = h;
+            moveInput.y = v;
             
             // mouse input
             lookInput.x = Input.GetAxis("Mouse X");
@@ -148,8 +165,11 @@ namespace SnackAttack.Player
                 Debug.Log($"[FPSController] Jump blocked - Grounded: {grounded}, Vel.Y: {vel.y:F2}");
             }
             
-            // gravity goes down
-            vel.y += gravity * Time.deltaTime;
+            // gravity goes down (only if not grounded or falling)
+            if (!grounded || vel.y > 0)
+            {
+                vel.y += gravity * Time.deltaTime;
+            }
             cc.Move(vel * Time.deltaTime);
         }
         

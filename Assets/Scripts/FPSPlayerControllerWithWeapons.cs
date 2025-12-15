@@ -105,6 +105,9 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             groundCheck = gc.transform;
         }
         
+        // Initialize velocity to zero to prevent immediate falling
+        velocity = Vector3.zero;
+        
         // Setup weapon system
         SetupWeapons();
         
@@ -186,10 +189,22 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         }
         else
         {
-            if (Input.GetKey(KeyCode.W)) moveInput.y += 1f;
-            if (Input.GetKey(KeyCode.S)) moveInput.y -= 1f;
-            if (Input.GetKey(KeyCode.A)) moveInput.x -= 1f;
-            if (Input.GetKey(KeyCode.D)) moveInput.x += 1f;
+            // Get input with dead zone to prevent unwanted movement
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
+            
+            // Apply dead zone to prevent joystick drift
+            if (Mathf.Abs(horizontal) < 0.2f) horizontal = 0f;
+            if (Mathf.Abs(vertical) < 0.2f) vertical = 0f;
+            
+            // Also check direct key input for more responsive controls
+            if (Input.GetKey(KeyCode.W)) vertical = Mathf.Max(vertical, 1f);
+            if (Input.GetKey(KeyCode.S)) vertical = Mathf.Min(vertical, -1f);
+            if (Input.GetKey(KeyCode.A)) horizontal = Mathf.Min(horizontal, -1f);
+            if (Input.GetKey(KeyCode.D)) horizontal = Mathf.Max(horizontal, 1f);
+            
+            moveInput.x = horizontal;
+            moveInput.y = vertical;
         }
         
         // Running detection
@@ -250,8 +265,13 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
         characterController.Move(move * currentSpeed * Time.deltaTime);
         
-        // Gravity
-        velocity.y += gravity * Time.deltaTime;
+        // Gravity (only if not grounded or falling)
+        if (!isGrounded || velocity.y > 0)
+        {
+            velocity.y += gravity * Time.deltaTime;
+        }
+        
+        // Apply vertical movement
         characterController.Move(velocity * Time.deltaTime);
         
         // Reset Y velocity when grounded
