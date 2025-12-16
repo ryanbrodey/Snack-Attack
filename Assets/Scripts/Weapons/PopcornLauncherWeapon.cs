@@ -29,6 +29,9 @@ namespace SnackAttack.Weapons
         private bool isReloading = false;
         private AudioSource audioSource;
         
+        // Camera cache for performance
+        private Camera playerCameraCache;
+        
         protected override void Awake()
         {
             base.Awake();
@@ -158,20 +161,29 @@ namespace SnackAttack.Weapons
                 return;
             }
             
-            // Get spread directions for all pellets using crosshair aiming
-            Vector3[] directions = CrosshairAiming.GetShotgunDirections(
-                bulletSpawn.position, 
-                playerCamera, 
-                pelletsPerShot, 
-                spreadAngle
-            );
+            // Spawn from gun barrel, but travel in camera forward direction (where crosshair points)
+            Vector3 spawnPosition = bulletSpawn.position;
+            Vector3 centerDirection = playerCamera.transform.forward; // Crosshair direction
             
-            Debug.Log($"Shotgun: Firing {pelletsPerShot} pellets with {spreadAngle}° spread");
+            // Generate spread directions around camera forward
+            Vector3[] directions = new Vector3[pelletsPerShot];
+            for (int i = 0; i < pelletsPerShot; i++)
+            {
+                // Create random spread around center direction
+                float randomX = Random.Range(-spreadAngle, spreadAngle);
+                float randomY = Random.Range(-spreadAngle, spreadAngle);
+                
+                // Apply spread to center direction
+                Vector3 spreadDirection = Quaternion.Euler(randomY, randomX, 0) * centerDirection;
+                directions[i] = spreadDirection.normalized;
+            }
+            
+            Debug.Log($"Shotgun: Firing {pelletsPerShot} pellets with {spreadAngle}° spread from camera position");
             
             // Fire each pellet
             for (int i = 0; i < pelletsPerShot; i++)
             {
-                GameObject pellet = Instantiate(pelletPrefab, bulletSpawn.position, Quaternion.identity);
+                GameObject pellet = Instantiate(pelletPrefab, spawnPosition, Quaternion.identity);
                 
                 // Initialize pellet with BulletController script
                 BulletController pelletScript = pellet.GetComponent<BulletController>();
@@ -184,7 +196,7 @@ namespace SnackAttack.Weapons
                     pelletScript.maxRange = reach;
                     pelletScript.speed = pelletSpeed;
                     
-                    pelletScript.Initialize(directions[i], bulletSpawn.position, pelletSpeed);
+                    pelletScript.Initialize(directions[i], spawnPosition, pelletSpeed);
                     Debug.Log($"Shotgun: Pellet {i+1} fired with BulletController script");
                 }
                 else
@@ -205,13 +217,58 @@ namespace SnackAttack.Weapons
         
         private Camera GetPlayerCamera()
         {
-            // Try to find camera in parent hierarchy
-            Camera cam = GetComponentInParent<Camera>();
-            if (cam == null)
+            // Return cached camera if we have it
+            if (playerCameraCache != null)
+                return playerCameraCache;
+            
+            Camera cam = null;
+            
+            // Method 1: Try to find camera in parent hierarchy (weapons are children of camera via weaponHolder)
+            cam = GetComponentInParent<Camera>();
+            if (cam != null)
             {
-                // Try to find any camera in the scene
-                cam = FindObjectOfType<Camera>();
+                playerCameraCache = cam;
+                return cam;
             }
+            
+            // Method 2: Try to find FPSPlayerController (current testing setup) and get its camera
+            FPSPlayerController playerController = FindObjectOfType<FPSPlayerController>();
+            if (playerController != null && playerController.playerCamera != null)
+            {
+                playerCameraCache = playerController.playerCamera;
+                return playerController.playerCamera;
+            }
+            
+            // Method 3: Try to find FPSPlayerControllerWithWeapons (long-term setup) and get its camera
+            FPSPlayerControllerWithWeapons weaponsController = FindObjectOfType<FPSPlayerControllerWithWeapons>();
+            if (weaponsController != null && weaponsController.playerCamera != null)
+            {
+                playerCameraCache = weaponsController.playerCamera;
+                return weaponsController.playerCamera;
+            }
+            
+            // Method 4: Try to find FPSController (namespace version) and get its PlayerCamera property
+            SnackAttack.Player.FPSController fpsController = FindObjectOfType<SnackAttack.Player.FPSController>();
+            if (fpsController != null && fpsController.PlayerCamera != null)
+            {
+                playerCameraCache = fpsController.PlayerCamera;
+                return fpsController.PlayerCamera;
+            }
+            
+            // Method 5: Fallback to Camera.main
+            if (Camera.main != null)
+            {
+                playerCameraCache = Camera.main;
+                return Camera.main;
+            }
+            
+            // Method 6: Last resort - find any camera
+            cam = FindObjectOfType<Camera>();
+            if (cam != null)
+            {
+                playerCameraCache = cam;
+            }
+            
             return cam;
         }
         
