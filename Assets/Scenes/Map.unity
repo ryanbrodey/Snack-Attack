@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657815, g: 0.49641192, b: 0.5748165, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641263, b: 0.57481724, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4493,6 +4493,28 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.010000011, y: 0.020000022, z: 0.00029220106}
   m_Center: {x: -0, y: -0, z: 0.011854027}
+--- !u!1 &1178942957 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6227990080510115811, guid: bba0bbded599d4085b6542556a789a29, type: 3}
+  m_PrefabInstance: {fileID: 2287759727637457025}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1178942961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1178942957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e0a15036a91a4619b7a46e5b52125ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableCrosshair: 1
+  crosshairColor: {r: 0.6, g: 0.2, b: 0.8, a: 1}
+  crosshairSize: 50
+  crosshairThickness: 5
+  useDynamicCrosshair: 1
 --- !u!1001 &1274801186
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7343,6 +7365,10 @@ PrefabInstance:
       propertyPath: unifiedAnimator
       value: 
       objectReference: {fileID: 207443537}
+    - target: {fileID: 5098324308118263407, guid: bba0bbded599d4085b6542556a789a29, type: 3}
+      propertyPath: enableCrosshair
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6227990080510115811, guid: bba0bbded599d4085b6542556a789a29, type: 3}
       propertyPath: m_Name
       value: FPS_Player_Unified_v2
@@ -7390,7 +7416,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6227990080510115811, guid: bba0bbded599d4085b6542556a789a29, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1178942961}
   m_SourcePrefab: {fileID: 100100000, guid: bba0bbded599d4085b6542556a789a29, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
