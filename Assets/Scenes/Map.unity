@@ -2701,9 +2701,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7415047232303318101, guid: 56adabc427fa14bfd99d2112fdb429bf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1038934673}
-    - targetCorrespondingSourceObject: {fileID: 7415047232303318101, guid: 56adabc427fa14bfd99d2112fdb429bf, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1038934676}
   m_SourcePrefab: {fileID: 100100000, guid: 56adabc427fa14bfd99d2112fdb429bf, type: 3}
 --- !u!1001 &415319031
 PrefabInstance:
@@ -4786,33 +4783,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6899219716485662557, guid: 56adabc427fa14bfd99d2112fdb429bf, type: 3}
   m_PrefabInstance: {fileID: 405351277}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1038934676
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1038934672}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ed8bac57d8464995b6a5504187a5a90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weapons:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  currentWeaponIdx: 0
-  weaponHolder: {fileID: 0}
-  pistolIndex: 0
-  shotgunIndex: 1
-  rifleIndex: 2
-  pistolUnlocked: 1
-  shotgunUnlocked: 0
-  rifleUnlocked: 0
-  semiAutoKey: 102
-  fullAutoKey: 103
-  weaponKeys: 31000000320000003300000034000000
 --- !u!1001 &1040714564
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5544,7 +5514,7 @@ MonoBehaviour:
   rifleUpgradeCost: 1000
   playerPoints: {fileID: 1038934674}
   weaponStats: {fileID: 1038934673}
-  weaponManager: {fileID: 1038934676}
+  weaponManager: {fileID: 0}
 --- !u!1001 &1274801186
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7325,9 +7295,6 @@ PrefabInstance:
       addedObject: {fileID: 1601314940}
     - targetCorrespondingSourceObject: {fileID: 8587112261069684662, guid: f556e486657014cd7b9b3cbf1c792e14, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1601314938}
-    - targetCorrespondingSourceObject: {fileID: 8587112261069684662, guid: f556e486657014cd7b9b3cbf1c792e14, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1601314937}
     - targetCorrespondingSourceObject: {fileID: 1410774038637749441, guid: f556e486657014cd7b9b3cbf1c792e14, type: 3}
       insertIndex: -1
@@ -7365,33 +7332,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcae74a9c7fc9417fa0ad0839bbf43cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1601314938
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1601314933}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ed8bac57d8464995b6a5504187a5a90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weapons:
-  - {fileID: 1601314939}
-  - {fileID: 994963499}
-  - {fileID: 426256536}
-  currentWeaponIdx: 0
-  weaponHolder: {fileID: 0}
-  pistolIndex: 0
-  shotgunIndex: 1
-  rifleIndex: 2
-  pistolUnlocked: 1
-  shotgunUnlocked: 0
-  rifleUnlocked: 0
-  semiAutoKey: 102
-  fullAutoKey: 103
-  weaponKeys: 31000000320000003300000034000000
 --- !u!114 &1601314939
 MonoBehaviour:
   m_ObjectHideFlags: 0
