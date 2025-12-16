@@ -168,7 +168,7 @@ namespace SnackAttack.Weapons
                     pelletScript.canPenetrate = true;
                     pelletScript.maxPenetrations = penetrationCount;
                     pelletScript.damage = pelletDamage;
-                    pelletScript.maxRange = reach;
+                    // maxRange is set in the prefab - don't override it here
                     pelletScript.speed = pelletSpeed;
                     pelletScript.Initialize(directions[i], spawnPosition, pelletSpeed);
                 }
