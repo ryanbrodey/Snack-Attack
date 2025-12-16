@@ -10,24 +10,6 @@ namespace SnackAttack.UI
     public class CrosshairSetup : MonoBehaviour
     {
         [Header("Setup Instructions")]
-        [TextArea(10, 15)]
-        [SerializeField] private string instructions = @"
-=== CROSSHAIR SETUP GUIDE ===
-
-AUTOMATIC SETUP:
-1. Attach this script to your FPS Player GameObject
-2. Click 'Add Crosshair To This Player' button below
-3. The crosshair will be automatically configured!
-
-MANUAL SETUP:
-1. Add 'CrosshairManager' component to your FPS Player
-2. The crosshair will appear automatically when you play
-
-CONTROLS:
-- C key: Toggle crosshair visibility (for testing)
-- Crosshair follows your camera/mouse movement automatically
-
-The crosshair is purple and static as requested!";
 
         [Header("Crosshair Settings")]
         public Color crosshairColor = new Color(0.6f, 0.2f, 0.8f, 1f); // Purple

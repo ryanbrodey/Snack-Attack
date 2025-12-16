@@ -157,9 +157,6 @@ namespace SnackAttack.Setup
             
             // Configure the weapon
             rifleWeapon.bulletPrefab = glizzyBulletPrefab;
-            rifleWeapon.shootSound = rifleShootSound;
-            rifleWeapon.reloadSound = reloadSound;
-            rifleWeapon.emptySound = emptySound;
             
             // Find or assign bullet spawn
             Transform bulletSpawn = rifleTransform.Find("BulletSpawn");
@@ -218,12 +215,7 @@ namespace SnackAttack.Setup
             }
             
             // Configure the weapon
-            launcherWeapon.bulletPrefab = popcornBulletPrefab;
-            launcherWeapon.shootSound = launcherShootSound;
-            launcherWeapon.reloadSound = reloadSound;
-            launcherWeapon.emptySound = emptySound;
-            launcherWeapon.explosionSound = explosionSound;
-            launcherWeapon.explosionEffect = explosionEffect;
+            launcherWeapon.pelletPrefab = popcornBulletPrefab;
             
             // Find or assign bullet spawn
             Transform bulletSpawn = launcherTransform.Find("BulletSpawn");
@@ -265,3 +257,4 @@ namespace SnackAttack.Setup
         }
     }
 }
+

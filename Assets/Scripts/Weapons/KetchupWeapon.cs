@@ -23,6 +23,9 @@ namespace SnackAttack.Weapons
         private bool isReloading = false;
         private AudioSource audioSource;
         
+        // Camera cache for performance
+        private Camera playerCameraCache;
+        
         protected override void Awake()
         {
             base.Awake();
@@ -105,29 +108,116 @@ namespace SnackAttack.Weapons
             // Consume ammo
             currentAmmo--;
             
-            // Spawn bullet
-            if (bulletPrefab != null && bulletSpawn != null)
-            {
-                GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
-                
-                Rigidbody rb = bullet.GetComponent<Rigidbody>();
-                if (rb != null)
-                {
-                    rb.velocity = bulletSpawn.forward * bulletSpeed;
-                }
-                
-                // Shot fired successfully
-            }
-            else
-            {
-                // Missing bullet prefab or spawn point
-            }
+            // Fire single bullet with crosshair aiming
+            FireBullet();
             
             // Play shoot sound
             PlaySound(shootSound);
             
             // Complete attack immediately (projectile weapon)
             StartCoroutine(CompleteAttackAfterAnimation());
+        }
+        
+        private void FireBullet()
+        {
+            if (bulletPrefab == null || bulletSpawn == null) 
+            {
+                Debug.LogWarning("KetchupWeapon: Missing bullet prefab or spawn point");
+                return;
+            }
+            
+            // Find player camera
+            Camera playerCamera = GetPlayerCamera();
+            if (playerCamera == null) 
+            {
+                Debug.LogWarning("KetchupWeapon: No player camera found, using forward direction");
+                // Fallback to old behavior
+                GameObject bulletFallback = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
+                Rigidbody rb = bulletFallback.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.velocity = bulletSpawn.forward * bulletSpeed;
+                }
+                return;
+            }
+            
+            // Spawn from gun barrel, but travel in camera forward direction (where crosshair points)
+            Vector3 spawnPosition = bulletSpawn.position;
+            Vector3 aimDirection = playerCamera.transform.forward; // Crosshair direction
+            
+            GameObject bulletObj = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
+            
+            BulletController bulletScript = bulletObj.GetComponent<BulletController>();
+            if (bulletScript != null)
+            {
+                bulletScript.Initialize(aimDirection, spawnPosition, bulletSpeed);
+            }
+            else
+            {
+                // Fallback
+                Rigidbody rb = bulletObj.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.velocity = aimDirection * bulletSpeed;
+                }
+            }
+        }
+        
+        private Camera GetPlayerCamera()
+        {
+            // Return cached camera if we have it
+            if (playerCameraCache != null)
+                return playerCameraCache;
+            
+            Camera cam = null;
+            
+            // Method 1: Try to find camera in parent hierarchy (weapons are children of camera via weaponHolder)
+            cam = GetComponentInParent<Camera>();
+            if (cam != null)
+            {
+                playerCameraCache = cam;
+                return cam;
+            }
+            
+            // Method 2: Try to find FPSPlayerController (current testing setup) and get its camera
+            FPSPlayerController playerController = FindObjectOfType<FPSPlayerController>();
+            if (playerController != null && playerController.playerCamera != null)
+            {
+                playerCameraCache = playerController.playerCamera;
+                return playerController.playerCamera;
+            }
+            
+            // Method 3: Try to find FPSPlayerControllerWithWeapons (long-term setup) and get its camera
+            FPSPlayerControllerWithWeapons weaponsController = FindObjectOfType<FPSPlayerControllerWithWeapons>();
+            if (weaponsController != null && weaponsController.playerCamera != null)
+            {
+                playerCameraCache = weaponsController.playerCamera;
+                return weaponsController.playerCamera;
+            }
+            
+            // Method 4: Try to find FPSController (namespace version) and get its PlayerCamera property
+            SnackAttack.Player.FPSController fpsController = FindObjectOfType<SnackAttack.Player.FPSController>();
+            if (fpsController != null && fpsController.PlayerCamera != null)
+            {
+                playerCameraCache = fpsController.PlayerCamera;
+                return fpsController.PlayerCamera;
+            }
+            
+            // Method 5: Fallback to Camera.main
+            if (Camera.main != null)
+            {
+                playerCameraCache = Camera.main;
+                return Camera.main;
+            }
+            
+            // Method 6: Last resort - find any camera
+            cam = FindObjectOfType<Camera>();
+            if (cam != null)
+            {
+                playerCameraCache = cam;
+            }
+            
+            return cam;
         }
         
         private IEnumerator CompleteAttackAfterAnimation()
