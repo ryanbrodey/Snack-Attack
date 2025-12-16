@@ -195,22 +195,51 @@ namespace SnackAttack.Weapons
             canAttack = false;
             lastAttackTime = Time.time;
             
-            // Spawn bullet
-            if (bulletPrefab != null && bulletSpawn != null)
+            // Fire bullet with crosshair aiming
+            if (bulletPrefab == null || bulletSpawn == null) 
             {
-                GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
-                
-                Rigidbody rb = bullet.GetComponent<Rigidbody>();
+                Debug.LogWarning("AssaultRifleWeapon: Missing bullet prefab or spawn point");
+                return;
+            }
+            
+            // Find player camera
+            Camera playerCamera = GetPlayerCamera();
+            if (playerCamera == null) 
+            {
+                Debug.LogWarning("AssaultRifleWeapon: No player camera found, using forward direction");
+                // Fallback to old behavior
+                GameObject bulletFallback = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
+                Rigidbody rb = bulletFallback.GetComponent<Rigidbody>();
                 if (rb != null)
                 {
                     rb.velocity = bulletSpawn.forward * bulletSpeed;
                 }
-                
-                // Shot fired
+                PlaySound(shootSound);
+                return;
+            }
+            
+            // Spawn bullet
+            GameObject bulletObj = Instantiate(bulletPrefab, bulletSpawn.position, Quaternion.identity);
+            
+            // Get aim direction using crosshair
+            Vector3 aimDirection = CrosshairAiming.GetBulletDirection(bulletSpawn.position, playerCamera);
+            
+            // Initialize bullet with BulletController script
+            BulletController bulletScript = bulletObj.GetComponent<BulletController>();
+            if (bulletScript != null)
+            {
+                bulletScript.Initialize(aimDirection, bulletSpawn.position, bulletSpeed);
+                Debug.Log("AssaultRifleWeapon: Fired bullet with BulletController script");
             }
             else
             {
-                // Missing bullet prefab or spawn point
+                // Fallback for bullets without BulletController script
+                Rigidbody rb = bulletObj.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.velocity = aimDirection * bulletSpeed;
+                    Debug.Log("AssaultRifleWeapon: Fired bullet with fallback Rigidbody method");
+                }
             }
             
             // Play shoot sound
@@ -221,6 +250,24 @@ namespace SnackAttack.Weapons
             {
                 anim.SetTrigger("Shoot");
             }
+            
+            // Debug visualization (only for semi-auto to avoid spam)
+            if (!isFullAutoFiring)
+            {
+                CrosshairAiming.DrawAimDebug(bulletSpawn.position, playerCamera, 1f);
+            }
+        }
+        
+        private Camera GetPlayerCamera()
+        {
+            // Try to find camera in parent hierarchy
+            Camera cam = GetComponentInParent<Camera>();
+            if (cam == null)
+            {
+                // Try to find any camera in the scene
+                cam = FindObjectOfType<Camera>();
+            }
+            return cam;
         }
         
         private IEnumerator CompleteAttackAfterAnimation()

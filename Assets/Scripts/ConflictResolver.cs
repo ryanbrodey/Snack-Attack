@@ -10,17 +10,6 @@ namespace SnackAttack.Setup
     public class ConflictResolver : MonoBehaviour
     {
         [Header("Conflict Resolution")]
-        [TextArea(8, 12)]
-        [SerializeField] private string instructions = @"
-=== CONFLICT RESOLVER ===
-
-PROBLEM: Multiple scripts handling same input
-- WeaponManager (F key + mouse)
-- FPSPlayerControllerWithWeapons (F key + mouse)
-
-SOLUTION: Keep only ONE input handler active
-
-Click 'Resolve All Conflicts' to fix automatically!";
 
         [Header("Status")]
         public bool conflictsResolved = false;

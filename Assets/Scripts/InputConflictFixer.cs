@@ -10,21 +10,6 @@ namespace SnackAttack.Setup
     public class InputConflictFixer : MonoBehaviour
     {
         [Header("Conflict Detection")]
-        [TextArea(10, 15)]
-        [SerializeField] private string diagnostics = @"
-=== INPUT CONFLICT FIXER ===
-
-This script detects conflicts between:
-- FPSController + WeaponManager
-- FPSPlayerControllerWithWeapons
-- Other input handlers
-
-COMMON ISSUE:
-Multiple scripts listening for 'Fire1' (mouse click) 
-causing weapon spam and game freezing.
-
-SOLUTION:
-Click 'Fix Input Conflicts' to automatically resolve conflicts.";
 
         [Header("Detection Results")]
         public bool hasWeaponManager = false;

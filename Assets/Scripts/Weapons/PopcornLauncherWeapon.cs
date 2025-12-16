@@ -3,28 +3,26 @@ using UnityEngine;
 
 namespace SnackAttack.Weapons
 {
-    // Popcorn rocket launcher - OP high damage, long range weapon
+    // Shotgun weapon - fires multiple pellets with spread pattern
     public class PopcornLauncherWeapon : BaseWeapon
     {
-        [Header("Popcorn Launcher Settings")]
+        [Header("Shotgun Settings")]
         public Transform bulletSpawn;
-        public GameObject bulletPrefab;
-        public float bulletSpeed = 30f; // Slower but more powerful
-        public int maxAmmo = 8; // Lower ammo count for balance
-        public float reloadTime = 3f; // Longer reload time
+        public GameObject pelletPrefab; // Renamed from bulletPrefab
+        public float pelletSpeed = 50f; // Speed per pellet
+        public int pelletsPerShot = 8; // Number of pellets per shot
+        public float spreadAngle = 15f; // Spread angle in degrees
+        public int maxAmmo = 8; // Shotgun shells
+        public float reloadTime = 2.5f; // Reload time
         
-        [Header("OP Stats")]
-        public float explosionRadius = 5f; // Area damage
-        public LayerMask explosionLayers = -1;
+        [Header("Shotgun Stats")]
+        public float pelletDamage = 12f; // Damage per pellet
+        public int penetrationCount = 2; // How many enemies each pellet can penetrate
         
         [Header("Audio")]
         public AudioClip shootSound;
         public AudioClip reloadSound;
         public AudioClip emptySound;
-        public AudioClip explosionSound;
-        
-        [Header("Effects")]
-        public GameObject explosionEffect;
         
         // Ammo system
         private int currentAmmo;
@@ -35,11 +33,11 @@ namespace SnackAttack.Weapons
         {
             base.Awake();
             
-            // OP Popcorn launcher stats
-            weaponName = "Popcorn Rocket Launcher";
-            cooldown = 1.5f; // Slow but devastating
-            dmg = 75f; // VERY high damage
-            reach = 100f; // Longest range
+            // Shotgun stats
+            weaponName = "Shotgun";
+            cooldown = 0.8f; // Semi-auto, slower than pistol but faster than original
+            dmg = pelletDamage; // Damage per pellet
+            reach = 50f; // Shorter range than rifles
             
             // Animation names (using shotgun animations)
             idleAnim = "shotgun idle";
@@ -63,11 +61,11 @@ namespace SnackAttack.Weapons
             // Auto-find bullet spawn if not assigned
             if (bulletSpawn == null)
             {
-                // Look for popcorn bucket or launcher
-                Transform popcorn = transform.Find("PopcornBucket") ?? transform.Find("Launcher");
-                if (popcorn != null)
+                // Look for shotgun or launcher
+                Transform shotgun = transform.Find("Shotgun") ?? transform.Find("PopcornBucket") ?? transform.Find("Launcher");
+                if (shotgun != null)
                 {
-                    bulletSpawn = popcorn.Find("BulletSpawn");
+                    bulletSpawn = shotgun.Find("BulletSpawn");
                 }
                 
                 if (bulletSpawn == null)
@@ -77,7 +75,7 @@ namespace SnackAttack.Weapons
                 
                 if (bulletSpawn == null)
                 {
-                    // BulletSpawn not found
+                    Debug.LogWarning("Shotgun: BulletSpawn not found");
                 }
             }
         }
@@ -98,14 +96,12 @@ namespace SnackAttack.Weapons
             // Check if we can shoot
             if (isReloading)
             {
-                // Cannot shoot while reloading
                 return;
             }
             
             if (currentAmmo <= 0)
             {
                 PlaySound(emptySound);
-                // Out of ammo
                 if (!isReloading)
                     StartReload();
                 return;
@@ -120,38 +116,8 @@ namespace SnackAttack.Weapons
             // Consume ammo
             currentAmmo--;
             
-            // Spawn explosive popcorn projectile
-            if (bulletPrefab != null && bulletSpawn != null)
-            {
-                GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
-                
-                // Add explosive behavior to the bullet
-                PopcornProjectile projectile = bullet.GetComponent<PopcornProjectile>();
-                if (projectile == null)
-                {
-                    projectile = bullet.AddComponent<PopcornProjectile>();
-                }
-                
-                // Configure the projectile
-                projectile.damage = dmg;
-                projectile.explosionRadius = explosionRadius;
-                projectile.explosionLayers = explosionLayers;
-                projectile.explosionEffect = explosionEffect;
-                projectile.explosionSound = explosionSound;
-                projectile.launcher = this;
-                
-                Rigidbody rb = bullet.GetComponent<Rigidbody>();
-                if (rb != null)
-                {
-                    rb.velocity = bulletSpawn.forward * bulletSpeed;
-                }
-                
-                // Popcorn rocket fired
-            }
-            else
-            {
-                // Missing bullet prefab or spawn point
-            }
+            // Fire shotgun blast
+            FireShotgunBlast();
             
             // Play shoot sound
             PlaySound(shootSound);
@@ -160,10 +126,99 @@ namespace SnackAttack.Weapons
             StartCoroutine(CompleteAttackAfterAnimation());
         }
         
+        private void FireShotgunBlast()
+        {
+            if (pelletPrefab == null || bulletSpawn == null) 
+            {
+                Debug.LogWarning("Shotgun: Missing pellet prefab or spawn point");
+                return;
+            }
+            
+            // Find player camera
+            Camera playerCamera = GetPlayerCamera();
+            if (playerCamera == null) 
+            {
+                Debug.LogWarning("Shotgun: No player camera found, using forward direction");
+                // Fallback to old behavior - fire straight ahead
+                for (int i = 0; i < pelletsPerShot; i++)
+                {
+                    GameObject pellet = Instantiate(pelletPrefab, bulletSpawn.position, bulletSpawn.rotation);
+                    
+                    // Add random spread
+                    Vector3 spreadDirection = bulletSpawn.forward;
+                    spreadDirection += Random.insideUnitSphere * (spreadAngle / 100f);
+                    spreadDirection.Normalize();
+                    
+                    Rigidbody rb = pellet.GetComponent<Rigidbody>();
+                    if (rb != null)
+                    {
+                        rb.velocity = spreadDirection * pelletSpeed;
+                    }
+                }
+                return;
+            }
+            
+            // Get spread directions for all pellets using crosshair aiming
+            Vector3[] directions = CrosshairAiming.GetShotgunDirections(
+                bulletSpawn.position, 
+                playerCamera, 
+                pelletsPerShot, 
+                spreadAngle
+            );
+            
+            Debug.Log($"Shotgun: Firing {pelletsPerShot} pellets with {spreadAngle}° spread");
+            
+            // Fire each pellet
+            for (int i = 0; i < pelletsPerShot; i++)
+            {
+                GameObject pellet = Instantiate(pelletPrefab, bulletSpawn.position, Quaternion.identity);
+                
+                // Initialize pellet with BulletController script
+                BulletController pelletScript = pellet.GetComponent<BulletController>();
+                if (pelletScript != null)
+                {
+                    // Configure for shotgun pellet
+                    pelletScript.canPenetrate = true;
+                    pelletScript.maxPenetrations = penetrationCount;
+                    pelletScript.damage = pelletDamage;
+                    pelletScript.maxRange = reach;
+                    pelletScript.speed = pelletSpeed;
+                    
+                    pelletScript.Initialize(directions[i], bulletSpawn.position, pelletSpeed);
+                    Debug.Log($"Shotgun: Pellet {i+1} fired with BulletController script");
+                }
+                else
+                {
+                    // Fallback for pellets without UniversalBullet script
+                    Rigidbody rb = pellet.GetComponent<Rigidbody>();
+                    if (rb != null)
+                    {
+                        rb.velocity = directions[i] * pelletSpeed;
+                        Debug.Log($"Shotgun: Pellet {i+1} fired with fallback Rigidbody method");
+                    }
+                }
+            }
+            
+            // Debug visualization
+            CrosshairAiming.DrawAimDebug(bulletSpawn.position, playerCamera, 3f);
+        }
+        
+        private Camera GetPlayerCamera()
+        {
+            // Try to find camera in parent hierarchy
+            Camera cam = GetComponentInParent<Camera>();
+            if (cam == null)
+            {
+                // Try to find any camera in the scene
+                cam = FindObjectOfType<Camera>();
+            }
+            return cam;
+        }
+        
         private IEnumerator CompleteAttackAfterAnimation()
         {
-            // Wait longer for heavy weapon animation
-            yield return new WaitForSeconds(0.8f);
+            // Wait for shotgun animation
+            yield return new WaitForSeconds(0.5f);
             CompleteAttack();
         }
         
@@ -172,7 +227,7 @@ namespace SnackAttack.Weapons
             if (isReloading) return;
             
             isReloading = true;
-            // Reloading rocket launcher
+            Debug.Log("Shotgun: Reloading...");
             
             PlaySound(reloadSound);
             StartCoroutine(ReloadCoroutine());
@@ -185,7 +240,7 @@ namespace SnackAttack.Weapons
             currentAmmo = maxAmmo;
             isReloading = false;
             
-            // Reload complete
+            Debug.Log("Shotgun: Reload complete");
         }
         
         private void PlaySound(AudioClip clip)
@@ -200,91 +255,8 @@ namespace SnackAttack.Weapons
         public int CurrentAmmo => currentAmmo;
         public int MaxAmmo => maxAmmo;
         public bool IsReloading => isReloading;
+        public int PelletsPerShot => pelletsPerShot;
+        public float SpreadAngle => spreadAngle;
         public float ReloadProgress => isReloading ? (reloadTime - Time.time + lastAttackTime) / reloadTime : 0f;
-    }
-    
-    // Special projectile component for explosive popcorn rockets
-    public class PopcornProjectile : MonoBehaviour
-    {
-        [HideInInspector] public float damage = 75f;
-        [HideInInspector] public float explosionRadius = 5f;
-        [HideInInspector] public LayerMask explosionLayers = -1;
-        [HideInInspector] public GameObject explosionEffect;
-        [HideInInspector] public AudioClip explosionSound;
-        [HideInInspector] public PopcornLauncherWeapon launcher;
-        
-        private bool hasExploded = false;
-        
-        void Start()
-        {
-            // Auto-destroy after 5 seconds if it doesn't hit anything
-            Destroy(gameObject, 5f);
-        }
-        
-        void OnCollisionEnter(Collision collision)
-        {
-            if (hasExploded) return;
-            
-            Explode(collision.contacts[0].point);
-        }
-        
-        private void Explode(Vector3 explosionPoint)
-        {
-            hasExploded = true;
-            
-            // Explosion triggered
-            
-            // Play explosion sound
-            if (explosionSound != null && launcher != null)
-            {
-                AudioSource.PlayClipAtPoint(explosionSound, explosionPoint);
-            }
-            
-            // Spawn explosion effect
-            if (explosionEffect != null)
-            {
-                Instantiate(explosionEffect, explosionPoint, Quaternion.identity);
-            }
-            
-            // Deal area damage
-            Collider[] hitColliders = Physics.OverlapSphere(explosionPoint, explosionRadius, explosionLayers);
-            
-            foreach (Collider hit in hitColliders)
-            {
-                // Don't damage the player who fired it
-                if (hit.transform.IsChildOf(launcher.transform.root))
-                    continue;
-                
-                // Calculate distance-based damage
-                float distance = Vector3.Distance(explosionPoint, hit.transform.position);
-                float damageMultiplier = 1f - (distance / explosionRadius);
-                float finalDamage = damage * damageMultiplier;
-                
-                // Try to damage the target
-                IDamageable target = hit.GetComponent<IDamageable>();
-                if (target != null)
-                {
-                    target.TakeDamage(finalDamage);
-                    // Explosion damage dealt
-                }
-                
-                // Add explosion force to rigidbodies
-                Rigidbody rb = hit.GetComponent<Rigidbody>();
-                if (rb != null)
-                {
-                    rb.AddExplosionForce(500f, explosionPoint, explosionRadius);
-                }
-            }
-            
-            // Destroy the projectile
-            Destroy(gameObject);
-        }
-        
-        void OnDrawGizmosSelected()
-        {
-            // Show explosion radius in editor
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, explosionRadius);
-        }
     }
 }

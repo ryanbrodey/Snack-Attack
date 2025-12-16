@@ -105,29 +105,77 @@ namespace SnackAttack.Weapons
             // Consume ammo
             currentAmmo--;
             
-            // Spawn bullet
-            if (bulletPrefab != null && bulletSpawn != null)
-            {
-                GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
-                
-                Rigidbody rb = bullet.GetComponent<Rigidbody>();
-                if (rb != null)
-                {
-                    rb.velocity = bulletSpawn.forward * bulletSpeed;
-                }
-                
-                // Shot fired successfully
-            }
-            else
-            {
-                // Missing bullet prefab or spawn point
-            }
+            // Fire single bullet with crosshair aiming
+            FireBullet();
             
             // Play shoot sound
             PlaySound(shootSound);
             
             // Complete attack immediately (projectile weapon)
             StartCoroutine(CompleteAttackAfterAnimation());
+        }
+        
+        private void FireBullet()
+        {
+            if (bulletPrefab == null || bulletSpawn == null) 
+            {
+                Debug.LogWarning("KetchupWeapon: Missing bullet prefab or spawn point");
+                return;
+            }
+            
+            // Find player camera
+            Camera playerCamera = GetPlayerCamera();
+            if (playerCamera == null) 
+            {
+                Debug.LogWarning("KetchupWeapon: No player camera found, using forward direction");
+                // Fallback to old behavior
+                GameObject bulletFallback = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
+                Rigidbody rb = bulletFallback.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.velocity = bulletSpawn.forward * bulletSpeed;
+                }
+                return;
+            }
+            
+            // Spawn bullet
+            GameObject bulletObj = Instantiate(bulletPrefab, bulletSpawn.position, Quaternion.identity);
+            
+            // Get aim direction using crosshair
+            Vector3 aimDirection = CrosshairAiming.GetBulletDirection(bulletSpawn.position, playerCamera);
+            
+            // Initialize bullet with BulletController script
+            BulletController bulletScript = bulletObj.GetComponent<BulletController>();
+            if (bulletScript != null)
+            {
+                bulletScript.Initialize(aimDirection, bulletSpawn.position, bulletSpeed);
+                Debug.Log("KetchupWeapon: Fired bullet with BulletController script");
+            }
+            else
+            {
+                // Fallback for bullets without BulletController script
+                Rigidbody rb = bulletObj.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.velocity = aimDirection * bulletSpeed;
+                    Debug.Log("KetchupWeapon: Fired bullet with fallback Rigidbody method");
+                }
+            }
+            
+            // Debug visualization
+            CrosshairAiming.DrawAimDebug(bulletSpawn.position, playerCamera, 2f);
+        }
+        
+        private Camera GetPlayerCamera()
+        {
+            // Try to find camera in parent hierarchy
+            Camera cam = GetComponentInParent<Camera>();
+            if (cam == null)
+            {
+                // Try to find any camera in the scene
+                cam = FindObjectOfType<Camera>();
+            }
+            return cam;
         }
         
         private IEnumerator CompleteAttackAfterAnimation()
