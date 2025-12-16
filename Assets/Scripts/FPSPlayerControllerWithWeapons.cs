@@ -340,15 +340,37 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     
     void UpdateAnimations()
     {
-        if (currentAnimator == null) return;
+        if (currentAnimator == null)
+        {
+            Debug.LogWarning("UpdateAnimations: currentAnimator is NULL!");
+            return;
+        }
         
         bool moving = moveInput.magnitude > 0.1f;
         
+        // Debug log once per second
+        if (Time.frameCount % 60 == 0)
+        {
+            Debug.Log($"UpdateAnimations: moving={moving}, isRunning={isRunning}, isWalking={moving && !isRunning}");
+        }
+        
         // Update the current arm model's animator
         if (HasAnimatorParameter("IsWalking"))
+        {
             currentAnimator.SetBool("IsWalking", moving && !isRunning);
+            if (Time.frameCount % 60 == 0) Debug.Log($"Set IsWalking to {moving && !isRunning}");
+        }
+        else
+        {
+            if (Time.frameCount % 60 == 0) Debug.LogWarning("IsWalking parameter not found!");
+        }
+        
         if (HasAnimatorParameter("IsRunning"))
+        {
             currentAnimator.SetBool("IsRunning", moving && isRunning);
+            if (Time.frameCount % 60 == 0) Debug.Log($"Set IsRunning to {moving && isRunning}");
+        }
+        
         if (HasAnimatorParameter("IsGrounded"))
             currentAnimator.SetBool("IsGrounded", isGrounded);
         if (HasAnimatorParameter("IsJumping"))
@@ -424,6 +446,11 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             if (currentAnimator == null)
             {
                 Debug.LogWarning($"No Animator found on {activeArmModel.name}!");
+            }
+            else
+            {
+                Debug.Log($"Found Animator on {activeArmModel.name}: {currentAnimator.name}");
+                Debug.Log($"Animator has controller: {currentAnimator.runtimeAnimatorController != null}");
             }
         }
         
