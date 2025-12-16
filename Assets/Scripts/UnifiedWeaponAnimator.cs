@@ -17,6 +17,7 @@ public class UnifiedWeaponAnimator : MonoBehaviour
     
     // Animator parameter names
     private const string WEAPON_TYPE = "WeaponType";
+    private const string MOVE_SPEED = "MoveSpeed";
     private const string IS_WALKING = "IsWalking";
     private const string IS_RUNNING = "IsRunning";
     private const string IS_GROUNDED = "IsGrounded";
@@ -26,6 +27,7 @@ public class UnifiedWeaponAnimator : MonoBehaviour
     
     // Animation state tracking
     private bool hasWeaponTypeParam;
+    private bool hasMoveSpeedParam;
     private bool hasWalkingParam;
     private bool hasRunningParam;
     private bool hasGroundedParam;
@@ -75,6 +77,9 @@ public class UnifiedWeaponAnimator : MonoBehaviour
                 case WEAPON_TYPE:
                     hasWeaponTypeParam = true;
                     break;
+                case MOVE_SPEED:
+                    hasMoveSpeedParam = true;
+                    break;
                 case IS_WALKING:
                     hasWalkingParam = true;
                     break;
@@ -96,7 +101,7 @@ public class UnifiedWeaponAnimator : MonoBehaviour
             }
         }
         
-        Debug.Log($"Animator Parameters Found - WeaponType: {hasWeaponTypeParam}, Walking: {hasWalkingParam}, Running: {hasRunningParam}, Attack: {hasAttackParam}");
+        Debug.Log($"Animator Parameters Found - WeaponType: {hasWeaponTypeParam}, MoveSpeed: {hasMoveSpeedParam}, Walking: {hasWalkingParam}, Running: {hasRunningParam}, Attack: {hasAttackParam}");
     }
     
     /// <summary>
@@ -129,6 +134,19 @@ public class UnifiedWeaponAnimator : MonoBehaviour
     {
         if (unifiedAnimator == null) return;
         
+        // Calculate movement speed for MoveSpeed parameter
+        // 0 = idle, 0.5 = walking, 1.0 = running
+        float moveSpeed = 0f;
+        if (isRunning)
+            moveSpeed = 1.0f;
+        else if (isWalking)
+            moveSpeed = 0.5f;
+        
+        // Set MoveSpeed parameter if it exists
+        if (hasMoveSpeedParam)
+            unifiedAnimator.SetFloat(MOVE_SPEED, moveSpeed);
+        
+        // Also set bool parameters for backwards compatibility
         if (hasWalkingParam)
             unifiedAnimator.SetBool(IS_WALKING, isWalking);
             

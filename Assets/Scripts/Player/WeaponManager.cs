@@ -4,6 +4,8 @@ using SnackAttack.Weapons;
 namespace SnackAttack.Player
 {
     // handles switching weapons and attacking
+    // WARNING: DO NOT use with FPSPlayerControllerWithWeapons - causes input conflicts!
+    // Use EITHER WeaponManager OR FPSPlayerControllerWithWeapons, not both!
     public class WeaponManager : MonoBehaviour
     {
         [Header("Weapon Stuff")]
@@ -73,19 +75,23 @@ namespace SnackAttack.Player
         
         void CheckInput()
         {
-            // Semi-auto attack with F key
-            if (Input.GetKeyDown(semiAutoKey))
-            {
-                Debug.Log("[WeaponManager] F key pressed - calling DoAttack()");
-                DoAttack();
-            }
+            // NOTE: ALL INPUT DISABLED TO PREVENT CONFLICTS WITH FPSPlayerControllerWithWeapons
+            // F key and mouse input are handled by FPSPlayerControllerWithWeapons instead
             
-            // Left mouse click for attack (Unity's default Fire1)
-            if (Input.GetButtonDown("Fire1"))
-            {
-                Debug.Log("[WeaponManager] Mouse click - calling DoAttack()");
-                DoAttack();
-            }
+            // Semi-auto attack with F key - DISABLED
+            // if (Input.GetKeyDown(semiAutoKey))
+            // {
+            //     Debug.Log("[WeaponManager] F key pressed - calling DoAttack()");
+            //     DoAttack();
+            // }
+            
+            // NOTE: Mouse click input disabled to prevent conflict with FPSPlayerControllerWithWeapons
+            // Left mouse click for attack is handled by FPSPlayerControllerWithWeapons instead
+            // if (Input.GetButtonDown("Fire1"))
+            // {
+            //     Debug.Log("[WeaponManager] Mouse click - calling DoAttack()");
+            //     DoAttack();
+            // }
             
             // Full-auto is handled by individual weapons (G key)
             // AssaultRifleWeapon will handle the G key input directly

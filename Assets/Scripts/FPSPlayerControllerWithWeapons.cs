@@ -32,17 +32,19 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     public Camera playerCamera;
     public Transform groundCheck;
     public LayerMask groundMask = 1;
-    public Animator armsAnimator;
-    public Transform cameraAnchor; // The CameraAnchor that moves for different weapons
-    public UnifiedWeaponAnimator unifiedWeaponAnimator; // New unified animator system
+    public Transform cameraAnchor;
+    
+    [Header("Arm Models - Assign the arm GameObjects")]
+    public GameObject pistolArmsModel;
+    public GameObject rifleArmsModel;
+    public GameObject shotgunArmsModel;
+    
+    [Header("UI")]
+    public bool enableCrosshair = true;
     
     [Header("Weapon System")]
     public BaseWeapon[] weapons;
-    public Transform weaponHolder;
     public int currentWeaponIdx = 0;
-    
-    [Header("Weapon Configuration")]
-    public WeaponConfigurationManager weaponConfigManager;
     
     [Header("Weapon Controls")]
     public KeyCode semiAutoKey = KeyCode.F;
@@ -69,9 +71,16 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     
     // Weapon system
     private BaseWeapon currentWeapon;
+    private Animator currentAnimator;
+    
+    // Crosshair system
+    private SnackAttack.Player.CrosshairManager crosshairManager;
     
     // Weapon configuration data
     private WeaponConfigData[] weaponConfigs;
+    
+    // Arm model references
+    private GameObject[] armModels;
     
     void Start()
     {
@@ -84,7 +93,10 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             return;
         }
         
+        // Properly lock and hide cursor for FPS gameplay
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        Debug.Log("[FPSPlayerControllerWithWeapons] Cursor locked and hidden for FPS gameplay");
         
         // Auto-find camera
         if (playerCamera == null)
@@ -100,40 +112,27 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             cameraAnchor = transform.Find("CameraAnchor");
         }
         
-        // Auto-find arms animator
-        if (armsAnimator == null)
+        // Auto-find arm models if not assigned
+        if (pistolArmsModel == null)
         {
-            Transform arms = transform.Find("PistolArms");
-            if (arms == null) arms = transform.Find("RifleArms");
-            if (arms == null) arms = transform.Find("Arms");
-            
-            if (arms != null)
-                armsAnimator = arms.GetComponent<Animator>();
+            Transform pistolArms = transform.Find("PistolArms");
+            if (pistolArms != null) pistolArmsModel = pistolArms.gameObject;
         }
         
-        // Auto-find unified weapon animator
-        if (unifiedWeaponAnimator == null)
+        if (rifleArmsModel == null)
         {
-            unifiedWeaponAnimator = GetComponent<UnifiedWeaponAnimator>();
-            if (unifiedWeaponAnimator == null)
-            {
-                // Try to find it in arms
-                if (armsAnimator != null)
-                {
-                    unifiedWeaponAnimator = armsAnimator.GetComponent<UnifiedWeaponAnimator>();
-                }
-            }
+            Transform rifleArms = transform.Find("RifleArms");
+            if (rifleArms != null) rifleArmsModel = rifleArms.gameObject;
         }
         
-        // Setup weapon configuration manager
-        if (weaponConfigManager == null)
+        if (shotgunArmsModel == null)
         {
-            weaponConfigManager = GetComponent<WeaponConfigurationManager>();
-            if (weaponConfigManager == null)
-            {
-                weaponConfigManager = gameObject.AddComponent<WeaponConfigurationManager>();
-            }
+            Transform shotgunArms = transform.Find("ShotgunArms");
+            if (shotgunArms != null) shotgunArmsModel = shotgunArms.gameObject;
         }
+        
+        // Store arm models in array for easy access
+        armModels = new GameObject[] { pistolArmsModel, rifleArmsModel, shotgunArmsModel };
         
         // Initialize weapon configurations
         InitializeWeaponConfigurations();
@@ -147,6 +146,9 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             groundCheck = gc.transform;
         }
         
+        // Initialize velocity to zero to prevent immediate falling
+        velocity = Vector3.zero;
+        
         // Setup weapon system
         SetupWeapons();
         
@@ -157,6 +159,13 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     
     void Update()
     {
+        // Ensure cursor stays locked during gameplay
+        if (Cursor.lockState != CursorLockMode.Locked)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        
         HandleInput();
         HandleWeaponInput();
         HandleMovement();
@@ -166,8 +175,18 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? 
-                CursorLockMode.None : CursorLockMode.Locked;
+            if (Cursor.lockState == CursorLockMode.Locked)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                Debug.Log("[FPSPlayerControllerWithWeapons] Cursor unlocked and visible");
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                Debug.Log("[FPSPlayerControllerWithWeapons] Cursor locked and hidden");
+            }
         }
     }
     
@@ -211,10 +230,22 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         }
         else
         {
-            if (Input.GetKey(KeyCode.W)) moveInput.y += 1f;
-            if (Input.GetKey(KeyCode.S)) moveInput.y -= 1f;
-            if (Input.GetKey(KeyCode.A)) moveInput.x -= 1f;
-            if (Input.GetKey(KeyCode.D)) moveInput.x += 1f;
+            // Get input with dead zone to prevent unwanted movement
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
+            
+            // Apply dead zone to prevent joystick drift
+            if (Mathf.Abs(horizontal) < 0.2f) horizontal = 0f;
+            if (Mathf.Abs(vertical) < 0.2f) vertical = 0f;
+            
+            // Also check direct key input for more responsive controls
+            if (Input.GetKey(KeyCode.W)) vertical = Mathf.Max(vertical, 1f);
+            if (Input.GetKey(KeyCode.S)) vertical = Mathf.Min(vertical, -1f);
+            if (Input.GetKey(KeyCode.A)) horizontal = Mathf.Min(horizontal, -1f);
+            if (Input.GetKey(KeyCode.D)) horizontal = Mathf.Max(horizontal, 1f);
+            
+            moveInput.x = horizontal;
+            moveInput.y = vertical;
         }
         
         // Running detection
@@ -283,14 +314,10 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
         characterController.Move(move * currentSpeed * Time.deltaTime);
         
-        // Apply gravity
-        if (!isGrounded)
+        // Gravity (only if not grounded or falling)
+        if (!isGrounded || velocity.y > 0)
         {
             velocity.y += gravity * Time.deltaTime;
-        }
-        else if (velocity.y < 0)
-        {
-            velocity.y = -2f; // Small negative value to keep grounded
         }
         
         // Apply vertical movement
@@ -313,38 +340,26 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     
     void UpdateAnimations()
     {
+        if (currentAnimator == null) return;
+        
         bool moving = moveInput.magnitude > 0.1f;
         
-        // Use unified weapon animator if available
-        if (unifiedWeaponAnimator != null)
-        {
-            unifiedWeaponAnimator.UpdateMovement(
-                moving && !isRunning,  // isWalking
-                moving && isRunning,   // isRunning
-                isGrounded,            // isGrounded
-                isJumping              // isJumping
-            );
-        }
-        // Fallback to old system
-        else if (armsAnimator != null && armsAnimator.runtimeAnimatorController != null)
-        {
-            // Check if parameters exist before setting them
-            if (HasAnimatorParameter("IsWalking"))
-                armsAnimator.SetBool("IsWalking", moving && !isRunning);
-            if (HasAnimatorParameter("IsRunning"))
-                armsAnimator.SetBool("IsRunning", moving && isRunning);
-            if (HasAnimatorParameter("IsGrounded"))
-                armsAnimator.SetBool("IsGrounded", isGrounded);
-            if (HasAnimatorParameter("IsJumping"))
-                armsAnimator.SetBool("IsJumping", isJumping);
-        }
+        // Update the current arm model's animator
+        if (HasAnimatorParameter("IsWalking"))
+            currentAnimator.SetBool("IsWalking", moving && !isRunning);
+        if (HasAnimatorParameter("IsRunning"))
+            currentAnimator.SetBool("IsRunning", moving && isRunning);
+        if (HasAnimatorParameter("IsGrounded"))
+            currentAnimator.SetBool("IsGrounded", isGrounded);
+        if (HasAnimatorParameter("IsJumping"))
+            currentAnimator.SetBool("IsJumping", isJumping);
     }
     
     bool HasAnimatorParameter(string paramName)
     {
-        if (armsAnimator == null || armsAnimator.runtimeAnimatorController == null) return false;
+        if (currentAnimator == null || currentAnimator.runtimeAnimatorController == null) return false;
         
-        foreach (AnimatorControllerParameter param in armsAnimator.parameters)
+        foreach (AnimatorControllerParameter param in currentAnimator.parameters)
         {
             if (param.name == paramName) return true;
         }
@@ -356,37 +371,23 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     {
         if (weapons == null || weapons.Length == 0)
         {
-            weapons = GetComponentsInChildren<BaseWeapon>(true);
+            Debug.LogWarning("No weapons assigned! Please assign weapons in the Inspector.");
+            return;
         }
         
-        // Create weapon holder if needed
-        if (weaponHolder == null && playerCamera != null)
-        {
-            GameObject holder = new GameObject("WeaponHolder");
-            holder.transform.SetParent(playerCamera.transform);
-            holder.transform.localPosition = Vector3.zero;
-            holder.transform.localRotation = Quaternion.identity;
-            weaponHolder = holder.transform;
-        }
+        // Deactivate all arm models initially
+        if (pistolArmsModel != null) pistolArmsModel.SetActive(false);
+        if (rifleArmsModel != null) rifleArmsModel.SetActive(false);
+        if (shotgunArmsModel != null) shotgunArmsModel.SetActive(false);
         
-        // Setup weapons
-        foreach (BaseWeapon weapon in weapons)
-        {
-            if (weapon != null && weaponHolder != null)
-            {
-                if (weapon.transform != transform)
-                {
-                    weapon.transform.SetParent(weaponHolder);
-                }
-                weapon.gameObject.SetActive(false);
-            }
-        }
-        
-        // Switch to first weapon
+        // Switch to first weapon (this will activate the correct arm model)
         if (weapons.Length > 0)
         {
             SwitchToWeapon(currentWeaponIdx);
         }
+        
+        // Setup crosshair
+        SetupCrosshair();
     }
     
     public void SwitchToWeapon(int idx)
@@ -397,35 +398,41 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             return;
         }
         
-        Debug.Log($"Switching to weapon: {weapons[idx].WeaponName}");
+        Debug.Log($"Switching to weapon {idx + 1}: {weapons[idx].WeaponName}");
         
-        // Deactivate current weapon
-        if (currentWeapon != null)
+        // Deactivate ALL arm models
+        if (pistolArmsModel != null) pistolArmsModel.SetActive(false);
+        if (rifleArmsModel != null) rifleArmsModel.SetActive(false);
+        if (shotgunArmsModel != null) shotgunArmsModel.SetActive(false);
+        
+        // Activate the correct arm model for this weapon
+        GameObject activeArmModel = null;
+        if (idx >= 0 && idx < armModels.Length)
         {
-            currentWeapon.gameObject.SetActive(false);
+            activeArmModel = armModels[idx];
+            if (activeArmModel != null)
+            {
+                activeArmModel.SetActive(true);
+                Debug.Log($"Activated arm model: {activeArmModel.name}");
+            }
         }
         
-        // Activate new weapon
+        // Get the animator from the active arm model
+        if (activeArmModel != null)
+        {
+            currentAnimator = activeArmModel.GetComponent<Animator>();
+            if (currentAnimator == null)
+            {
+                Debug.LogWarning($"No Animator found on {activeArmModel.name}!");
+            }
+        }
+        
+        // Update current weapon
         currentWeaponIdx = idx;
         currentWeapon = weapons[currentWeaponIdx];
-        currentWeapon.gameObject.SetActive(true);
         
-        // Update unified weapon animator
-        if (unifiedWeaponAnimator != null)
-        {
-            unifiedWeaponAnimator.SetWeaponType(idx);
-        }
-        
-        // Switch weapon configuration (camera position, animations, etc.)
-        if (weaponConfigManager != null)
-        {
-            weaponConfigManager.SwitchToWeapon(idx);
-        }
-        else
-        {
-            // Fallback: Apply weapon configuration directly
-            ApplyWeaponConfiguration(idx);
-        }
+        // Apply weapon configuration (camera position)
+        ApplyWeaponConfiguration(idx);
         
         Debug.Log($"Successfully switched to: {currentWeapon.WeaponName}");
     }
@@ -445,6 +452,19 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         // Update weapon animations based on movement
         bool moving = moveInput.magnitude > 0.1f;
         currentWeapon.UpdateMovementAnimation(moving, isRunning);
+    }
+    
+    void SetupCrosshair()
+    {
+        if (!enableCrosshair) return;
+        
+        // Add CrosshairManager if it doesn't exist
+        crosshairManager = GetComponent<SnackAttack.Player.CrosshairManager>();
+        if (crosshairManager == null)
+        {
+            crosshairManager = gameObject.AddComponent<SnackAttack.Player.CrosshairManager>();
+            Debug.Log("[FPSPlayerControllerWithWeapons] CrosshairManager added automatically");
+        }
     }
     
     void InitializeWeaponConfigurations()
@@ -479,8 +499,8 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         weaponConfigs[2] = new WeaponConfigData
         {
             weaponName = "Shotgun",
-            cameraPosition = new Vector3(-0.004f, 1.505f, 0.221f),
-            cameraRotation = new Vector3(5.624f, -44.278f, -0.456f),
+            cameraPosition = new Vector3(-0.078f, 1.542f, 0.058f),
+            cameraRotation = new Vector3(5.311f, -59.427f, 0.353f),
             animatorController = shotgunController
         };
         
@@ -503,13 +523,6 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             cameraAnchor.localPosition = config.cameraPosition;
             cameraAnchor.localEulerAngles = config.cameraRotation;
             Debug.Log($"Applied camera position: {config.cameraPosition} and rotation: {config.cameraRotation}");
-        }
-        
-        // Apply animation controller
-        if (armsAnimator != null && config.animatorController != null)
-        {
-            armsAnimator.runtimeAnimatorController = config.animatorController;
-            Debug.Log($"Applied animation controller: {config.animatorController.name}");
         }
     }
     

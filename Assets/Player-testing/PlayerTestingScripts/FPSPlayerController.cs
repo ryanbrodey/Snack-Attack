@@ -142,14 +142,8 @@ public class FPSPlayerController : MonoBehaviour
             }
         }
         
-        // Ensure player starts on the ground (if CharacterController center is (0,1,0) and height is 2, bottom is at y=0)
-        if (transform.position.y > 0.1f)
-        {
-            Vector3 pos = transform.position;
-            pos.y = 0f;
-            transform.position = pos;
-            Debug.Log($"Reset player Y position to 0 to ensure it's on the ground");
-        }
+        // Initialize velocity to zero to prevent immediate falling
+        velocity = Vector3.zero;
         
         Debug.Log($"FPS Player Controller initialized. Camera: {(playerCamera != null ? playerCamera.name : "NULL")}, GroundCheck: {(groundCheck != null ? groundCheck.name : "NULL")}");
         Debug.Log("Controls: WASD to move, Double-tap W for auto-run, Space to jump, Mouse to look around.");
@@ -215,11 +209,22 @@ public class FPSPlayerController : MonoBehaviour
         }
         else
         {
-            // WASD input
-            if (Input.GetKey(KeyCode.W)) moveInput.y += 1f;
-            if (Input.GetKey(KeyCode.S)) moveInput.y -= 1f;
-            if (Input.GetKey(KeyCode.A)) moveInput.x -= 1f;
-            if (Input.GetKey(KeyCode.D)) moveInput.x += 1f;
+            // WASD input with dead zone to prevent unwanted movement
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
+            
+            // Apply dead zone to prevent joystick drift
+            if (Mathf.Abs(horizontal) < 0.2f) horizontal = 0f;
+            if (Mathf.Abs(vertical) < 0.2f) vertical = 0f;
+            
+            // Also check direct key input for more responsive controls
+            if (Input.GetKey(KeyCode.W)) vertical = Mathf.Max(vertical, 1f);
+            if (Input.GetKey(KeyCode.S)) vertical = Mathf.Min(vertical, -1f);
+            if (Input.GetKey(KeyCode.A)) horizontal = Mathf.Min(horizontal, -1f);
+            if (Input.GetKey(KeyCode.D)) horizontal = Mathf.Max(horizontal, 1f);
+            
+            moveInput.x = horizontal;
+            moveInput.y = vertical;
         }
         
         // Running detection (Shift key or auto-run)
@@ -287,6 +292,12 @@ public class FPSPlayerController : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             isJumping = true;
             Debug.Log($"Jump! Initial velocity: {velocity.y:F2}");
+        }
+        
+        // Apply gravity continuously (only if not grounded or falling)
+        if (!isGrounded || velocity.y > 0)
+        {
+            velocity.y += gravity * Time.deltaTime;
         }
         
         // Apply vertical movement

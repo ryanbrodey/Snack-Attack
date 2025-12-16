@@ -169,6 +169,16 @@ namespace SnackAttack.Weapons
         // animation helpers
         protected virtual void PlayIdle()
         {
+            // With unified animator, idle is handled automatically by the state machine
+            // based on movement parameters, so we don't need to call anything
+            if (unifiedAnimator != null)
+            {
+                currentAnimationState = idleAnim;
+                lastAnimationTime = Time.time;
+                return;
+            }
+            
+            // Fallback to individual animator
             if (anim != null && !string.IsNullOrEmpty(idleAnim))
             {
                 anim.Play(idleAnim);
@@ -224,6 +234,16 @@ namespace SnackAttack.Weapons
         
         protected virtual void PlayWalk()
         {
+            // With unified animator, walk is handled automatically by the state machine
+            // based on movement parameters (IsWalking, IsRunning)
+            if (unifiedAnimator != null)
+            {
+                currentAnimationState = walkAnim;
+                lastAnimationTime = Time.time;
+                return;
+            }
+            
+            // Fallback to individual animator
             if (anim != null && !string.IsNullOrEmpty(walkAnim))
             {
                 anim.Play(walkAnim);
@@ -234,6 +254,16 @@ namespace SnackAttack.Weapons
         
         protected virtual void PlayRun()
         {
+            // With unified animator, run is handled automatically by the state machine
+            // based on movement parameters (IsRunning)
+            if (unifiedAnimator != null)
+            {
+                currentAnimationState = runAnim;
+                lastAnimationTime = Time.time;
+                return;
+            }
+            
+            // Fallback to individual animator
             if (anim != null && !string.IsNullOrEmpty(runAnim))
             {
                 anim.Play(runAnim);
