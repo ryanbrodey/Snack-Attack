@@ -6,7 +6,7 @@ using SnackAttack.Player;   // for WeaponManager
 public class Shopkeeper : MonoBehaviour
 {
     [Header("Player & Distance")]
-    public Transform player;          // <-- this is the player transform
+    public Transform player;          // this is the player transform
     public float interactionRadius = 3f;
 
     [Header("UI References")]
@@ -31,6 +31,10 @@ public class Shopkeeper : MonoBehaviour
     public WeaponStats weaponStats;       // holds damage values
     public WeaponManager weaponManager;   // unlocks/handles weapons
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip interactSound;
+
     private bool isPlayerInRange = false;
     private bool isShopOpen = false;
     private int selectedIndex = 0;
@@ -39,6 +43,16 @@ public class Shopkeeper : MonoBehaviour
     {
         if (promptUI != null) promptUI.SetActive(false);
         if (shopPanel != null) shopPanel.SetActive(false);
+
+        // Ensure we have an AudioSource
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+                audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        audioSource.spatialBlend = 1f; // 3D sound
 
         UpdateOptionTexts();
     }
@@ -84,6 +98,12 @@ public class Shopkeeper : MonoBehaviour
 
         if (shopPanel != null)
             shopPanel.SetActive(true);
+
+        // play interact sound
+        if (audioSource != null && interactSound != null)
+        {
+            audioSource.PlayOneShot(interactSound);
+        }
 
         selectedIndex = 0;
         HighlightSelection();
