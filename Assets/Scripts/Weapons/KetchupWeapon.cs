@@ -141,9 +141,14 @@ namespace SnackAttack.Weapons
                 return;
             }
             
-            // Spawn from gun barrel, but travel in camera forward direction (where crosshair points)
+            // Spawn from gun barrel, but travel toward crosshair target point
+            // This accounts for bullet spawn offset from camera center
             Vector3 spawnPosition = bulletSpawn.position;
-            Vector3 aimDirection = playerCamera.transform.forward; // Crosshair direction
+            Vector3 aimDirection = CrosshairAiming.GetBulletDirectionFromSpawnToCrosshair(
+                spawnPosition, 
+                playerCamera, 
+                1000f
+            );
             
             GameObject bulletObj = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
             
