@@ -66,8 +66,8 @@ public class KetchupGunTest : MonoBehaviour
     
     void HandleShooting()
     {
-        // Check for shoot input (left mouse button or Fire1)
-        if (Input.GetButtonDown("Fire1") || Input.GetMouseButtonDown(0))
+        // Check for shoot input (left mouse button - Fire1 is the same as mouse button 0)
+        if (Input.GetButtonDown("Fire1"))
         {
             TryShoot();
         }
@@ -82,7 +82,7 @@ public class KetchupGunTest : MonoBehaviour
         }
         
         // Auto-reload when empty and trying to shoot
-        if (currentAmmo <= 0 && !isReloading && (Input.GetButtonDown("Fire1") || Input.GetMouseButtonDown(0)))
+        if (currentAmmo <= 0 && !isReloading && Input.GetButtonDown("Fire1"))
         {
             StartReload();
         }
@@ -126,15 +126,46 @@ public class KetchupGunTest : MonoBehaviour
             armsAnimator.SetTrigger("Shoot");
         }
         
-        // Spawn bullet
+        // Spawn bullet with crosshair aiming
         if (bulletPrefab != null && bulletSpawn != null)
         {
-            GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
+            // Find player camera for crosshair aiming
+            Camera playerCamera = GetPlayerCamera();
+            Vector3 spawnPosition = bulletSpawn.position;
+            Vector3 aimDirection;
             
-            Rigidbody rb = bullet.GetComponent<Rigidbody>();
-            if (rb != null)
+            if (playerCamera != null)
             {
-                rb.velocity = bulletSpawn.forward * bulletSpeed;
+                // Use proper crosshair aiming - direction from bullet spawn to crosshair target
+                aimDirection = CrosshairAiming.GetBulletDirectionFromSpawnToCrosshair(
+                    spawnPosition, 
+                    playerCamera, 
+                    1000f
+                );
+            }
+            else
+            {
+                // Fallback to bullet spawn forward if no camera found
+                Debug.LogWarning("KetchupGunTest: No player camera found, using bullet spawn forward");
+                aimDirection = bulletSpawn.forward;
+            }
+            
+            GameObject bullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
+            
+            // Use BulletController if available (better physics)
+            BulletController bulletScript = bullet.GetComponent<BulletController>();
+            if (bulletScript != null)
+            {
+                bulletScript.Initialize(aimDirection, spawnPosition, bulletSpeed);
+            }
+            else
+            {
+                // Fallback to direct Rigidbody velocity
+                Rigidbody rb = bullet.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.velocity = aimDirection * bulletSpeed;
+                }
             }
             
             Debug.Log($"Ketchup shot fired! Ammo remaining: {currentAmmo}/{maxAmmo}");
@@ -146,6 +177,36 @@ public class KetchupGunTest : MonoBehaviour
         
         // Play shoot sound
         PlaySound(shootSound);
+    }
+    
+    private Camera GetPlayerCamera()
+    {
+        // Try to find player camera
+        Camera cam = null;
+        
+        // Method 1: Try to find FPSPlayerController
+        FPSPlayerController playerController = FindObjectOfType<FPSPlayerController>();
+        if (playerController != null && playerController.playerCamera != null)
+        {
+            return playerController.playerCamera;
+        }
+        
+        // Method 2: Try to find FPSPlayerControllerWithWeapons
+        FPSPlayerControllerWithWeapons weaponsController = FindObjectOfType<FPSPlayerControllerWithWeapons>();
+        if (weaponsController != null && weaponsController.playerCamera != null)
+        {
+            return weaponsController.playerCamera;
+        }
+        
+        // Method 3: Fallback to Camera.main
+        if (Camera.main != null)
+        {
+            return Camera.main;
+        }
+        
+        // Method 4: Find any camera
+        cam = FindObjectOfType<Camera>();
+        return cam;
     }
     
     void StartReload()
