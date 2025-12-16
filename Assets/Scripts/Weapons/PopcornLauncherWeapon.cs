@@ -137,82 +137,42 @@ namespace SnackAttack.Weapons
                 return;
             }
             
-            // Find player camera
             Camera playerCamera = GetPlayerCamera();
             if (playerCamera == null) 
             {
-                Debug.LogWarning("Shotgun: No player camera found, using forward direction");
-                // Fallback to old behavior - fire straight ahead
-                for (int i = 0; i < pelletsPerShot; i++)
-                {
-                    GameObject pellet = Instantiate(pelletPrefab, bulletSpawn.position, bulletSpawn.rotation);
-                    
-                    // Add random spread
-                    Vector3 spreadDirection = bulletSpawn.forward;
-                    spreadDirection += Random.insideUnitSphere * (spreadAngle / 100f);
-                    spreadDirection.Normalize();
-                    
-                    Rigidbody rb = pellet.GetComponent<Rigidbody>();
-                    if (rb != null)
-                    {
-                        rb.velocity = spreadDirection * pelletSpeed;
-                    }
-                }
+                Debug.LogWarning("Shotgun: No player camera found");
                 return;
             }
             
-            // Spawn from gun barrel, but travel in camera forward direction (where crosshair points)
             Vector3 spawnPosition = bulletSpawn.position;
-            Vector3 centerDirection = playerCamera.transform.forward; // Crosshair direction
+            Vector3 centerDirection = playerCamera.transform.forward;
             
-            // Generate spread directions around camera forward
             Vector3[] directions = new Vector3[pelletsPerShot];
+            Vector3 right = playerCamera.transform.right;
+            Vector3 up = playerCamera.transform.up;
+            
             for (int i = 0; i < pelletsPerShot; i++)
             {
-                // Create random spread around center direction
-                float randomX = Random.Range(-spreadAngle, spreadAngle);
-                float randomY = Random.Range(-spreadAngle, spreadAngle);
-                
-                // Apply spread to center direction
-                Vector3 spreadDirection = Quaternion.Euler(randomY, randomX, 0) * centerDirection;
-                directions[i] = spreadDirection.normalized;
+                float randomAngle = Random.Range(0f, spreadAngle * Mathf.Deg2Rad);
+                float randomDirection = Random.Range(0f, 2f * Mathf.PI);
+                Vector3 spreadOffset = (right * Mathf.Cos(randomDirection) + up * Mathf.Sin(randomDirection)) * Mathf.Tan(randomAngle);
+                directions[i] = (centerDirection + spreadOffset).normalized;
             }
             
-            Debug.Log($"Shotgun: Firing {pelletsPerShot} pellets with {spreadAngle}° spread from camera position");
-            
-            // Fire each pellet
             for (int i = 0; i < pelletsPerShot; i++)
             {
                 GameObject pellet = Instantiate(pelletPrefab, spawnPosition, Quaternion.identity);
-                
-                // Initialize pellet with BulletController script
                 BulletController pelletScript = pellet.GetComponent<BulletController>();
                 if (pelletScript != null)
                 {
-                    // Configure for shotgun pellet
                     pelletScript.canPenetrate = true;
                     pelletScript.maxPenetrations = penetrationCount;
                     pelletScript.damage = pelletDamage;
                     pelletScript.maxRange = reach;
                     pelletScript.speed = pelletSpeed;
-                    
                     pelletScript.Initialize(directions[i], spawnPosition, pelletSpeed);
-                    Debug.Log($"Shotgun: Pellet {i+1} fired with BulletController script");
-                }
-                else
-                {
-                    // Fallback for pellets without UniversalBullet script
-                    Rigidbody rb = pellet.GetComponent<Rigidbody>();
-                    if (rb != null)
-                    {
-                        rb.velocity = directions[i] * pelletSpeed;
-                        Debug.Log($"Shotgun: Pellet {i+1} fired with fallback Rigidbody method");
-                    }
                 }
             }
-            
-            // Debug visualization
-            CrosshairAiming.DrawAimDebug(bulletSpawn.position, playerCamera, 3f);
         }
         
         private Camera GetPlayerCamera()
