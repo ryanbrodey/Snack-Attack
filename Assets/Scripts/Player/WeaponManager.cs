@@ -4,6 +4,8 @@ using SnackAttack.Weapons;
 namespace SnackAttack.Player
 {
     // handles switching weapons and attacking
+    // WARNING: DO NOT use with FPSPlayerControllerWithWeapons - causes input conflicts!
+    // Use EITHER WeaponManager OR FPSPlayerControllerWithWeapons, not both!
     public class WeaponManager : MonoBehaviour
     {
         [Header("Weapon Stuff")]
@@ -12,12 +14,14 @@ namespace SnackAttack.Player
         public Transform weaponHolder;
         
         [Header("Controls")]
-        public KeyCode attackKey = KeyCode.F; // F key for attack
+        public KeyCode semiAutoKey = KeyCode.F; // F key for semi-auto
+        public KeyCode fullAutoKey = KeyCode.G; // G key for full-auto (assault rifle only)
         public KeyCode[] weaponKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4 };
         
         // stuff we need
         private BaseWeapon currentWeapon;
         private FPSController player;
+        private FPSPlayerController playerController; // Support for FPSPlayerController
         private float lastUpdateTime;
         
         // getters
@@ -27,12 +31,27 @@ namespace SnackAttack.Player
         void Awake()
         {
             player = GetComponent<FPSController>();
+            playerController = GetComponent<FPSPlayerController>();
+            
+            // Find camera for weapon holder
+            Camera playerCamera = null;
+            if (player != null && player.PlayerCamera != null)
+            {
+                playerCamera = player.PlayerCamera;
+            }
+            else if (playerController != null)
+            {
+                // Find camera in FPSPlayerController setup
+                playerCamera = GetComponentInChildren<Camera>();
+                if (playerCamera == null)
+                    playerCamera = Camera.main;
+            }
             
             // make weapon holder if we dont have one
-            if (weaponHolder == null && player != null && player.PlayerCamera != null)
+            if (weaponHolder == null && playerCamera != null)
             {
                 GameObject holder = new GameObject("WeaponHolder");
-                holder.transform.SetParent(player.PlayerCamera.transform);
+                holder.transform.SetParent(playerCamera.transform);
                 holder.transform.localPosition = Vector3.zero;
                 holder.transform.localRotation = Quaternion.identity;
                 weaponHolder = holder.transform;
@@ -56,24 +75,39 @@ namespace SnackAttack.Player
         
         void CheckInput()
         {
-            // attack with F key
-            if (Input.GetKeyDown(attackKey))
-            {
-                Debug.Log("[WeaponManager] F key pressed - calling DoAttack()");
-                DoAttack();
-            }
+            // NOTE: ALL INPUT DISABLED TO PREVENT CONFLICTS WITH FPSPlayerControllerWithWeapons
+            // F key and mouse input are handled by FPSPlayerControllerWithWeapons instead
             
-            // number keys for weapons
+            // Semi-auto attack with F key - DISABLED
+            // if (Input.GetKeyDown(semiAutoKey))
+            // {
+            //     Debug.Log("[WeaponManager] F key pressed - calling DoAttack()");
+            //     DoAttack();
+            // }
+            
+            // NOTE: Mouse click input disabled to prevent conflict with FPSPlayerControllerWithWeapons
+            // Left mouse click for attack is handled by FPSPlayerControllerWithWeapons instead
+            // if (Input.GetButtonDown("Fire1"))
+            // {
+            //     Debug.Log("[WeaponManager] Mouse click - calling DoAttack()");
+            //     DoAttack();
+            // }
+            
+            // Full-auto is handled by individual weapons (G key)
+            // AssaultRifleWeapon will handle the G key input directly
+            
+            // Number keys for weapon switching (1, 2, 3)
             for (int i = 0; i < weaponKeys.Length && i < weapons.Length; i++)
             {
                 if (Input.GetKeyDown(weaponKeys[i]))
                 {
+                    Debug.Log($"[WeaponManager] Number key {i+1} pressed - switching to weapon {i}");
                     SwitchToWeapon(i);
                     break;
                 }
             }
             
-            // scroll wheel to change weapons
+            // Scroll wheel to change weapons
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (scroll > 0f)
             {
@@ -87,7 +121,7 @@ namespace SnackAttack.Player
         
         void UpdateWeapon()
         {
-            if (currentWeapon == null || player == null) return;
+            if (currentWeapon == null || (player == null && playerController == null)) return;
             
             // Only update animations every few frames to reduce jitter
             if (Time.time - lastUpdateTime < 0.05f) return; // 20 FPS update rate for animations
@@ -97,8 +131,20 @@ namespace SnackAttack.Player
             if (currentWeapon.IsAttacking) return;
             
             // update weapon animations based on movement
-            bool moving = player.HorizontalVelocity.magnitude > 0.1f;
-            bool running = Input.GetKey(KeyCode.LeftShift) && moving;
+            bool moving = false;
+            bool running = false;
+            
+            if (player != null)
+            {
+                moving = player.HorizontalVelocity.magnitude > 0.1f;
+                running = Input.GetKey(KeyCode.LeftShift) && moving;
+            }
+            else if (playerController != null)
+            {
+                // For FPSPlayerController, check input directly
+                moving = Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0;
+                running = Input.GetKey(KeyCode.LeftShift) && moving;
+            }
             
             currentWeapon.UpdateMovementAnimation(moving, running);
         }
