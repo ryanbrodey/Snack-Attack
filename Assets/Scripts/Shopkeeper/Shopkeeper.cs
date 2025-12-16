@@ -1,21 +1,19 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using SnackAttack.Player;   // for WeaponManager
 
 public class Shopkeeper : MonoBehaviour
 {
     [Header("Player & Distance")]
-    public Transform player;
+    public Transform player;          // <-- this is the player transform
     public float interactionRadius = 3f;
 
     [Header("UI References")]
-    public GameObject promptUI;      // "Press P to interact..." text object
-    public GameObject shopPanel;     // The whole shop UI panel
-
+    public GameObject promptUI;       // "Press P to interact..." text object
+    public GameObject shopPanel;      // The whole shop UI panel
     public TMP_Text pointsText;
-    public TMP_Text[] optionTexts;
-    // 0: Glizzy Rifle, 1: Shotgun, 2: Pistol Upgrade, 3: Shotgun Upgrade, 4: Rifle Upgrade
+    public TMP_Text[] optionTexts;    // 0: Rifle, 1: Shotgun, 2?4 upgrades
 
     [Header("Keybinds")]
     public KeyCode interactKey = KeyCode.P;
@@ -29,8 +27,9 @@ public class Shopkeeper : MonoBehaviour
     public int rifleUpgradeCost = 1000;
 
     [Header("References")]
-    public PlayerPoints playerPoints; // script that holds current points
-    public WeaponStats weaponStats;   // script we made above
+    public PlayerPoints playerPoints;     // holds current points
+    public WeaponStats weaponStats;       // holds damage values
+    public WeaponManager weaponManager;   // unlocks/handles weapons
 
     private bool isPlayerInRange = false;
     private bool isShopOpen = false;
@@ -79,24 +78,27 @@ public class Shopkeeper : MonoBehaviour
     private void OpenShop()
     {
         isShopOpen = true;
-        if (shopPanel != null) shopPanel.SetActive(true);
+
+        if (promptUI != null)
+            promptUI.SetActive(false);
+
+        if (shopPanel != null)
+            shopPanel.SetActive(true);
 
         selectedIndex = 0;
         HighlightSelection();
-
         UpdatePointsText();
-
-        // Optionally lock player movement here
-        // e.g. playerController.enabled = false;
     }
 
     private void CloseShop()
     {
         isShopOpen = false;
-        if (shopPanel != null) shopPanel.SetActive(false);
 
-        // Unlock player movement if locked
-        // playerController.enabled = true;
+        if (shopPanel != null)
+            shopPanel.SetActive(false);
+
+        if (promptUI != null && isPlayerInRange)
+            promptUI.SetActive(true);
     }
 
     private void HandleShopInput()
@@ -136,9 +138,9 @@ public class Shopkeeper : MonoBehaviour
             if (optionTexts[i] == null) continue;
 
             if (i == selectedIndex)
-                optionTexts[i].fontStyle = FontStyles.Bold;    // <-- changed
+                optionTexts[i].fontStyle = FontStyles.Bold;
             else
-                optionTexts[i].fontStyle = FontStyles.Normal;  // <-- changed
+                optionTexts[i].fontStyle = FontStyles.Normal;
         }
     }
 
@@ -178,7 +180,10 @@ public class Shopkeeper : MonoBehaviour
                 if (playerPoints.points >= glizzyRifleCost)
                 {
                     playerPoints.points -= glizzyRifleCost;
-                    // Give player the rifle here (enable weapon, unlock in inventory, etc.)
+
+                    if (weaponManager != null)
+                        weaponManager.UnlockRifle();
+
                     Debug.Log("Purchased Glizzy Rifle!");
                 }
                 else
@@ -191,7 +196,10 @@ public class Shopkeeper : MonoBehaviour
                 if (playerPoints.points >= shotgunCost)
                 {
                     playerPoints.points -= shotgunCost;
-                    // Give player the shotgun here
+
+                    if (weaponManager != null)
+                        weaponManager.UnlockShotgun();
+
                     Debug.Log("Purchased Shotgun!");
                 }
                 else

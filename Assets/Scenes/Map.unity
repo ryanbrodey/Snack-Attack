@@ -661,6 +661,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: FPS_Player_Shotgun
       objectReference: {fileID: 0}
+    - target: {fileID: 8587112261069684662, guid: 5528a56d676014639b7389c3f9a8a902, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8587112261069684662, guid: 5528a56d676014639b7389c3f9a8a902, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 9010941347050830954, guid: 5528a56d676014639b7389c3f9a8a902, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.5
@@ -1975,7 +1983,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100, y: -175}
+  m_AnchoredPosition: {x: -90, y: -57}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &264403850
@@ -1998,7 +2006,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Upgrade Shotgun
+  m_text: 'Upgrade Shotgun: 750'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2061,7 +2069,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: -283.48993, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2637,7 +2645,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6899219716485662557, guid: 56adabc427fa14bfd99d2112fdb429bf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.4
+      value: 0.109
       objectReference: {fileID: 0}
     - target: {fileID: 6899219716485662557, guid: 56adabc427fa14bfd99d2112fdb429bf, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2693,6 +2701,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7415047232303318101, guid: 56adabc427fa14bfd99d2112fdb429bf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1038934673}
+    - targetCorrespondingSourceObject: {fileID: 7415047232303318101, guid: 56adabc427fa14bfd99d2112fdb429bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1038934676}
   m_SourcePrefab: {fileID: 100100000, guid: 56adabc427fa14bfd99d2112fdb429bf, type: 3}
 --- !u!1001 &415319031
 PrefabInstance:
@@ -4064,7 +4075,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100, y: -75}
+  m_AnchoredPosition: {x: -90, y: 22}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &817109313
@@ -4087,7 +4098,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Buy Popcorn Shotgun
+  m_text: 'Buy Popcorn Shotgun: 1500'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4150,7 +4161,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: -282.95068, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -4570,7 +4581,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 200}
+  m_AnchoredPosition: {x: 0, y: 186}
   m_SizeDelta: {x: 400, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &955538101
@@ -4775,6 +4786,33 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6899219716485662557, guid: 56adabc427fa14bfd99d2112fdb429bf, type: 3}
   m_PrefabInstance: {fileID: 405351277}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1038934676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1038934672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ed8bac57d8464995b6a5504187a5a90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  currentWeaponIdx: 0
+  weaponHolder: {fileID: 0}
+  pistolIndex: 0
+  shotgunIndex: 1
+  rifleIndex: 2
+  pistolUnlocked: 1
+  shotgunUnlocked: 0
+  rifleUnlocked: 0
+  semiAutoKey: 102
+  fullAutoKey: 103
+  weaponKeys: 31000000320000003300000034000000
 --- !u!1001 &1040714564
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5219,7 +5257,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100, y: -125}
+  m_AnchoredPosition: {x: -90, y: -16}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1170732956
@@ -5242,7 +5280,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Upgrade Pistol
+  m_text: 'Upgrade Pistol: 500'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5305,7 +5343,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: -281.3247, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -5506,6 +5544,7 @@ MonoBehaviour:
   rifleUpgradeCost: 1000
   playerPoints: {fileID: 1038934674}
   weaponStats: {fileID: 1038934673}
+  weaponManager: {fileID: 1038934676}
 --- !u!1001 &1274801186
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6176,7 +6215,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100, y: -25}
+  m_AnchoredPosition: {x: -90, y: 59}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1318762994
@@ -6199,7 +6238,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Buy Glizzy Rifle
+  m_text: 'Buy Glizzy Rifle: 1000'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6262,7 +6301,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: -278.34357, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -6588,7 +6627,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100, y: -225}
+  m_AnchoredPosition: {x: -90, y: -97}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1378197185
@@ -6611,7 +6650,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Upgrade rifle
+  m_text: 'Upgrade rifle: 1000
 
 '
   m_isRightToLeft: 0
@@ -6676,7 +6715,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: -284.12915, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -6699,15 +6738,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1385731473}
-  - component: {fileID: 1385731475}
-  - component: {fileID: 1385731474}
   m_Layer: 5
   m_Name: OptionsContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1385731473
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6729,49 +6766,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 250}
+  m_AnchoredPosition: {x: 0, y: 25}
+  m_SizeDelta: {x: 100, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1385731474
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1385731472}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 0
-  m_VerticalFit: 2
---- !u!114 &1385731475
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1385731472}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!1001 &1414768205
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6991,6 +6988,7 @@ GameObject:
   - component: {fileID: 1506117758}
   - component: {fileID: 1506117760}
   - component: {fileID: 1506117759}
+  - component: {fileID: 1506117761}
   m_Layer: 5
   m_Name: PointsText
   m_TagString: Untagged
@@ -7114,6 +7112,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1506117757}
   m_CullTransparentMesh: 1
+--- !u!114 &1506117761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1506117757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54674eb4bb42543f499ed0d3bfd92f9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPoints: {fileID: 1038934674}
+  pointsText: {fileID: 1506117759}
 --- !u!1 &1517404251
 GameObject:
   m_ObjectHideFlags: 0
@@ -7292,7 +7304,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8587112261069684662, guid: f556e486657014cd7b9b3cbf1c792e14, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8587112261069684662, guid: f556e486657014cd7b9b3cbf1c792e14, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7367,6 +7383,12 @@ MonoBehaviour:
   - {fileID: 426256536}
   currentWeaponIdx: 0
   weaponHolder: {fileID: 0}
+  pistolIndex: 0
+  shotgunIndex: 1
+  rifleIndex: 2
+  pistolUnlocked: 1
+  shotgunUnlocked: 0
+  rifleUnlocked: 0
   semiAutoKey: 102
   fullAutoKey: 103
   weaponKeys: 31000000320000003300000034000000
@@ -9197,8 +9219,8 @@ SceneRoots:
   - {fileID: 361311260}
   - {fileID: 1933397826}
   - {fileID: 1280623172}
-  - {fileID: 40580093}
   - {fileID: 405351277}
+  - {fileID: 40580093}
   - {fileID: 1720016594}
   - {fileID: 1601314932}
   - {fileID: 230875974}
