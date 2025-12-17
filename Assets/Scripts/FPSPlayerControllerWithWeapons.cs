@@ -283,61 +283,77 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     
     void HandleMovement()
     {
-        // Check if we're on the ground using the CharacterController
+        // Student-written: Store previous grounded state to detect landing
         wasGroundedLastFrame = isGrounded;
-        isGrounded = characterController.isGrounded;
         
-        // Double check with a sphere cast to make sure we're really grounded
-        if (!isGrounded)
+        // Student-written: Ground check - use ONLY sphere check for reliable detection
+        // Don't use characterController.isGrounded as it's unreliable
+        if (groundCheck != null)
         {
             isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckDistance, groundMask);
         }
-        
-        // If we just landed, reset jump state and apply small downward force
-        if (isGrounded && !wasGroundedLastFrame)
+        else
         {
-            isJumping = false;
-            velocity.y = -2f; // keeps us stuck to the ground
-            Debug.Log($"[JUMP DEBUG] Landed! velocity.y set to -2");
+            // Student-written: Fallback to raycast if no ground check transform
+            isGrounded = Physics.Raycast(transform.position, Vector3.down, 
+                characterController.height / 2 + 0.1f, groundMask);
         }
         
-        // Handle jump input - can only jump if on ground and not already jumping
+        // Student-written: Calculate movement direction relative to body rotation
+        Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
+        move = Vector3.ClampMagnitude(move, 1f); // Prevent faster diagonal movement
+        
+        // Student-written: Apply horizontal speed
+        float currentSpeed = isRunning ? runSpeed : walkSpeed;
+        characterController.Move(move * currentSpeed * Time.deltaTime);
+        
+        // Student-written: Apply gravity FIRST before any ground checks affect velocity
+        if (!isGrounded)
+        {
+            velocity.y += gravity * Time.deltaTime;
+            
+            // Student-written: Terminal velocity cap to prevent extreme speeds
+            velocity.y = Mathf.Max(velocity.y, -50f);
+        }
+        else
+        {
+            // Student-written: When grounded, use small constant downward velocity to stay grounded
+            // Only apply if we're not trying to jump
+            if (velocity.y < 0)
+            {
+                velocity.y = -2f;
+                
+                // Student-written: Reset jumping state when we land
+                if (isJumping)
+                {
+                    isJumping = false;
+                    Debug.Log("Landed");
+                }
+            }
+        }
+        
+        // Student-written: Jumping - only allow when grounded and not already jumping
         if (jumpPressed && isGrounded && !isJumping)
         {
-            // Calculate jump velocity using physics formula
+            // Student-written: Calculate jump velocity using physics formula: v = sqrt(2 * g * h)
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             isJumping = true;
-            isGrounded = false; // stop double jumps
-            Debug.Log($"[JUMP DEBUG] Jump executed! velocity.y = {velocity.y}, jumpHeight = {jumpHeight}, gravity = {gravity}");
+            Debug.Log($"Jump! Initial velocity: {velocity.y:F2}");
         }
         
-        // Log velocity every few frames to see what's happening
-        if (Time.frameCount % 30 == 0 && isJumping)
-        {
-            Debug.Log($"[JUMP DEBUG] Mid-jump: velocity.y = {velocity.y}, isGrounded = {isGrounded}, position.y = {transform.position.y}");
-        }
-        
-        // Combine horizontal and vertical movement into one move
-        Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
-        float currentSpeed = isRunning ? runSpeed : walkSpeed;
-        move = move * currentSpeed;
-        
-        // Apply gravity when in air or moving upward
+        // Student-written: Apply gravity continuously (only if not grounded or falling)
         if (!isGrounded || velocity.y > 0)
         {
             velocity.y += gravity * Time.deltaTime;
         }
         
-        // Add vertical velocity to the movement vector
-        move.y = velocity.y;
+        // Student-written: Apply vertical movement separately from horizontal
+        characterController.Move(velocity * Time.deltaTime);
         
-        // Apply the combined movement in one go
-        characterController.Move(move * Time.deltaTime);
-        
-        // Debug what happened after the move
-        if (jumpPressed)
+        // Student-written: Debug ground state changes (only log occasionally to reduce spam)
+        if (wasGroundedLastFrame != isGrounded)
         {
-            Debug.Log($"[JUMP DEBUG] After Move: move.y = {move.y}, velocity.y = {velocity.y}, actual Y = {transform.position.y}");
+            Debug.Log($"Ground state changed: {(isGrounded ? "Grounded" : "Airborne")}");
         }
     }
     
