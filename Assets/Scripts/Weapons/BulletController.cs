@@ -29,6 +29,9 @@ public class BulletController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
+        
+        Debug.Log($"[Bullet] Awake - Rigidbody: {(rb != null ? "Found" : "MISSING")}, Collider: {(col != null ? col.GetType().Name : "MISSING")}, Layer: {gameObject.layer}");
+        
         SetupPhysics();
         SetupCollisionLayers();
     }
@@ -42,10 +45,12 @@ public class BulletController : MonoBehaviour
             rb.angularDrag = 0f;
             rb.mass = 0.01f; // Very light mass to prevent physics interactions
             rb.interpolation = RigidbodyInterpolation.Interpolate; // Smooth movement
-            rb.collisionDetectionMode = CollisionDetectionMode.Continuous; // Better collision detection for fast bullets
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic; // Better collision detection for fast bullets
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             rb.constraints = RigidbodyConstraints.FreezeRotation; // Only freeze rotation
+            
+            Debug.Log($"[Bullet] Physics setup - CollisionDetectionMode: {rb.collisionDetectionMode}, Layer: {gameObject.layer}");
         }
         
         // Set collider to trigger during ignore period to prevent physics interactions
@@ -56,16 +61,26 @@ public class BulletController : MonoBehaviour
             // Remove any physics material that might cause bouncing
             if (col is SphereCollider)
             {
-                ((SphereCollider)col).material = null;
+                SphereCollider sphereCol = (SphereCollider)col;
+                sphereCol.material = null;
+                Debug.Log($"[Bullet] SphereCollider - Radius: {sphereCol.radius}, IsTrigger: {col.isTrigger}, Layer: {gameObject.layer}");
             }
             else if (col is BoxCollider)
             {
-                ((BoxCollider)col).material = null;
+                BoxCollider boxCol = (BoxCollider)col;
+                boxCol.material = null;
+                Debug.Log($"[Bullet] BoxCollider - Size: {boxCol.size}, IsTrigger: {col.isTrigger}, Layer: {gameObject.layer}");
             }
             else if (col is CapsuleCollider)
             {
-                ((CapsuleCollider)col).material = null;
+                CapsuleCollider capCol = (CapsuleCollider)col;
+                capCol.material = null;
+                Debug.Log($"[Bullet] CapsuleCollider - Radius: {capCol.radius}, Height: {capCol.height}, IsTrigger: {col.isTrigger}, Layer: {gameObject.layer}");
             }
+        }
+        else
+        {
+            Debug.LogError("[Bullet] No Collider component found on bullet! Bullets will not detect collisions!");
         }
     }
     
@@ -107,6 +122,7 @@ public class BulletController : MonoBehaviour
             if (col != null)
             {
                 col.isTrigger = false;
+                Debug.Log($"[Bullet] Collisions now enabled. Collider isTrigger: {col.isTrigger}, Layer: {gameObject.layer}");
             }
         }
         
@@ -179,6 +195,8 @@ public class BulletController : MonoBehaviour
         transform.position = origin;
         transform.rotation = Quaternion.LookRotation(targetDirection);
         
+        Debug.Log($"[Bullet] Initialized - Direction: {direction}, Speed: {speed}, Position: {origin}, Damage: {damage}, CollisionIgnoreTime: {collisionIgnoreTime}");
+        
         // Ensure physics is set up
         SetupPhysics();
         
@@ -187,22 +205,60 @@ public class BulletController : MonoBehaviour
             rb.velocity = targetDirection * speed;
             rb.angularVelocity = Vector3.zero;
             rb.useGravity = false;
+            Debug.Log($"[Bullet] Rigidbody velocity set to: {rb.velocity}");
+        }
+        else
+        {
+            Debug.LogError("[Bullet] Initialize: Rigidbody is NULL!");
         }
     }
     
     void OnCollisionEnter(Collision collision)
     {
+        Debug.Log($"[Bullet] OnCollisionEnter called - Object: {collision.gameObject.name}, Layer: {collision.gameObject.layer}, IgnoreCollisions: {ignoreCollisions}");
+        
         // Ignore collisions during ignore period
         if (ignoreCollisions)
+        {
+            Debug.Log($"[Bullet] Ignoring collision (still in ignore period: {Time.time - spawnTime:F3}s / {collisionIgnoreTime}s)");
             return;
+        }
         
         // Ignore player collisions
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
+        int playerLayer = LayerMask.NameToLayer("Player");
+        if (collision.gameObject.layer == playerLayer)
+        {
+            Debug.Log($"[Bullet] Ignoring player collision: {collision.gameObject.name}");
             return;
+        }
         
         // Ignore other bullets
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Bullet"))
+        int bulletLayer = LayerMask.NameToLayer("Bullet");
+        if (collision.gameObject.layer == bulletLayer)
+        {
+            Debug.Log($"[Bullet] Ignoring bullet collision: {collision.gameObject.name}");
             return;
+        }
+        
+        Debug.Log($"[Bullet] Processing collision with: {collision.gameObject.name} (Layer: {collision.gameObject.layer}) at point: {collision.contacts[0].point}");
+        
+        // Quick check: Is this an enemy?
+        bool isEnemy = collision.gameObject.GetComponent<IDamageable>() != null;
+        if (!isEnemy)
+        {
+            IDamageable parentDamageable = collision.gameObject.GetComponentInParent<IDamageable>();
+            isEnemy = parentDamageable != null;
+        }
+        
+        if (isEnemy)
+        {
+            Debug.Log($"[Bullet] *** ENEMY DETECTED: {collision.gameObject.name} has IDamageable! ***");
+        }
+        else
+        {
+            Debug.LogWarning($"[Bullet] ⚠️ Hit NON-ENEMY object: {collision.gameObject.name}. Bullet will stop here and won't reach enemies behind it!");
+            Debug.LogWarning($"[Bullet] ⚠️ Make sure you're shooting directly at the enemy, not at environment objects in front of it!");
+        }
         
         // Stop bullet immediately - no bouncing
         if (rb != null)
@@ -231,14 +287,25 @@ public class BulletController : MonoBehaviour
     
     void OnTriggerEnter(Collider other)
     {
+        Debug.Log($"[Bullet] OnTriggerEnter called - Object: {other.gameObject.name}, Layer: {other.gameObject.layer}, IgnoreCollisions: {ignoreCollisions}");
+        
         // Only handle triggers if collisions are enabled (after ignore period)
         if (ignoreCollisions)
+        {
+            Debug.Log($"[Bullet] Ignoring trigger (still in ignore period: {Time.time - spawnTime:F3}s / {collisionIgnoreTime}s)");
             return;
+        }
         
         // Ignore player and bullet triggers
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player") || 
-            other.gameObject.layer == LayerMask.NameToLayer("Bullet"))
+        int playerLayer = LayerMask.NameToLayer("Player");
+        int bulletLayer = LayerMask.NameToLayer("Bullet");
+        if (other.gameObject.layer == playerLayer || other.gameObject.layer == bulletLayer)
+        {
+            Debug.Log($"[Bullet] Ignoring trigger from player/bullet: {other.gameObject.name}");
             return;
+        }
+        
+        Debug.Log($"[Bullet] Processing trigger with: {other.gameObject.name} (Layer: {other.gameObject.layer})");
         
         // Stop bullet immediately
         if (rb != null)
@@ -268,17 +335,59 @@ public class BulletController : MonoBehaviour
     
     void HandleHit(GameObject hitObject, Vector3 hitPoint)
     {
-        // Damage system
+        Debug.Log($"[Bullet] HandleHit called - Object: {hitObject.name}, HitPoint: {hitPoint}");
+        Debug.Log($"[Bullet] Searching for IDamageable on: {hitObject.name}");
+        
+        // Damage system - search in hit object AND parent objects
         IDamageable damageable = hitObject.GetComponent<IDamageable>();
+        bool foundOnDirect = damageable != null;
+        
+        if (foundOnDirect)
+        {
+            Debug.Log($"[Bullet] Found IDamageable directly on: {hitObject.name}");
+        }
+        else
+        {
+            Debug.Log($"[Bullet] No IDamageable on {hitObject.name}, searching parent hierarchy...");
+            
+            // If not found on hit object, search parent hierarchy
+            Transform parent = hitObject.transform.parent;
+            int depth = 0;
+            while (parent != null && damageable == null)
+            {
+                depth++;
+                Debug.Log($"[Bullet] Checking parent level {depth}: {parent.name}");
+                damageable = parent.GetComponent<IDamageable>();
+                if (damageable != null)
+                {
+                    Debug.Log($"[Bullet] Found IDamageable on parent level {depth}: {parent.name}");
+                    break;
+                }
+                parent = parent.parent;
+            }
+            
+            if (damageable == null)
+            {
+                Debug.LogWarning($"[Bullet] No IDamageable found on {hitObject.name} or any of its {depth} parent levels!");
+                Debug.LogWarning($"[Bullet] Full hierarchy: {GetGameObjectPath(hitObject)}");
+            }
+        }
+        
         if (damageable != null)
         {
+            Debug.Log($"[Bullet] DEALING {damage} DAMAGE to {hitObject.name} (found via {(foundOnDirect ? "direct" : "parent")})");
             damageable.TakeDamage(damage);
+        }
+        else
+        {
+            Debug.LogWarning($"[Bullet] Cannot deal damage - No IDamageable component found!");
         }
         
         // Penetration logic (only for shotgun pellets)
         if (canPenetrate && penetrationCount < maxPenetrations)
         {
             penetrationCount++;
+            Debug.Log($"[Bullet] Penetration {penetrationCount}/{maxPenetrations} - continuing");
             // Continue traveling - don't destroy yet
             return;
         }
@@ -286,6 +395,18 @@ public class BulletController : MonoBehaviour
         // Regular bullets (non-penetrating) always destroy immediately
         hasHit = true;
         DestroyBullet();
+    }
+    
+    string GetGameObjectPath(GameObject obj)
+    {
+        string path = obj.name;
+        Transform parent = obj.transform.parent;
+        while (parent != null)
+        {
+            path = parent.name + "/" + path;
+            parent = parent.parent;
+        }
+        return path;
     }
     
     void DestroyBullet()
