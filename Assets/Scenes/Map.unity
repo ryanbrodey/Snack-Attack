@@ -824,6 +824,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1107477802}
     - target: {fileID: 4163416030112116313, guid: 33a7d93286031490f84de28a551bb28d, type: 3}
+      propertyPath: debugMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4163416030112116313, guid: 33a7d93286031490f84de28a551bb28d, type: 3}
       propertyPath: shopPanel
       value: 
       objectReference: {fileID: 1467249225}
@@ -839,6 +843,10 @@ PrefabInstance:
       propertyPath: playerPoints
       value: 
       objectReference: {fileID: 1476574466}
+    - target: {fileID: 4163416030112116313, guid: 33a7d93286031490f84de28a551bb28d, type: 3}
+      propertyPath: playerWeaponsController
+      value: 
+      objectReference: {fileID: 1476574464}
     - target: {fileID: 4163416030112116313, guid: 33a7d93286031490f84de28a551bb28d, type: 3}
       propertyPath: optionTexts.Array.data[0]
       value: 
@@ -5059,6 +5067,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8944852672607616376, guid: bba0bbded599d4085b6542556a789a29, type: 3}
   m_PrefabInstance: {fileID: 1202154966686041676}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1476574464 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5098324308118263407, guid: bba0bbded599d4085b6542556a789a29, type: 3}
+  m_PrefabInstance: {fileID: 1202154966686041676}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1476574462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ee9487a51a0d4919be8b5baeb0451e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1476574466
 MonoBehaviour:
   m_ObjectHideFlags: 0
