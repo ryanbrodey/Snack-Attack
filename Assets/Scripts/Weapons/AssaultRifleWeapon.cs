@@ -170,8 +170,9 @@ namespace SnackAttack.Weapons
                 
                 if (CanAttack)
                 {
-                    // Fire a shot
-                    FireBullet();
+                    // Call base.Attack() instead of FireBullet() directly
+                    // This ensures animations are properly triggered
+                    base.Attack();
                 }
                 
                 yield return new WaitForSeconds(fullAutoRate);
@@ -193,10 +194,9 @@ namespace SnackAttack.Weapons
             // Consume ammo
             currentAmmo--;
             
-            // Update attack timing
-            attacking = true;
-            canAttack = false;
-            lastAttackTime = Time.time;
+            // Note: Attack timing is handled by base.StartAttack() when called through base.Attack()
+            // These lines are kept for backwards compatibility if FireBullet() is called directly
+            // (though it should now go through base.Attack() for proper animation support)
             
             // Fire bullet with crosshair aiming
             if (bulletPrefab == null || bulletSpawn == null) 
