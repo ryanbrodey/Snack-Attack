@@ -45,15 +45,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: f494513d99f194dbf91c449ca35c98c3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.88
+      value: 2.1178608
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: f494513d99f194dbf91c449ca35c98c3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: f494513d99f194dbf91c449ca35c98c3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.38
+      value: 0.19997793
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: f494513d99f194dbf91c449ca35c98c3, type: 3}
       propertyPath: m_LocalRotation.w
@@ -173,7 +173,7 @@ MonoBehaviour:
   model: {fileID: 9094780982019503249}
   speedParam: Speed
   inAttackParam: InAttackRange
-  chaseRange: 14
+  chaseRange: 1000
   attackRange: 1.6
   rotationSpeedDegPerSec: 720
   modelYawOffset: -90
