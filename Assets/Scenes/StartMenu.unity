@@ -305,7 +305,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 17
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -361,6 +361,7 @@ GameObject:
   - component: {fileID: 650110324}
   - component: {fileID: 650110323}
   - component: {fileID: 650110322}
+  - component: {fileID: 650110325}
   m_Layer: 5
   m_Name: StartButton
   m_TagString: Untagged
@@ -412,7 +413,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_SelectedColor: {r: 0.6301887, g: 0.6301887, b: 0.6301887, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -470,6 +471,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 650110320}
   m_CullTransparentMesh: 1
+--- !u!114 &650110325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 650110320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47ea591778e75c94b83df285f5a222e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startButton: {fileID: 650110322}
+  initialDelay: 3
+  flashInterval: 0.5
+  flashCount: 3
+  offAlpha: 0
+  keepClickableWhileFlashing: 1
 --- !u!1 &682763400
 GameObject:
   m_ObjectHideFlags: 0
@@ -928,6 +947,7 @@ GameObject:
   - component: {fileID: 1456346215}
   - component: {fileID: 1456346217}
   - component: {fileID: 1456346216}
+  - component: {fileID: 1456346218}
   m_Layer: 5
   m_Name: TitleText
   m_TagString: Untagged
@@ -1051,6 +1071,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1456346214}
   m_CullTransparentMesh: 1
+--- !u!114 &1456346218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1456346214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42c1b566cc5eff242819555fc45d2f23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  delayBeforeFade: 1
+  fadeDuration: 1
 --- !u!1 &1509914481
 GameObject:
   m_ObjectHideFlags: 0

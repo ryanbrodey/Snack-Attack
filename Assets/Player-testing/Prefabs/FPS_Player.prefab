@@ -77,7 +77,7 @@ GameObject:
   - component: {fileID: 3600240296007092923}
   m_Layer: 0
   m_Name: FPS_Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
