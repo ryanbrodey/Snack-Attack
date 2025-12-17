@@ -114,7 +114,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   canPenetrate: 1
-  maxPenetrations: 10
+  maxPenetrations: 1
   collisionIgnoreTime: 0.2
 --- !u!54 &-1486131962282317386
 Rigidbody:
