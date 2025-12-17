@@ -123,6 +123,9 @@ public class Shopkeeper : MonoBehaviour
 
     private void HandleShopInput()
     {
+
+        if (optionTexts == null || optionTexts.Length == 0) return;
+
         // Navigate options with arrow keys
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
@@ -144,12 +147,17 @@ public class Shopkeeper : MonoBehaviour
             UpdatePointsText();
         }
 
-        // Exit shop with P or Escape
-        if (Input.GetKeyDown(interactKey) || Input.GetKeyDown(KeyCode.Escape))
+       
+        // Exit shop with Escape only (prevents instant open+close on the same P press)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             CloseShop();
         }
+
     }
+
+    public Color normalColor = Color.white;
+    public Color selectedColor = Color.yellow;
 
     private void HighlightSelection()
     {
@@ -157,10 +165,8 @@ public class Shopkeeper : MonoBehaviour
         {
             if (optionTexts[i] == null) continue;
 
-            if (i == selectedIndex)
-                optionTexts[i].fontStyle = FontStyles.Bold;
-            else
-                optionTexts[i].fontStyle = FontStyles.Normal;
+            optionTexts[i].color = (i == selectedIndex) ? selectedColor : normalColor;
+            optionTexts[i].fontStyle = FontStyles.Normal;
         }
     }
 
