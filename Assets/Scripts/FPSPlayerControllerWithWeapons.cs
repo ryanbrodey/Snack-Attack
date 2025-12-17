@@ -283,45 +283,62 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     
     void HandleMovement()
     {
-        // Ground check - use CharacterController.isGrounded for more reliable detection
+        // Check if we're on the ground using the CharacterController
         wasGroundedLastFrame = isGrounded;
         isGrounded = characterController.isGrounded;
         
-        // Additional ground check with sphere cast for better reliability
+        // Double check with a sphere cast to make sure we're really grounded
         if (!isGrounded)
         {
             isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckDistance, groundMask);
         }
         
-        // Landing detection
+        // If we just landed, reset jump state and apply small downward force
         if (isGrounded && !wasGroundedLastFrame)
         {
             isJumping = false;
-            velocity.y = -2f; // Small negative value to keep grounded
+            velocity.y = -2f; // keeps us stuck to the ground
+            Debug.Log($"[JUMP DEBUG] Landed! velocity.y set to -2");
         }
         
-        // Jump - only allow jumping when grounded and not already jumping
+        // Handle jump input - can only jump if on ground and not already jumping
         if (jumpPressed && isGrounded && !isJumping)
         {
+            // Calculate jump velocity using physics formula
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             isJumping = true;
-            isGrounded = false; // Immediately set to false to prevent double jumping
-            Debug.Log("Jump executed!");
+            isGrounded = false; // stop double jumps
+            Debug.Log($"[JUMP DEBUG] Jump executed! velocity.y = {velocity.y}, jumpHeight = {jumpHeight}, gravity = {gravity}");
         }
         
-        // Movement
+        // Log velocity every few frames to see what's happening
+        if (Time.frameCount % 30 == 0 && isJumping)
+        {
+            Debug.Log($"[JUMP DEBUG] Mid-jump: velocity.y = {velocity.y}, isGrounded = {isGrounded}, position.y = {transform.position.y}");
+        }
+        
+        // Combine horizontal and vertical movement into one move
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
-        characterController.Move(move * currentSpeed * Time.deltaTime);
+        move = move * currentSpeed;
         
-        // Gravity (only if not grounded or falling)
+        // Apply gravity when in air or moving upward
         if (!isGrounded || velocity.y > 0)
         {
             velocity.y += gravity * Time.deltaTime;
         }
         
-        // Apply vertical movement
-        characterController.Move(velocity * Time.deltaTime);
+        // Add vertical velocity to the movement vector
+        move.y = velocity.y;
+        
+        // Apply the combined movement in one go
+        characterController.Move(move * Time.deltaTime);
+        
+        // Debug what happened after the move
+        if (jumpPressed)
+        {
+            Debug.Log($"[JUMP DEBUG] After Move: move.y = {move.y}, velocity.y = {velocity.y}, actual Y = {transform.position.y}");
+        }
     }
     
     void HandleMouseLook()
