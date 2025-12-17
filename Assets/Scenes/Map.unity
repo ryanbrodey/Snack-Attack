@@ -7022,6 +7022,10 @@ PrefabInstance:
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5098324308118263407, guid: bba0bbded599d4085b6542556a789a29, type: 3}
+      propertyPath: jumpHeight
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5098324308118263407, guid: bba0bbded599d4085b6542556a789a29, type: 3}
       propertyPath: enableCrosshair
       value: 0
       objectReference: {fileID: 0}
@@ -7166,6 +7170,10 @@ PrefabInstance:
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6227990080510115811, guid: bba0bbded599d4085b6542556a789a29, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6227990080510115811, guid: bba0bbded599d4085b6542556a789a29, type: 3}
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
@@ -7195,7 +7203,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6441408537435984893, guid: bba0bbded599d4085b6542556a789a29, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6442295067127055258, guid: bba0bbded599d4085b6542556a789a29, type: 3}
       propertyPath: m_Layer
