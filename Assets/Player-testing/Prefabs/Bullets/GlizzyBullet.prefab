@@ -155,4 +155,4 @@ MonoBehaviour:
     m_Bits: 4294967295
   canPenetrate: 0
   maxPenetrations: 1
-  collisionIgnoreTime: 0.1
+  collisionIgnoreTime: 0.2

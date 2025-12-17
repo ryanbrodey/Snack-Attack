@@ -45,10 +45,12 @@ public class BulletController : MonoBehaviour
             rb.angularDrag = 0f;
             rb.mass = 0.01f; // Very light mass to prevent physics interactions
             rb.interpolation = RigidbodyInterpolation.Interpolate; // Smooth movement
-            rb.collisionDetectionMode = CollisionDetectionMode.Continuous; // Better collision detection for fast bullets
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic; // Better collision detection for fast bullets
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             rb.constraints = RigidbodyConstraints.FreezeRotation; // Only freeze rotation
+            
+            Debug.Log($"[Bullet] Physics setup - CollisionDetectionMode: {rb.collisionDetectionMode}, Layer: {gameObject.layer}");
         }
         
         // Set collider to trigger during ignore period to prevent physics interactions
@@ -59,16 +61,26 @@ public class BulletController : MonoBehaviour
             // Remove any physics material that might cause bouncing
             if (col is SphereCollider)
             {
-                ((SphereCollider)col).material = null;
+                SphereCollider sphereCol = (SphereCollider)col;
+                sphereCol.material = null;
+                Debug.Log($"[Bullet] SphereCollider - Radius: {sphereCol.radius}, IsTrigger: {col.isTrigger}, Layer: {gameObject.layer}");
             }
             else if (col is BoxCollider)
             {
-                ((BoxCollider)col).material = null;
+                BoxCollider boxCol = (BoxCollider)col;
+                boxCol.material = null;
+                Debug.Log($"[Bullet] BoxCollider - Size: {boxCol.size}, IsTrigger: {col.isTrigger}, Layer: {gameObject.layer}");
             }
             else if (col is CapsuleCollider)
             {
-                ((CapsuleCollider)col).material = null;
+                CapsuleCollider capCol = (CapsuleCollider)col;
+                capCol.material = null;
+                Debug.Log($"[Bullet] CapsuleCollider - Radius: {capCol.radius}, Height: {capCol.height}, IsTrigger: {col.isTrigger}, Layer: {gameObject.layer}");
             }
+        }
+        else
+        {
+            Debug.LogError("[Bullet] No Collider component found on bullet! Bullets will not detect collisions!");
         }
     }
     
