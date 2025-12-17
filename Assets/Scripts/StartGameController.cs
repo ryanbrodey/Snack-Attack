@@ -4,15 +4,15 @@ using UnityEngine.SceneManagement;
 public class StartGameController : MonoBehaviour
 {
     [Header("Assign in Inspector")]
-    public GameObject startMenuCanvas;    // Start menu UI
-    public Camera startMenuCamera;         // MenuCam
-    public Camera startMenuMainCamera;     // Wall-facing camera
+    public GameObject startMenuCanvas;
+    public Camera startMenuCamera;        // MenuCam (blur)
+    public Camera startMenuMainCamera;    // Wall-facing camera
 
-    GameObject player;
+    private GameObject player;
 
     void Start()
     {
-        // Get the Map scene (it is already loaded additively)
+        // Find inactive player in Map scene
         Scene mapScene = SceneManager.GetSceneByName("Map");
 
         if (!mapScene.isLoaded)
@@ -21,7 +21,6 @@ public class StartGameController : MonoBehaviour
             return;
         }
 
-        // Find the player EVEN IF IT IS INACTIVE
         foreach (GameObject obj in mapScene.GetRootGameObjects())
         {
             if (obj.CompareTag("Player"))
@@ -37,26 +36,54 @@ public class StartGameController : MonoBehaviour
             return;
         }
 
-        // Make sure player starts OFF
+        // Ensure player starts OFF
         player.SetActive(false);
     }
 
-    // Called when Start button is pressed
+    // Called by Start button
     public void StartGame()
     {
         // Hide menu UI
         if (startMenuCanvas != null)
             startMenuCanvas.SetActive(false);
 
-        // Turn off BOTH StartMenu cameras
+        // Disable BOTH menu cameras
         if (startMenuCamera != null)
             startMenuCamera.enabled = false;
 
         if (startMenuMainCamera != null)
             startMenuMainCamera.enabled = false;
 
-        // Turn on the player (activates its camera)
+        // Activate player
         if (player != null)
             player.SetActive(true);
+
+        // 🔥 START ALL ENEMY SPAWNERS 🔥
+        Scene spawnerScene = SceneManager.GetSceneByName("Spawners");
+
+        if (spawnerScene.isLoaded)
+        {
+            foreach (GameObject obj in spawnerScene.GetRootGameObjects())
+            {
+                EnemySpawner spawner = obj.GetComponent<EnemySpawner>();
+                if (spawner != null)
+                {
+                    spawner.StartSpawning();
+                }
+
+                // ⭐ NEW: Trigger round UI (SAFE ADDITION)
+                RoundUIController roundUI =
+                    obj.GetComponentInChildren<RoundUIController>();
+
+                if (roundUI != null)
+                {
+                    roundUI.PlayRoundIntro(1);
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Spawners scene is not loaded.");
+        }
     }
 }
