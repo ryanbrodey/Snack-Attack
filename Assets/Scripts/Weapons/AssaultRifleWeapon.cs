@@ -194,6 +194,8 @@ namespace SnackAttack.Weapons
             // Consume ammo
             currentAmmo--;
             
+            Debug.Log($"[AssaultRifle] FireBullet called - Ammo: {currentAmmo}/{maxAmmo}, BulletPrefab: {(bulletPrefab != null ? bulletPrefab.name : "NULL")}, BulletSpawn: {(bulletSpawn != null ? "Found" : "NULL")}");
+            
             // Note: Attack timing is handled by base.StartAttack() when called through base.Attack()
             // These lines are kept for backwards compatibility if FireBullet() is called directly
             // (though it should now go through base.Attack() for proper animation support)
@@ -225,15 +227,21 @@ namespace SnackAttack.Weapons
             Vector3 spawnPosition = bulletSpawn.position;
             Vector3 aimDirection = playerCamera.transform.forward; // Crosshair direction
             
+            Debug.Log($"[AssaultRifle] Spawning bullet at {spawnPosition}, direction: {aimDirection}, speed: {bulletSpeed}");
+            
             GameObject bulletObj = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
+            
+            Debug.Log($"[AssaultRifle] Bullet instantiated: {bulletObj.name}, Position: {bulletObj.transform.position}, Has BulletController: {(bulletObj.GetComponent<BulletController>() != null ? "YES" : "NO")}");
             
             BulletController bulletScript = bulletObj.GetComponent<BulletController>();
             if (bulletScript != null)
             {
+                Debug.Log($"[AssaultRifle] BulletController found, initializing with damage: {bulletScript.damage}");
                 bulletScript.Initialize(aimDirection, spawnPosition, bulletSpeed);
             }
             else
             {
+                Debug.LogWarning($"[AssaultRifle] No BulletController found! Using fallback Rigidbody.");
                 // Fallback
                 Rigidbody rb = bulletObj.GetComponent<Rigidbody>();
                 if (rb != null)
