@@ -1,11 +1,16 @@
 using System.Collections;
 using UnityEngine;
+using SnackAttack.Player; 
+
 
 namespace SnackAttack.Weapons
 {
     // Shotgun weapon - fires multiple pellets with spread pattern
     public class PopcornLauncherWeapon : BaseWeapon
     {
+        [Header("Stats")]
+        public WeaponStats weaponStats;
+
         [Header("Shotgun Settings")]
         public Transform bulletSpawn;
         public GameObject pelletPrefab; // Renamed from bulletPrefab
@@ -60,7 +65,11 @@ namespace SnackAttack.Weapons
         protected override void Start()
         {
             base.Start();
-            
+
+            if (weaponStats == null)
+                weaponStats = FindObjectOfType<WeaponStats>();
+
+
             // Auto-find bullet spawn if not assigned
             if (bulletSpawn == null)
             {
@@ -131,6 +140,10 @@ namespace SnackAttack.Weapons
         
         private void FireShotgunBlast()
         {
+            if (weaponStats != null)
+                pelletDamage = weaponStats.shotgunDamage;
+
+
             if (pelletPrefab == null || bulletSpawn == null) 
             {
                 Debug.LogWarning("Shotgun: Missing pellet prefab or spawn point");

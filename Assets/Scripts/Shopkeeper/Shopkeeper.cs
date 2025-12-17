@@ -5,6 +5,12 @@ using SnackAttack.Player;   // for WeaponManager
 
 public class Shopkeeper : MonoBehaviour
 {
+
+    [Header("Debug")]
+    public bool debugMode = true;
+    public int debugAddPointsAmount = 5000;
+    public KeyCode debugAddPointsKey = KeyCode.K; // press K to add points
+
     [Header("Player & Distance")]
     public Transform player;          // this is the player transform
     public float interactionRadius = 3f;
@@ -30,6 +36,8 @@ public class Shopkeeper : MonoBehaviour
     public PlayerPoints playerPoints;     // holds current points
     public WeaponStats weaponStats;       // holds damage values
     public WeaponManager weaponManager;   // unlocks/handles weapons
+    public FPSPlayerControllerWithWeapons playerWeaponsController;
+
 
     [Header("Audio")]
     public AudioSource audioSource;
@@ -39,10 +47,17 @@ public class Shopkeeper : MonoBehaviour
     private bool isShopOpen = false;
     private int selectedIndex = 0;
 
+    private bool rifleUnlockedTest = false;
+    private bool shotgunUnlockedTest = false;
+
+
     private void Start()
     {
         if (promptUI != null) promptUI.SetActive(false);
         if (shopPanel != null) shopPanel.SetActive(false);
+
+        if (playerWeaponsController == null && player != null)
+            playerWeaponsController = player.GetComponent<FPSPlayerControllerWithWeapons>();
 
         // Ensure we have an AudioSource
         if (audioSource == null)
@@ -60,6 +75,14 @@ public class Shopkeeper : MonoBehaviour
     private void Update()
     {
         CheckDistance();
+
+        if (debugMode && playerPoints != null && Input.GetKeyDown(debugAddPointsKey))
+        {
+            playerPoints.points += debugAddPointsAmount;
+            Debug.Log($"[Shopkeeper DEBUG] Added {debugAddPointsAmount} points. Total: {playerPoints.points}");
+            UpdatePointsText();
+        }
+
 
         if (!isShopOpen && isPlayerInRange)
         {
@@ -145,9 +168,11 @@ public class Shopkeeper : MonoBehaviour
         {
             TryPurchase(selectedIndex);
             UpdatePointsText();
+            UpdateOptionTexts();
+            HighlightSelection();
         }
 
-       
+
         // Exit shop with Escape only (prevents instant open+close on the same P press)
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -161,11 +186,18 @@ public class Shopkeeper : MonoBehaviour
 
     private void HighlightSelection()
     {
+        bool rifleOwned = playerWeaponsController != null && playerWeaponsController.rifleUnlocked;
+        bool shotgunOwned = playerWeaponsController != null && playerWeaponsController.shotgunUnlocked;
+
         for (int i = 0; i < optionTexts.Length; i++)
         {
             if (optionTexts[i] == null) continue;
 
-            optionTexts[i].color = (i == selectedIndex) ? selectedColor : normalColor;
+            bool disabled =
+                (i == 0 && rifleOwned) ||
+                (i == 1 && shotgunOwned);
+
+            optionTexts[i].color = disabled ? Color.gray : (i == selectedIndex ? selectedColor : normalColor);
             optionTexts[i].fontStyle = FontStyles.Normal;
         }
     }
@@ -180,11 +212,18 @@ public class Shopkeeper : MonoBehaviour
 
     private void UpdateOptionTexts()
     {
+        bool rifleOwned = playerWeaponsController != null && playerWeaponsController.rifleUnlocked;
+        bool shotgunOwned = playerWeaponsController != null && playerWeaponsController.shotgunUnlocked;
+
         if (optionTexts.Length > 0 && optionTexts[0] != null)
-            optionTexts[0].text = $"Buy Glizzy Rifle - {glizzyRifleCost} pts";
+            optionTexts[0].text = rifleOwned
+                ? "Glizzy Rifle - OWNED"
+                : $"Buy Glizzy Rifle - {glizzyRifleCost} pts";
 
         if (optionTexts.Length > 1 && optionTexts[1] != null)
-            optionTexts[1].text = $"Buy Shotgun - {shotgunCost} pts";
+            optionTexts[1].text = shotgunOwned
+                ? "Shotgun - OWNED"
+                : $"Buy Shotgun - {shotgunCost} pts";
 
         if (optionTexts.Length > 2 && optionTexts[2] != null)
             optionTexts[2].text = $"Upgrade Pistol Damage - {pistolUpgradeCost} pts";
@@ -196,82 +235,81 @@ public class Shopkeeper : MonoBehaviour
             optionTexts[4].text = $"Upgrade Rifle Damage - {rifleUpgradeCost} pts";
     }
 
+
     private void TryPurchase(int index)
     {
-        if (playerPoints == null || weaponStats == null) return;
+        if (playerPoints == null)
+        {
+            Debug.LogError("[Shopkeeper] PlayerPoints not assigned.");
+            return;
+        }
+
+        bool Spend(int cost)
+        {
+            if (playerPoints.points < cost)
+            {
+                Debug.Log("Not enough points.");
+                return false;
+            }
+            playerPoints.points -= cost;
+            return true;
+        }
 
         switch (index)
         {
             case 0: // Glizzy Rifle
-                if (playerPoints.points >= glizzyRifleCost)
                 {
-                    playerPoints.points -= glizzyRifleCost;
+                    if (playerWeaponsController != null && playerWeaponsController.rifleUnlocked)
+                    {
+                        Debug.Log("Rifle already owned.");
+                        return;
+                    }
+                    if (!Spend(glizzyRifleCost)) return;
 
-                    if (weaponManager != null)
-                        weaponManager.UnlockRifle();
+                    if (playerWeaponsController != null)
+                        playerWeaponsController.UnlockRifle();
 
                     Debug.Log("Purchased Glizzy Rifle!");
+                    break;
                 }
-                else
-                {
-                    Debug.Log("Not enough points for Glizzy Rifle.");
-                }
-                break;
 
             case 1: // Shotgun
-                if (playerPoints.points >= shotgunCost)
                 {
-                    playerPoints.points -= shotgunCost;
+                    if (playerWeaponsController != null && playerWeaponsController.shotgunUnlocked)
+                    {
+                        Debug.Log("Shotgun already owned.");
+                        return;
+                    }
+                    if (!Spend(shotgunCost)) return;
 
-                    if (weaponManager != null)
-                        weaponManager.UnlockShotgun();
+                    if (playerWeaponsController != null)
+                        playerWeaponsController.UnlockShotgun();
 
                     Debug.Log("Purchased Shotgun!");
+                    break;
                 }
-                else
-                {
-                    Debug.Log("Not enough points for Shotgun.");
-                }
+
+            case 2: // Pistol upgrade
+                if (weaponStats == null) { Debug.LogWarning("[Shopkeeper] WeaponStats not assigned."); return; }
+                if (!Spend(pistolUpgradeCost)) return;
+                weaponStats.UpgradePistol();
+                Debug.Log("Upgraded Pistol Damage to: " + weaponStats.pistolDamage);
                 break;
 
-            case 2: // Pistol damage upgrade
-                if (playerPoints.points >= pistolUpgradeCost)
-                {
-                    playerPoints.points -= pistolUpgradeCost;
-                    weaponStats.UpgradePistol();
-                    Debug.Log("Upgraded Pistol Damage to: " + weaponStats.pistolDamage);
-                }
-                else
-                {
-                    Debug.Log("Not enough points for Pistol upgrade.");
-                }
+            case 3: // Shotgun upgrade
+                if (weaponStats == null) { Debug.LogWarning("[Shopkeeper] WeaponStats not assigned."); return; }
+                if (!Spend(shotgunUpgradeCost)) return;
+                weaponStats.UpgradeShotgun();
+                Debug.Log("Upgraded Shotgun Damage to: " + weaponStats.shotgunDamage);
                 break;
 
-            case 3: // Shotgun damage upgrade
-                if (playerPoints.points >= shotgunUpgradeCost)
-                {
-                    playerPoints.points -= shotgunUpgradeCost;
-                    weaponStats.UpgradeShotgun();
-                    Debug.Log("Upgraded Shotgun Damage to: " + weaponStats.shotgunDamage);
-                }
-                else
-                {
-                    Debug.Log("Not enough points for Shotgun upgrade.");
-                }
-                break;
-
-            case 4: // Rifle damage upgrade
-                if (playerPoints.points >= rifleUpgradeCost)
-                {
-                    playerPoints.points -= rifleUpgradeCost;
-                    weaponStats.UpgradeRifle();
-                    Debug.Log("Upgraded Rifle Damage to: " + weaponStats.rifleDamage);
-                }
-                else
-                {
-                    Debug.Log("Not enough points for Rifle upgrade.");
-                }
+            case 4: // Rifle upgrade
+                if (weaponStats == null) { Debug.LogWarning("[Shopkeeper] WeaponStats not assigned."); return; }
+                if (!Spend(rifleUpgradeCost)) return;
+                weaponStats.UpgradeRifle();
+                Debug.Log("Upgraded Rifle Damage to: " + weaponStats.rifleDamage);
                 break;
         }
     }
+
 }

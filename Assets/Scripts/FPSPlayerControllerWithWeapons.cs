@@ -45,7 +45,11 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     [Header("Weapon System")]
     public BaseWeapon[] weapons;
     public int currentWeaponIdx = 0;
-    
+    public bool pistolUnlocked = true;
+    public bool rifleUnlocked = false;
+    public bool shotgunUnlocked = false;
+
+
     [Header("Weapon Controls")]
     public KeyCode semiAutoKey = KeyCode.F;
     public KeyCode fullAutoKey = KeyCode.G;
@@ -280,7 +284,29 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             }
         }
     }
-    
+
+    public bool IsWeaponUnlocked(int idx)
+    {
+        // idx: 0=pistol, 1=rifle, 2=shotgun (matches your armModels array)
+        if (idx == 0) return pistolUnlocked;
+        if (idx == 1) return rifleUnlocked;
+        if (idx == 2) return shotgunUnlocked;
+        return true; // any extra weapons default unlocked
+    }
+
+    public void UnlockRifle()
+    {
+        rifleUnlocked = true;
+        Debug.Log("[FPSPlayerControllerWithWeapons] Rifle unlocked!");
+    }
+
+    public void UnlockShotgun()
+    {
+        shotgunUnlocked = true;
+        Debug.Log("[FPSPlayerControllerWithWeapons] Shotgun unlocked!");
+    }
+
+
     void HandleMovement()
     {
         // Ground check - use CharacterController.isGrounded for more reliable detection
@@ -411,7 +437,7 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         // Setup crosshair
         SetupCrosshair();
     }
-    
+
     public void SwitchToWeapon(int idx)
     {
         if (weapons == null || idx < 0 || idx >= weapons.Length || weapons[idx] == null)
@@ -419,8 +445,13 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             Debug.LogWarning($"Invalid weapon index {idx}");
             return;
         }
-        
-        Debug.Log($"Switching to weapon {idx + 1}: {weapons[idx].WeaponName}");
+
+        if (!IsWeaponUnlocked(idx))
+        {
+            Debug.Log($"Weapon {idx + 1} is LOCKED. Buy it from the shopkeeper.");
+            return;
+        }
+
         
         // Deactivate ALL arm models
         if (pistolArmsModel != null) pistolArmsModel.SetActive(false);

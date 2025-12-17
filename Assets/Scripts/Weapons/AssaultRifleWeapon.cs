@@ -1,11 +1,16 @@
 using System.Collections;
 using UnityEngine;
+using SnackAttack.Player; 
+
 
 namespace SnackAttack.Weapons
 {
     // Assault rifle weapon - semi-auto (F) and full-auto (G) modes
     public class AssaultRifleWeapon : BaseWeapon
     {
+        [Header("Stats")]
+        public WeaponStats weaponStats;
+
         [Header("Assault Rifle Settings")]
         public Transform bulletSpawn;
         public GameObject bulletPrefab;
@@ -60,7 +65,9 @@ namespace SnackAttack.Weapons
         protected override void Start()
         {
             base.Start();
-            
+            if (weaponStats == null)
+                weaponStats = FindObjectOfType<WeaponStats>();
+
             // Auto-find bullet spawn if not assigned
             if (bulletSpawn == null)
             {
@@ -184,7 +191,10 @@ namespace SnackAttack.Weapons
         protected override void PerformAttack()
         {
             FireBullet();
-            
+
+            if (weaponStats != null) dmg = weaponStats.rifleDamage;
+
+
             // Complete attack quickly for rapid fire
             StartCoroutine(CompleteAttackAfterAnimation());
         }
