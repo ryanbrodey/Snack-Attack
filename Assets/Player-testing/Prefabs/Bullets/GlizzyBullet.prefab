@@ -149,7 +149,7 @@ MonoBehaviour:
   speed: 50
   damage: 50
   lifetime: 5
-  maxRange: 150
+  maxRange: 250
   hitLayers:
     serializedVersion: 2
     m_Bits: 4294967295
