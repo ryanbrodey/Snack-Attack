@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class StartButtonFlash : MonoBehaviour
 {
@@ -8,12 +7,11 @@ public class StartButtonFlash : MonoBehaviour
     public Button startButton;
 
     [Header("Timing")]
-    public float initialDelay = 3f;
+    public float initialDelay = 5f;
     public float flashInterval = 0.5f;
-    public int flashCount = 3;  // Number of times to flash
 
     [Header("Flash look")]
-    [Range(0f, 1f)] public float offAlpha = 0f;   // 0 = invisible, try 0.3 for "pulse"
+    [Range(0f, 1f)] public float offAlpha = 0f;   // 0 = invisible, try 0.3 for “pulse”
     public bool keepClickableWhileFlashing = true;
 
     CanvasGroup cg;
@@ -31,7 +29,7 @@ public class StartButtonFlash : MonoBehaviour
         if (cg == null) cg = startButton.gameObject.AddComponent<CanvasGroup>();
     }
 
-    IEnumerator Start()
+    System.Collections.IEnumerator Start()
     {
         // Hide initially
         SetVisible(false);
@@ -39,20 +37,15 @@ public class StartButtonFlash : MonoBehaviour
         // Wait before showing
         yield return new WaitForSeconds(initialDelay);
 
-        // Flash the button the specified number of times
-        for (int i = 0; i < flashCount; i++)
+        // Show, then flash
+        SetVisible(true);
+
+        while (true)
         {
-            // Flash ON
-            cg.alpha = 1f;
-            yield return new WaitForSeconds(flashInterval);
-            
-            // Flash OFF
-            cg.alpha = offAlpha;
+            // Toggle alpha
+            cg.alpha = (cg.alpha > 0.9f) ? offAlpha : 1f;
             yield return new WaitForSeconds(flashInterval);
         }
-
-        // After flashing, make button fully visible and stay visible
-        SetVisible(true);
     }
 
     void SetVisible(bool visible)
