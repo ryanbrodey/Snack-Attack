@@ -1,42 +1,62 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class StartGameController : MonoBehaviour
 {
-    [Header("Start Menu Objects")]
-    public Canvas startMenuCanvas;
-    public Camera startMenuCamera;
-
-    [Header("Player")]
-    public string playerTag = "Player";
+    [Header("Assign in Inspector")]
+    public GameObject startMenuCanvas;    // Start menu UI
+    public Camera startMenuCamera;         // MenuCam
+    public Camera startMenuMainCamera;     // Wall-facing camera
 
     GameObject player;
 
     void Start()
     {
-        // Player starts disabled
-        player = GameObject.FindGameObjectWithTag(playerTag);
-        if (player != null)
-            player.SetActive(false);
+        // Get the Map scene (it is already loaded additively)
+        Scene mapScene = SceneManager.GetSceneByName("Map");
+
+        if (!mapScene.isLoaded)
+        {
+            Debug.LogError("Map scene is not loaded!");
+            return;
+        }
+
+        // Find the player EVEN IF IT IS INACTIVE
+        foreach (GameObject obj in mapScene.GetRootGameObjects())
+        {
+            if (obj.CompareTag("Player"))
+            {
+                player = obj;
+                break;
+            }
+        }
+
+        if (player == null)
+        {
+            Debug.LogError("Player not found in Map scene.");
+            return;
+        }
+
+        // Make sure player starts OFF
+        player.SetActive(false);
     }
 
+    // Called when Start button is pressed
     public void StartGame()
     {
-        // Enable player (activates player camera)
-        if (player == null)
-            player = GameObject.FindGameObjectWithTag(playerTag);
+        // Hide menu UI
+        if (startMenuCanvas != null)
+            startMenuCanvas.SetActive(false);
 
+        // Turn off BOTH StartMenu cameras
+        if (startMenuCamera != null)
+            startMenuCamera.enabled = false;
+
+        if (startMenuMainCamera != null)
+            startMenuMainCamera.enabled = false;
+
+        // Turn on the player (activates its camera)
         if (player != null)
             player.SetActive(true);
-
-        // Disable start menu visuals
-        if (startMenuCanvas != null)
-            startMenuCanvas.enabled = false;
-
-        if (startMenuCamera != null)
-            startMenuCamera.gameObject.SetActive(false);
-
-        // Optional: unlock mouse if needed
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 }
