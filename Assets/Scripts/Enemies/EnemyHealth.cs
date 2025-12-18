@@ -4,10 +4,6 @@ using UnityEngine;
 /// Reusable health component for any enemy (Kiwi, Egg, Chili, etc.).
 /// Attach this to the root GameObject that should take damage.
 /// Works with existing weapons that call IDamageable.TakeDamage().
-///
-/// NOTE:
-/// This implements the global IDamageable interface defined in the
-/// Player-testing scripts, which is the one used by BulletController.
 /// </summary>
 public class EnemyHealth : MonoBehaviour, IDamageable
 {
@@ -16,17 +12,15 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [SerializeField] private float currentHealth;
 
     [Header("Death Behaviour")]
-    [Tooltip("If true, the GameObject will be destroyed on death. If false, it will just be disabled.")]
     [SerializeField] private bool destroyOnDeath = true;
-
-    [Tooltip("Optional death effect (e.g. particle system prefab) spawned at the enemy's position on death.")]
     [SerializeField] private GameObject deathVFX;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip hitSound;
+    [SerializeField] private AudioClip deathSound;
+
     [Header("Point Rewards")]
-    [Tooltip("Fixed points awarded per hit (regardless of damage amount, set to 0 to disable damage rewards)")]
     [SerializeField] private int pointsPerHit = 1;
-    
-    [Tooltip("Bonus points awarded on kill")]
     [SerializeField] private int killBonusPoints = 50;
 
     public float Health => currentHealth;
@@ -34,35 +28,37 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public bool IsAlive => currentHealth > 0f;
 
     private PlayerPoints playerPoints;
+    private AudioSource audioSource;
 
     private void Awake()
     {
-        // Start at full health
         currentHealth = maxHealth;
-        
-        // Find PlayerPoints in the scene
+
+        Debug.Log($"[EnemyHealth] {name} initialized with {maxHealth} HP");
+
         FindPlayerPoints();
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 0f; // 2D audio
+            Debug.Log($"[EnemyHealth] AudioSource added to {name}");
+        }
     }
 
     private void FindPlayerPoints()
     {
-        // Try to find PlayerPoints on the player
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
-        {
             playerPoints = player.GetComponent<PlayerPoints>();
-        }
-        
-        // Fallback: search entire scene
-        if (playerPoints == null)
-        {
-            playerPoints = FindObjectOfType<PlayerPoints>();
-        }
 
         if (playerPoints == null)
-        {
-            Debug.LogWarning($"[EnemyHealth] PlayerPoints not found! Points will not be awarded for {gameObject.name}");
-        }
+            playerPoints = FindObjectOfType<PlayerPoints>();
+
+        if (playerPoints == null)
+            Debug.LogWarning($"[EnemyHealth] PlayerPoints NOT FOUND for {name}");
     }
 
     /// <summary>
@@ -70,7 +66,13 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     /// </summary>
     public void TakeDamage(float damage)
     {
-        if (!IsAlive) return;
+        Debug.Log($"[EnemyHealth] {name} TakeDamage called with {damage}");
+
+        if (!IsAlive)
+        {
+            Debug.Log($"[EnemyHealth] {name} already dead, ignoring damage");
+            return;
+        }
 
         float previousHealth = currentHealth;
         currentHealth -= damage;
@@ -78,13 +80,27 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         float actualDamage = previousHealth - currentHealth;
 
-        Debug.Log($"{name} took {damage} damage. Health: {currentHealth}/{maxHealth}");
+        Debug.Log($"[EnemyHealth] {name} HIT! Took {actualDamage} damage. HP now {currentHealth}/{maxHealth}");
 
-        // Award points for hitting enemy (if enabled) - fixed amount per hit
+        // 🔊 HIT SOUND
+        if (actualDamage > 0f)
+        {
+            if (hitSound != null)
+            {
+                audioSource.PlayOneShot(hitSound);
+                Debug.Log($"[EnemyHealth] Hit sound played on {name}");
+            }
+            else
+            {
+                Debug.LogWarning($"[EnemyHealth] Hit sound is NULL on {name}");
+            }
+        }
+
+        // 🎯 POINTS
         if (playerPoints != null && actualDamage > 0 && pointsPerHit > 0)
         {
             playerPoints.points += pointsPerHit;
-            Debug.Log($"[Points] Awarded {pointsPerHit} points for hitting {name}");
+            Debug.Log($"[EnemyHealth] Awarded {pointsPerHit} hit points for {name}");
         }
 
         if (!IsAlive)
@@ -93,43 +109,51 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         }
     }
 
-    /// <summary>
-    /// Handles enemy death (VFX, disabling/destroying, and any hooks).
-    /// </summary>
     private void Die()
     {
-        // Award kill bonus points
+        Debug.Log($"[EnemyHealth] {name} DIED");
+
+        // 🏆 KILL POINTS
         if (playerPoints != null && killBonusPoints > 0)
         {
             playerPoints.points += killBonusPoints;
-            Debug.Log($"[Points] Awarded {killBonusPoints} bonus points for killing {name}");
+            Debug.Log($"[EnemyHealth] Awarded {killBonusPoints} kill points for {name}");
         }
 
-        // Spawn death VFX if assigned
-        if (deathVFX != null)
+        // 🔊 DEATH SOUND
+        if (deathSound != null)
         {
-            Instantiate(deathVFX, transform.position, Quaternion.identity);
-        }
-
-        // TODO: Hook into score / wave systems here if needed (e.g. notify a spawner).
-
-        if (destroyOnDeath)
-        {
-            Destroy(gameObject);
+            audioSource.PlayOneShot(deathSound);
+            Debug.Log($"[EnemyHealth] Death sound played on {name}");
         }
         else
         {
+            Debug.LogWarning($"[EnemyHealth] Death sound is NULL on {name}");
+        }
+
+        // 💥 VFX
+        if (deathVFX != null)
+        {
+            Instantiate(deathVFX, transform.position, Quaternion.identity);
+            Debug.Log($"[EnemyHealth] Death VFX spawned for {name}");
+        }
+
+        if (destroyOnDeath)
+        {
+            Debug.Log($"[EnemyHealth] Destroying {name}");
+            Destroy(gameObject, 0.05f);
+        }
+        else
+        {
+            Debug.Log($"[EnemyHealth] Disabling {name}");
             gameObject.SetActive(false);
         }
     }
 
-    /// <summary>
-    /// Optional helper to fully heal and re-enable the enemy (useful for pooling).
-    /// </summary>
     public void ResetHealth()
     {
         currentHealth = maxHealth;
-        if (!gameObject.activeSelf)
-            gameObject.SetActive(true);
+        gameObject.SetActive(true);
+        Debug.Log($"[EnemyHealth] {name} health reset to {maxHealth}");
     }
 }

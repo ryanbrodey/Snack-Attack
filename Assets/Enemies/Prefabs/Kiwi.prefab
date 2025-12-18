@@ -162,6 +162,10 @@ MonoBehaviour:
   currentHealth: 0
   destroyOnDeath: 1
   deathVFX: {fileID: 0}
+  hitSound: {fileID: 8300000, guid: 50561d0c98c9b1e438c40980dbc9bd3f, type: 3}
+  deathSound: {fileID: 8300000, guid: 50561d0c98c9b1e438c40980dbc9bd3f, type: 3}
+  pointsPerHit: 1
+  killBonusPoints: 50
 --- !u!114 &5533022319110816906
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -341,6 +341,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100000, guid: 0b9f20f2dc04f4b1b98f92fb30fd0393, type: 3}
       insertIndex: -1
       addedObject: {fileID: -706189708014737570}
+    - targetCorrespondingSourceObject: {fileID: 100000, guid: 0b9f20f2dc04f4b1b98f92fb30fd0393, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8139128331562124328}
   m_SourcePrefab: {fileID: 100100000, guid: 0b9f20f2dc04f4b1b98f92fb30fd0393, type: 3}
 --- !u!95 &5692911633981428663 stripped
 Animator:
@@ -435,6 +438,8 @@ MonoBehaviour:
   currentHealth: 10
   destroyOnDeath: 1
   deathVFX: {fileID: 0}
+  hitSound: {fileID: 8300000, guid: 50561d0c98c9b1e438c40980dbc9bd3f, type: 3}
+  deathSound: {fileID: 8300000, guid: 50561d0c98c9b1e438c40980dbc9bd3f, type: 3}
   pointsPerHit: 1
   killBonusPoints: 50
 --- !u!114 &-706189708014737570
@@ -449,3 +454,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15923e8d659aabf42983485f07faa23d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!136 &8139128331562124328
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5692911633990918263}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}

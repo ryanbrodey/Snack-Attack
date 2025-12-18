@@ -253,7 +253,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 661207714}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &661207716
 Camera:
   m_ObjectHideFlags: 0
@@ -465,6 +465,8 @@ MonoBehaviour:
   currentHealth: 0
   destroyOnDeath: 1
   deathVFX: {fileID: 0}
+  hitSound: {fileID: 0}
+  deathSound: {fileID: 0}
   pointsPerHit: 1
   killBonusPoints: 50
 --- !u!114 &1387923114 stripped
