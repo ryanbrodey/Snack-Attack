@@ -113,6 +113,14 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         Debug.Log($"[EnemyHealth] {name} DIED");
 
+        // 💀 DEATH ANIMATION
+        Animator animator = GetComponent<Animator>();
+        if (animator != null)
+        {
+            animator.SetTrigger("Die");
+            Debug.Log($"[EnemyHealth] Death animation triggered on {name}");
+        }
+
         // 🏆 KILL POINTS
         if (playerPoints != null && killBonusPoints > 0)
         {
@@ -141,7 +149,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (destroyOnDeath)
         {
             Debug.Log($"[EnemyHealth] Destroying {name}");
-            Destroy(gameObject, 0.05f);
+            Destroy(gameObject, 2f); // wait for death animation to play
         }
         else
         {
