@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 50
-  damage: 50
+  damage: 150
   lifetime: 5
   maxRange: 250
   hitLayers:

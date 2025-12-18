@@ -141,13 +141,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3129898589407883480}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 810de3ad1883847a7a3ac5af2753ef2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 50
-  damage: 15
+  damage: 100
   lifetime: 5
   maxRange: 150
   hitLayers:
