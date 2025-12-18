@@ -26,7 +26,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: fd3ed1d29d9da4d6c83f004cbebe2214, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -13.12
+      value: -13.13
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: fd3ed1d29d9da4d6c83f004cbebe2214, type: 3}
       propertyPath: m_LocalPosition.y
@@ -34,7 +34,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: fd3ed1d29d9da4d6c83f004cbebe2214, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -47.42
+      value: -47.007317
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: fd3ed1d29d9da4d6c83f004cbebe2214, type: 3}
       propertyPath: m_LocalRotation.w
@@ -116,9 +116,11 @@ MonoBehaviour:
   rifleUpgradeCost: 1000
   playerPoints: {fileID: 0}
   weaponStats: {fileID: 0}
-  weaponManager: {fileID: 0}
+  weaponController: {fileID: 0}
   audioSource: {fileID: 6529387906803984444}
   interactSound: {fileID: 8300000, guid: 976ff1460420648c2812f3d00b245aeb, type: 3}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!82 &6529387906803984444
 AudioSource:
   m_ObjectHideFlags: 0
