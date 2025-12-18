@@ -193,12 +193,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1c6a58ac945d41aea97499ecdca585c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 10
+  damage: 1
   hitRadius: 1.2
   attackPoint: {fileID: 9220868811447669885}
   playerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
 --- !u!114 &-8605657793213554453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,7 +215,7 @@ MonoBehaviour:
   currentHealth: 50
   destroyOnDeath: 1
   deathVFX: {fileID: 0}
-  pointsPerDamage: 25
+  pointsPerHit: 1
   killBonusPoints: 50
 --- !u!136 &2029562080077867065
 CapsuleCollider:
