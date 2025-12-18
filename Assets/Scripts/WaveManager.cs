@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class WaveManager : MonoBehaviour
 {
@@ -43,7 +44,7 @@ public class WaveManager : MonoBehaviour
         else if (currentRound == 3 && enemiesKilled >= 10)
         {
             chickSpawner.StopSpawning();
-            Debug.Log("ALL ROUNDS COMPLETE!");
+            SceneManager.LoadScene("EndMenu");
         }
     }
 
