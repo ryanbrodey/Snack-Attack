@@ -46,6 +46,14 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     public BaseWeapon[] weapons;
     public int currentWeaponIdx = 0;
     
+    [Header("Weapon Unlocking")]
+    public bool pistolUnlocked = true;   // Start with pistol unlocked
+    public bool rifleUnlocked = false;   // Locked by default
+    public bool shotgunUnlocked = false; // Locked by default
+    public int pistolIndex = 0;
+    public int rifleIndex = 1;
+    public int shotgunIndex = 2;
+    
     [Header("Weapon Controls")]
     public KeyCode semiAutoKey = KeyCode.F;
     public KeyCode fullAutoKey = KeyCode.G;
@@ -447,6 +455,13 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     
     public void SwitchToWeapon(int idx)
     {
+        // Check if weapon is unlocked
+        if (!IsWeaponUnlocked(idx))
+        {
+            Debug.LogWarning($"Cannot switch to weapon {idx} - it's locked!");
+            return;
+        }
+        
         if (weapons == null || idx < 0 || idx >= weapons.Length || weapons[idx] == null)
         {
             Debug.LogWarning($"Invalid weapon index {idx}");
@@ -593,4 +608,25 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     public Vector2 MoveInput => moveInput;
     public WeaponConfigData GetWeaponConfig(int index) => 
         (weaponConfigs != null && index >= 0 && index < weaponConfigs.Length) ? weaponConfigs[index] : null;
+    
+    // Weapon unlocking methods for shop system
+    public void UnlockRifle()
+    {
+        rifleUnlocked = true;
+        Debug.Log("[FPSPlayerControllerWithWeapons] Rifle unlocked!");
+    }
+
+    public void UnlockShotgun()
+    {
+        shotgunUnlocked = true;
+        Debug.Log("[FPSPlayerControllerWithWeapons] Shotgun unlocked!");
+    }
+
+    public bool IsWeaponUnlocked(int weaponIndex)
+    {
+        if (weaponIndex == pistolIndex) return pistolUnlocked;
+        if (weaponIndex == rifleIndex) return rifleUnlocked;
+        if (weaponIndex == shotgunIndex) return shotgunUnlocked;
+        return false; // Default to locked for any other weapons
+    }
 }

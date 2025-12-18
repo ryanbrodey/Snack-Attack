@@ -1,11 +1,15 @@
 using System.Collections;
 using UnityEngine;
+using SnackAttack.Player;
 
 namespace SnackAttack.Weapons
 {
     // Ketchup bottle weapon - semi-automatic shooting
     public class KetchupWeapon : BaseWeapon
     {
+        [Header("Stats")]
+        public WeaponStats weaponStats; // reference to weapon stats for upgrades
+        
         [Header("Ketchup Gun Settings")]
         public Transform bulletSpawn;
         public GameObject bulletPrefab;
@@ -54,6 +58,10 @@ namespace SnackAttack.Weapons
         protected override void Start()
         {
             base.Start();
+            
+            // try to find weapon stats if we didn't assign it manually
+            if (weaponStats == null)
+                weaponStats = FindObjectOfType<WeaponStats>();
             
             // Auto-find bullet spawn if not assigned
             if (bulletSpawn == null)
@@ -107,6 +115,12 @@ namespace SnackAttack.Weapons
         {
             // Consume ammo
             currentAmmo--;
+            
+            // pull the current damage from weapon stats (for upgrades)
+            if (weaponStats != null) 
+                dmg = weaponStats.pistolDamage;
+            
+            Debug.Log($"[KetchupWeapon] Using dmg={dmg} (stats pistolDamage={weaponStats?.pistolDamage})");
             
             // Fire single bullet with crosshair aiming
             FireBullet();

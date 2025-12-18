@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using SnackAttack.Player;   // for WeaponManager
 
 public class Shopkeeper : MonoBehaviour
 {
@@ -29,7 +28,7 @@ public class Shopkeeper : MonoBehaviour
     [Header("References")]
     public PlayerPoints playerPoints;     // holds current points
     public WeaponStats weaponStats;       // holds damage values
-    public WeaponManager weaponManager;   // unlocks/handles weapons
+    public FPSPlayerControllerWithWeapons weaponController;   // unlocks/handles weapons
 
     [Header("Audio")]
     public AudioSource audioSource;
@@ -207,8 +206,8 @@ public class Shopkeeper : MonoBehaviour
                 {
                     playerPoints.points -= glizzyRifleCost;
 
-                    if (weaponManager != null)
-                        weaponManager.UnlockRifle();
+                    if (weaponController != null)
+                        weaponController.UnlockRifle();
 
                     Debug.Log("Purchased Glizzy Rifle!");
                 }
@@ -223,8 +222,8 @@ public class Shopkeeper : MonoBehaviour
                 {
                     playerPoints.points -= shotgunCost;
 
-                    if (weaponManager != null)
-                        weaponManager.UnlockShotgun();
+                    if (weaponController != null)
+                        weaponController.UnlockShotgun();
 
                     Debug.Log("Purchased Shotgun!");
                 }
