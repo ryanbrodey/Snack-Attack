@@ -133,5 +133,3 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             gameObject.SetActive(true);
     }
 }
-
-

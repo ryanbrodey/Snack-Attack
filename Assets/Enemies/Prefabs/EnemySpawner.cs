@@ -11,38 +11,50 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private Transform[] spawnPoints;
 
     [Header("Spawning settings")]
-    [SerializeField] private float spawnInterval = 5f;   // seconds between spawns
-    [SerializeField] private int maxAliveEnemies = 10;   // cap on enemies alive
-    [Tooltip("-1 = infinite enemies")]
-    [SerializeField] private int totalToSpawn = -1;      // total enemies over whole game
+    [SerializeField] private float spawnInterval = 3f;
+    [SerializeField] private int maxAliveEnemies = 10;
+    [SerializeField] private int totalToSpawn = 10;
 
     private readonly List<GameObject> aliveEnemies = new List<GameObject>();
     private int totalSpawned = 0;
-    private bool spawning = true;
 
-    private void Start()
+    private bool spawning = false;   // 🔒 locked by default
+    private Coroutine spawnRoutine;
+
+    private WaveManager waveManager;
+
+    public void Init(WaveManager manager)
     {
-        if (enemyPrefab == null || spawnPoints == null || spawnPoints.Length == 0)
-        {
-            Debug.LogError("EnemySpawner is not configured correctly!", this);
-            enabled = false;
-            return;
-        }
+        waveManager = manager;
+    }
 
-        StartCoroutine(SpawnLoop());
+    public void StartSpawning()
+    {
+        if (spawning) return;
+
+        spawning = true;
+        spawnRoutine = StartCoroutine(SpawnLoop());
+    }
+
+    public void StopSpawning()
+    {
+        spawning = false;
+
+        if (spawnRoutine != null)
+        {
+            StopCoroutine(spawnRoutine);
+            spawnRoutine = null;
+        }
     }
 
     private IEnumerator SpawnLoop()
     {
         while (spawning)
         {
-            // Clean out destroyed enemies
             aliveEnemies.RemoveAll(e => e == null);
 
-            bool underAliveLimit = aliveEnemies.Count < maxAliveEnemies;
-            bool underTotalLimit = (totalToSpawn < 0) || (totalSpawned < totalToSpawn);
-
-            if (underAliveLimit && underTotalLimit)
+            if (aliveEnemies.Count < maxAliveEnemies &&
+                totalSpawned < totalToSpawn)
             {
                 SpawnOneEnemy();
             }
@@ -53,27 +65,22 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnOneEnemy()
     {
-        // pick a random spawn point
         Transform point = spawnPoints[Random.Range(0, spawnPoints.Length)];
-
         GameObject enemy = Instantiate(enemyPrefab, point.position, point.rotation);
+
         aliveEnemies.Add(enemy);
         totalSpawned++;
-    }
 
-    // Optional: allow other scripts to stop spawning (e.g. when wave ends)
-    public void StopSpawning()
-    {
-        spawning = false;
-    }
-
-    public void StartSpawning()
-    {
-        if (!spawning)
+        EnemyDeathReporter reporter = enemy.GetComponent<EnemyDeathReporter>();
+        if (reporter != null && waveManager != null)
         {
-            spawning = true;
-            StartCoroutine(SpawnLoop());
+            reporter.Init(waveManager);
         }
     }
-}
 
+    public bool IsWaveComplete()
+    {
+        aliveEnemies.RemoveAll(e => e == null);
+        return totalSpawned >= totalToSpawn && aliveEnemies.Count == 0;
+    }
+}
