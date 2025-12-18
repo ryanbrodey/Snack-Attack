@@ -3692,6 +3692,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 649351145693141079, guid: f556e486657014cd7b9b3cbf1c792e14, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7449015975066752168, guid: f556e486657014cd7b9b3cbf1c792e14, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4613,6 +4617,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5747312611354208190, guid: 56adabc427fa14bfd99d2112fdb429bf, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6899219716485662557, guid: 56adabc427fa14bfd99d2112fdb429bf, type: 3}
       propertyPath: m_LocalPosition.x
       value: -44.08
@@ -6103,7 +6111,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2100608082}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &2100608084
 Camera:
   m_ObjectHideFlags: 0
