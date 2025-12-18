@@ -58,32 +58,24 @@ public class StartGameController : MonoBehaviour
         if (player != null)
             player.SetActive(true);
 
-        // 🔥 START ALL ENEMY SPAWNERS 🔥
+        // ✅ START GAME VIA WAVEMANAGER ONLY
         Scene spawnerScene = SceneManager.GetSceneByName("Spawners");
 
-        if (spawnerScene.isLoaded)
-        {
-            foreach (GameObject obj in spawnerScene.GetRootGameObjects())
-            {
-                EnemySpawner spawner = obj.GetComponent<EnemySpawner>();
-                if (spawner != null)
-                {
-                    spawner.StartSpawning();
-                }
-
-                // ⭐ NEW: Trigger round UI (SAFE ADDITION)
-                RoundUIController roundUI =
-                    obj.GetComponentInChildren<RoundUIController>();
-
-                if (roundUI != null)
-                {
-                    roundUI.PlayRoundIntro(1);
-                }
-            }
-        }
-        else
+        if (!spawnerScene.isLoaded)
         {
             Debug.LogWarning("Spawners scene is not loaded.");
+            return;
+        }
+
+        foreach (GameObject obj in spawnerScene.GetRootGameObjects())
+        {
+            WaveManager waveManager = obj.GetComponent<WaveManager>();
+            if (waveManager != null)
+            {
+                waveManager.StartRound1();
+                Debug.Log("WaveManager: Round 1 started");
+                break;
+            }
         }
     }
 }

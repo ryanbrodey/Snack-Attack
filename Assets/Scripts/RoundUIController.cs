@@ -4,67 +4,56 @@ using System.Collections;
 
 public class RoundUIController : MonoBehaviour
 {
-    [Header("UI References")]
-    public TextMeshProUGUI roundStartText;
-    public TextMeshProUGUI roundIndicatorText;
+    public TextMeshProUGUI centerText;
+    public TextMeshProUGUI cornerText;
 
-    [Header("Timing")]
-    public float fadeInTime = 1f;
-    public float holdTime = 2f;
-    public float fadeOutTime = 1f;
-
-    void Awake()
+    private void Awake()
     {
-        SetAlpha(roundStartText, 0f);
-        roundStartText.gameObject.SetActive(false);
-
-        roundIndicatorText.gameObject.SetActive(false);
+        SetAlpha(centerText, 0f);
+        SetAlpha(cornerText, 0f);
     }
 
-    public void PlayRoundIntro(int roundNumber)
+    public void PlayRoundIntro(int round)
     {
-        StartCoroutine(RoundSequence(roundNumber));
+        StopAllCoroutines();
+        StartCoroutine(RoundSequence(round));
     }
 
-    IEnumerator RoundSequence(int roundNumber)
+    private IEnumerator RoundSequence(int round)
     {
-        roundStartText.text = $"ROUND {roundNumber}";
-        roundIndicatorText.text = $"Round {roundNumber}";
+        centerText.text = $"ROUND {round}";
+        cornerText.text = $"Round {round}";
 
-        roundStartText.gameObject.SetActive(true);
-
-        // Fade in
-        yield return Fade(roundStartText, 0f, 1f, fadeInTime);
+        // Fade in big center text
+        yield return Fade(centerText, 0f, 1f, 1f);
 
         // Hold
-        yield return new WaitForSeconds(holdTime);
+        yield return new WaitForSeconds(2f);
 
         // Fade out
-        yield return Fade(roundStartText, 1f, 0f, fadeOutTime);
+        yield return Fade(centerText, 1f, 0f, 1f);
 
-        roundStartText.gameObject.SetActive(false);
-        roundIndicatorText.gameObject.SetActive(true);
+        // Show small corner indicator
+        SetAlpha(cornerText, 1f);
     }
 
-    IEnumerator Fade(TextMeshProUGUI text, float from, float to, float duration)
+    private IEnumerator Fade(TextMeshProUGUI text, float from, float to, float duration)
     {
-        float elapsed = 0f;
-
-        while (elapsed < duration)
+        float t = 0f;
+        while (t < duration)
         {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / duration);
-            SetAlpha(text, Mathf.Lerp(from, to, t));
+            t += Time.deltaTime;
+            SetAlpha(text, Mathf.Lerp(from, to, t / duration));
             yield return null;
         }
-
         SetAlpha(text, to);
     }
 
-    void SetAlpha(TextMeshProUGUI text, float alpha)
+    private void SetAlpha(TextMeshProUGUI text, float a)
     {
+        if (text == null) return;
         Color c = text.color;
-        c.a = alpha;
+        c.a = a;
         text.color = c;
     }
 }
