@@ -122,19 +122,17 @@ MonoBehaviour:
   walkAnim: Walk
   runAnim: Run
   bulletSpawn: {fileID: 2031751383722693519}
-  bulletPrefab: {fileID: 7708616965784169204, guid: 9fef8d356dffb4aa8ae363f7907c548b, type: 3}
-  bulletSpeed: 30
+  pelletPrefab: {fileID: 0}
+  pelletSpeed: 50
+  pelletsPerShot: 8
+  spreadAngle: 15
   maxAmmo: 8
   reloadTime: 3
-  explosionRadius: 5
-  explosionLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
+  pelletDamage: 12
+  penetrationCount: 2
   shootSound: {fileID: 0}
   reloadSound: {fileID: 0}
   emptySound: {fileID: 0}
-  explosionSound: {fileID: 0}
-  explosionEffect: {fileID: 0}
 --- !u!1 &4457580350908985323
 GameObject:
   m_ObjectHideFlags: 0
@@ -191,19 +189,17 @@ MonoBehaviour:
   walkAnim: Walk
   runAnim: Run
   bulletSpawn: {fileID: 8477784268222863427}
-  bulletPrefab: {fileID: 7708616965784169204, guid: 9fef8d356dffb4aa8ae363f7907c548b, type: 3}
-  bulletSpeed: 30
+  pelletPrefab: {fileID: 0}
+  pelletSpeed: 50
+  pelletsPerShot: 8
+  spreadAngle: 15
   maxAmmo: 8
   reloadTime: 3
-  explosionRadius: 5
-  explosionLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
+  pelletDamage: 12
+  penetrationCount: 2
   shootSound: {fileID: 0}
   reloadSound: {fileID: 0}
   emptySound: {fileID: 0}
-  explosionSound: {fileID: 0}
-  explosionEffect: {fileID: 0}
 --- !u!1 &4458167551238652813
 GameObject:
   m_ObjectHideFlags: 0
@@ -311,9 +307,11 @@ GameObject:
   - component: {fileID: 8944852672607616376}
   - component: {fileID: 157366258173128006}
   - component: {fileID: 5098324308118263407}
+  - component: {fileID: 5825877159783342122}
+  - component: {fileID: 6230894117946448297}
   m_Layer: 0
   m_Name: FPS_Player_Unified_v2
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -402,6 +400,37 @@ MonoBehaviour:
   semiAutoKey: 102
   fullAutoKey: 103
   weaponKeys: 31000000320000003300000034000000
+--- !u!114 &5825877159783342122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6227990080510115811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e0a15036a91a4619b7a46e5b52125ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableCrosshair: 1
+  crosshairColor: {r: 0.6, g: 0.2, b: 0.8, a: 1}
+  crosshairSize: 50
+  crosshairThickness: 5
+  useDynamicCrosshair: 1
+--- !u!114 &6230894117946448297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6227990080510115811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f02597dd04edc4498d5ffe522da1c2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canTeleport: 1
+  cooldownTime: 0.75
 --- !u!1 &7587015305750586312
 GameObject:
   m_ObjectHideFlags: 0

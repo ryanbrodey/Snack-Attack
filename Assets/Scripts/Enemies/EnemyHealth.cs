@@ -22,14 +22,47 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [Tooltip("Optional death effect (e.g. particle system prefab) spawned at the enemy's position on death.")]
     [SerializeField] private GameObject deathVFX;
 
+    [Header("Point Rewards")]
+    [Tooltip("Fixed points awarded per hit (regardless of damage amount, set to 0 to disable damage rewards)")]
+    [SerializeField] private int pointsPerHit = 1;
+    
+    [Tooltip("Bonus points awarded on kill")]
+    [SerializeField] private int killBonusPoints = 50;
+
     public float Health => currentHealth;
     public float MaxHealth => maxHealth;
     public bool IsAlive => currentHealth > 0f;
+
+    private PlayerPoints playerPoints;
 
     private void Awake()
     {
         // Start at full health
         currentHealth = maxHealth;
+        
+        // Find PlayerPoints in the scene
+        FindPlayerPoints();
+    }
+
+    private void FindPlayerPoints()
+    {
+        // Try to find PlayerPoints on the player
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            playerPoints = player.GetComponent<PlayerPoints>();
+        }
+        
+        // Fallback: search entire scene
+        if (playerPoints == null)
+        {
+            playerPoints = FindObjectOfType<PlayerPoints>();
+        }
+
+        if (playerPoints == null)
+        {
+            Debug.LogWarning($"[EnemyHealth] PlayerPoints not found! Points will not be awarded for {gameObject.name}");
+        }
     }
 
     /// <summary>
@@ -39,10 +72,20 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         if (!IsAlive) return;
 
+        float previousHealth = currentHealth;
         currentHealth -= damage;
         currentHealth = Mathf.Max(0f, currentHealth);
 
+        float actualDamage = previousHealth - currentHealth;
+
         Debug.Log($"{name} took {damage} damage. Health: {currentHealth}/{maxHealth}");
+
+        // Award points for hitting enemy (if enabled) - fixed amount per hit
+        if (playerPoints != null && actualDamage > 0 && pointsPerHit > 0)
+        {
+            playerPoints.points += pointsPerHit;
+            Debug.Log($"[Points] Awarded {pointsPerHit} points for hitting {name}");
+        }
 
         if (!IsAlive)
         {
@@ -55,6 +98,13 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     /// </summary>
     private void Die()
     {
+        // Award kill bonus points
+        if (playerPoints != null && killBonusPoints > 0)
+        {
+            playerPoints.points += killBonusPoints;
+            Debug.Log($"[Points] Awarded {killBonusPoints} bonus points for killing {name}");
+        }
+
         // Spawn death VFX if assigned
         if (deathVFX != null)
         {
