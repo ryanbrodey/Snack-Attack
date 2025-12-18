@@ -51,6 +51,14 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     public KeyCode fullAutoKey = KeyCode.G;
     public KeyCode[] weaponKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4 };
     
+    [Header("Weapon Unlocking")]
+    public bool pistolUnlocked = true;
+    public bool rifleUnlocked = false;
+    public bool shotgunUnlocked = false;
+    public int pistolIndex = 0;
+    public int rifleIndex = 1;
+    public int shotgunIndex = 2;
+    
     // Private variables
     private CharacterController characterController;
     private Vector3 velocity;
@@ -416,6 +424,12 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     
     public void SwitchToWeapon(int idx)
     {
+        // check if weapon is unlocked
+        if (!IsWeaponUnlocked(idx))
+        {
+            return;
+        }
+        
         if (weapons == null || idx < 0 || idx >= weapons.Length || weapons[idx] == null)
         {
             return;
@@ -542,4 +556,27 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     public Vector2 MoveInput => moveInput;
     public WeaponConfigData GetWeaponConfig(int index) => 
         (weaponConfigs != null && index >= 0 && index < weaponConfigs.Length) ? weaponConfigs[index] : null;
+    
+    // weapon unlocking methods for shopkeeper
+    public void UnlockRifle()
+    {
+        rifleUnlocked = true;
+        Debug.Log("[FPSPlayerControllerWithWeapons] Rifle unlocked!");
+    }
+    
+    public void UnlockShotgun()
+    {
+        shotgunUnlocked = true;
+        Debug.Log("[FPSPlayerControllerWithWeapons] Shotgun unlocked!");
+    }
+    
+    private bool IsWeaponUnlocked(int weaponIndex)
+    {
+        if (weaponIndex == pistolIndex) return pistolUnlocked;
+        if (weaponIndex == rifleIndex) return rifleUnlocked;
+        if (weaponIndex == shotgunIndex) return shotgunUnlocked;
+        
+        // any other weapons default to unlocked
+        return true;
+    }
 }
