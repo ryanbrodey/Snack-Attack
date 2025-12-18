@@ -332,6 +332,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kiwi
       objectReference: {fileID: 0}
+    - target: {fileID: 6648841391906720295, guid: 0ea0d252951a74ac8974f38d9ff16268, type: 3}
+      propertyPath: m_Height
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7860831162792299143, guid: 0ea0d252951a74ac8974f38d9ff16268, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1
@@ -400,6 +404,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15923e8d659aabf42983485f07faa23d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1333618204 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5692911633990918263, guid: 3a04f210fcbb0455295dc5e082f4758d, type: 3}
+  m_PrefabInstance: {fileID: 1681018491}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1333618213
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1333618204}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 3
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1375335742 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3284472970200407762, guid: 0ea0d252951a74ac8974f38d9ff16268, type: 3}
@@ -523,7 +555,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5692911633990918263, guid: 3a04f210fcbb0455295dc5e082f4758d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1333618213}
   m_SourcePrefab: {fileID: 100100000, guid: 3a04f210fcbb0455295dc5e082f4758d, type: 3}
 --- !u!1001 &1844179294
 PrefabInstance:
@@ -533,6 +568,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -1367304527640549977, guid: c2795c391bebc4b2bbc89f354c6099c0, type: 3}
+      propertyPath: m_Height
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 9094780982019503261, guid: c2795c391bebc4b2bbc89f354c6099c0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.1178608
@@ -708,10 +747,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1422617071871567489, guid: ed9330d849e85144fbc44bfeb53ab4e9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 107.51
+      objectReference: {fileID: 0}
     - target: {fileID: 2228056612386890802, guid: ed9330d849e85144fbc44bfeb53ab4e9, type: 3}
       propertyPath: enemyPrefab
       value: 
       objectReference: {fileID: 1375335742}
+    - target: {fileID: 2228056612386890802, guid: ed9330d849e85144fbc44bfeb53ab4e9, type: 3}
+      propertyPath: totalToSpawn
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 7786667555764101535, guid: ed9330d849e85144fbc44bfeb53ab4e9, type: 3}
       propertyPath: m_LocalPosition.x
       value: -55.91882
@@ -772,6 +819,10 @@ PrefabInstance:
     - target: {fileID: 4166616777277586033, guid: 34c0ba34b1cc0634bb8971690c0f6b4b, type: 3}
       propertyPath: m_Name
       value: ChickSpawner
+      objectReference: {fileID: 0}
+    - target: {fileID: 4479427133268339000, guid: 34c0ba34b1cc0634bb8971690c0f6b4b, type: 3}
+      propertyPath: totalToSpawn
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4682144136873659190, guid: 34c0ba34b1cc0634bb8971690c0f6b4b, type: 3}
       propertyPath: m_LocalPosition.x
