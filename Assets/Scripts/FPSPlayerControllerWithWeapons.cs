@@ -88,7 +88,6 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         
         if (characterController == null)
         {
-            Debug.LogError("FPSPlayerController requires a CharacterController component!");
             enabled = false;
             return;
         }
@@ -96,7 +95,6 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         // Properly lock and hide cursor for FPS gameplay
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        Debug.Log("[FPSPlayerControllerWithWeapons] Cursor locked and hidden for FPS gameplay");
         
         // Auto-find camera
         if (playerCamera == null)
@@ -151,10 +149,6 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         
         // Setup weapon system
         SetupWeapons();
-        
-        Debug.Log("FPS Player Controller with Weapons initialized!");
-        Debug.Log("Controls: WASD=move, Double-tap W=auto-run, Space=jump, Mouse=look");
-        Debug.Log("Weapons: 1,2,3=switch, F=semi-auto, G=full-auto, R=reload");
     }
     
     void Update()
@@ -179,13 +173,11 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             {
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
-                Debug.Log("[FPSPlayerControllerWithWeapons] Cursor unlocked and visible");
             }
             else
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
-                Debug.Log("[FPSPlayerControllerWithWeapons] Cursor locked and hidden");
             }
         }
     }
@@ -274,7 +266,6 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         {
             if (Input.GetKeyDown(weaponKeys[i]))
             {
-                Debug.Log($"Switching to weapon {i + 1}");
                 SwitchToWeapon(i);
                 break;
             }
@@ -327,7 +318,6 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
                 if (isJumping)
                 {
                     isJumping = false;
-                    Debug.Log("Landed");
                 }
             }
         }
@@ -338,7 +328,6 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             // Student-written: Calculate jump velocity using physics formula: v = sqrt(2 * g * h)
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             isJumping = true;
-            Debug.Log($"Jump! Initial velocity: {velocity.y:F2}");
         }
         
         // Student-written: Apply gravity continuously (only if not grounded or falling)
@@ -349,12 +338,6 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         
         // Student-written: Apply vertical movement separately from horizontal
         characterController.Move(velocity * Time.deltaTime);
-        
-        // Student-written: Debug ground state changes (only log occasionally to reduce spam)
-        if (wasGroundedLastFrame != isGrounded)
-        {
-            Debug.Log($"Ground state changed: {(isGrounded ? "Grounded" : "Airborne")}");
-        }
     }
     
     void HandleMouseLook()
@@ -375,33 +358,20 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     {
         if (currentAnimator == null)
         {
-            Debug.LogWarning("UpdateAnimations: currentAnimator is NULL!");
             return;
         }
         
         bool moving = moveInput.magnitude > 0.1f;
         
-        // Debug log once per second
-        if (Time.frameCount % 60 == 0)
-        {
-            Debug.Log($"UpdateAnimations: moving={moving}, isRunning={isRunning}, isWalking={moving && !isRunning}");
-        }
-        
         // Update the current arm model's animator
         if (HasAnimatorParameter("IsWalking"))
         {
             currentAnimator.SetBool("IsWalking", moving && !isRunning);
-            if (Time.frameCount % 60 == 0) Debug.Log($"Set IsWalking to {moving && !isRunning}");
-        }
-        else
-        {
-            if (Time.frameCount % 60 == 0) Debug.LogWarning("IsWalking parameter not found!");
         }
         
         if (HasAnimatorParameter("IsRunning"))
         {
             currentAnimator.SetBool("IsRunning", moving && isRunning);
-            if (Time.frameCount % 60 == 0) Debug.Log($"Set IsRunning to {moving && isRunning}");
         }
         
         if (HasAnimatorParameter("IsGrounded"))
@@ -426,7 +396,6 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     {
         if (weapons == null || weapons.Length == 0)
         {
-            Debug.LogWarning("No weapons assigned! Please assign weapons in the Inspector.");
             return;
         }
         
@@ -449,11 +418,8 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
     {
         if (weapons == null || idx < 0 || idx >= weapons.Length || weapons[idx] == null)
         {
-            Debug.LogWarning($"Invalid weapon index {idx}");
             return;
         }
-        
-        Debug.Log($"Switching to weapon {idx + 1}: {weapons[idx].WeaponName}");
         
         // Deactivate ALL arm models
         if (pistolArmsModel != null) pistolArmsModel.SetActive(false);
@@ -468,7 +434,6 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             if (activeArmModel != null)
             {
                 activeArmModel.SetActive(true);
-                Debug.Log($"Activated arm model: {activeArmModel.name}");
             }
         }
         
@@ -476,15 +441,6 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         if (activeArmModel != null)
         {
             currentAnimator = activeArmModel.GetComponent<Animator>();
-            if (currentAnimator == null)
-            {
-                Debug.LogWarning($"No Animator found on {activeArmModel.name}!");
-            }
-            else
-            {
-                Debug.Log($"Found Animator on {activeArmModel.name}: {currentAnimator.name}");
-                Debug.Log($"Animator has controller: {currentAnimator.runtimeAnimatorController != null}");
-            }
         }
         
         // Update current weapon
@@ -493,8 +449,6 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         
         // Apply weapon configuration (camera position)
         ApplyWeaponConfiguration(idx);
-        
-        Debug.Log($"Successfully switched to: {currentWeapon.WeaponName}");
     }
     
     public void DoAttack()
@@ -523,7 +477,6 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         if (crosshairManager == null)
         {
             crosshairManager = gameObject.AddComponent<SnackAttack.Player.CrosshairManager>();
-            Debug.Log("[FPSPlayerControllerWithWeapons] CrosshairManager added automatically");
         }
     }
     
@@ -563,15 +516,12 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
             cameraRotation = new Vector3(5.311f, -59.427f, 0.353f),
             animatorController = shotgunController
         };
-        
-        Debug.Log("Weapon configurations initialized");
     }
     
     void ApplyWeaponConfiguration(int weaponIndex)
     {
         if (weaponConfigs == null || weaponIndex < 0 || weaponIndex >= weaponConfigs.Length)
         {
-            Debug.LogWarning($"Invalid weapon configuration index: {weaponIndex}");
             return;
         }
         
@@ -582,7 +532,6 @@ public class FPSPlayerControllerWithWeapons : MonoBehaviour
         {
             cameraAnchor.localPosition = config.cameraPosition;
             cameraAnchor.localEulerAngles = config.cameraRotation;
-            Debug.Log($"Applied camera position: {config.cameraPosition} and rotation: {config.cameraRotation}");
         }
     }
     
