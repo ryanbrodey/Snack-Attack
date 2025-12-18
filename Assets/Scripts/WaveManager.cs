@@ -1,11 +1,12 @@
 using UnityEngine;
+using UnityEngine.SceneManagement; // 🆕 REQUIRED
 
 public class WaveManager : MonoBehaviour
 {
     [Header("Spawners")]
     public EnemySpawner chiliSpawner;
     public EnemySpawner kiwiSpawner;
-    public EnemySpawner chickSpawner;   // 🆕 Round 3
+    public EnemySpawner chickSpawner;   // Round 3
 
     [Header("UI")]
     public RoundUIController roundUI;
@@ -43,7 +44,7 @@ public class WaveManager : MonoBehaviour
         else if (currentRound == 3 && enemiesKilled >= 10)
         {
             chickSpawner.StopSpawning();
-            Debug.Log("ALL ROUNDS COMPLETE!");
+            EndGame(); // 🆕 THIS IS THE ONLY NEW CALL
         }
     }
 
@@ -69,5 +70,13 @@ public class WaveManager : MonoBehaviour
 
         chickSpawner.Init(this);
         chickSpawner.StartSpawning();
+    }
+
+    // ---------- END GAME ----------
+    private void EndGame()
+    {
+        Debug.Log("ALL ROUNDS COMPLETE — LOADING END MENU");
+
+        SceneManager.LoadScene("EndMenu", LoadSceneMode.Additive);
     }
 }
