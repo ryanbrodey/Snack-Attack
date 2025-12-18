@@ -602,6 +602,7 @@ MonoBehaviour:
   attackAnim: Attack
   walkAnim: Walk
   runAnim: Run
+  weaponStats: {fileID: 0}
   bulletSpawn: {fileID: 7370953637456326278}
   pelletPrefab: {fileID: 0}
   pelletSpeed: 50
@@ -1679,14 +1680,15 @@ MonoBehaviour:
   cooldown: 0.3
   dmg: 10
   reach: 2
-  anim: {fileID: 0}
+  anim: {fileID: 3926429325302668094}
   unifiedAnimator: {fileID: 0}
   idleAnim: Idle
-  attackAnim: Attack
+  attackAnim: shotgun shooting
   walkAnim: Walk
   runAnim: Run
+  weaponStats: {fileID: 484124315567248401}
   bulletSpawn: {fileID: 5315560565716632161}
-  pelletPrefab: {fileID: 0}
+  pelletPrefab: {fileID: 7708616965784169204, guid: 9fef8d356dffb4aa8ae363f7907c548b, type: 3}
   pelletSpeed: 50
   pelletsPerShot: 8
   spreadAngle: 15
@@ -1974,13 +1976,13 @@ MonoBehaviour:
   cooldown: 0.3
   dmg: 20
   reach: 75
-  anim: {fileID: 0}
+  anim: {fileID: 8831732737325911934}
   unifiedAnimator: {fileID: 0}
   idleAnim: rifle idle
-  attackAnim: rifle shoot
+  attackAnim: pistol shooting
   walkAnim: rifle walk
   runAnim: rifle run
-  weaponStats: {fileID: 0}
+  weaponStats: {fileID: 484124315567248401}
   bulletSpawn: {fileID: 8048454989585135491}
   bulletPrefab: {fileID: 3129898589407883480, guid: 7e9afc49976e64efc82299f72c2cea74, type: 3}
   bulletSpeed: 50
@@ -2100,8 +2102,8 @@ MonoBehaviour:
   fullAutoKey: 103
   weaponKeys: 31000000320000003300000034000000
   pistolUnlocked: 1
-  rifleUnlocked: 1
-  shotgunUnlocked: 1
+  rifleUnlocked: 0
+  shotgunUnlocked: 0
   pistolIndex: 0
   rifleIndex: 1
   shotgunIndex: 2
@@ -2618,13 +2620,13 @@ MonoBehaviour:
   cooldown: 0.3
   dmg: 10
   reach: 2
-  anim: {fileID: 0}
+  anim: {fileID: 5642224985879575359}
   unifiedAnimator: {fileID: 0}
   idleAnim: Idle
-  attackAnim: Attack
+  attackAnim: pistol shooting
   walkAnim: Walk
   runAnim: Run
-  weaponStats: {fileID: 0}
+  weaponStats: {fileID: 484124315567248401}
   bulletSpawn: {fileID: 2492487583193138498}
   bulletPrefab: {fileID: 3129898589407883480, guid: ee97d11bd06d149ccbdb500cb76f6106, type: 3}
   bulletSpeed: 40
@@ -2993,7 +2995,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1434055370818649087}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c2c514b4e00c40e7b8472ba6ef8d3fb, type: 3}
   m_Name: 
@@ -3377,7 +3379,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2826961328998076350}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c2c514b4e00c40e7b8472ba6ef8d3fb, type: 3}
   m_Name: 
@@ -4584,7 +4586,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7770546448098794494}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c2c514b4e00c40e7b8472ba6ef8d3fb, type: 3}
   m_Name: 
@@ -4638,31 +4640,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4201291804329303971, guid: ed681ab49fa8b48e78ab7a3308d1acfb, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.5885882
+      value: -0.03396496
       objectReference: {fileID: 0}
     - target: {fileID: 4201291804329303971, guid: ed681ab49fa8b48e78ab7a3308d1acfb, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.44469446
+      value: 0.5687366
       objectReference: {fileID: 0}
     - target: {fileID: 4201291804329303971, guid: ed681ab49fa8b48e78ab7a3308d1acfb, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.5674586
+      value: -0.8168792
       objectReference: {fileID: 0}
     - target: {fileID: 4201291804329303971, guid: ed681ab49fa8b48e78ab7a3308d1acfb, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.3657889
+      value: -0.08996327
       objectReference: {fileID: 0}
     - target: {fileID: 4201291804329303971, guid: ed681ab49fa8b48e78ab7a3308d1acfb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 184.38
+      value: -10.697
       objectReference: {fileID: 0}
     - target: {fileID: 4201291804329303971, guid: ed681ab49fa8b48e78ab7a3308d1acfb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -357.424
+      value: -537.268
       objectReference: {fileID: 0}
     - target: {fileID: 4201291804329303971, guid: ed681ab49fa8b48e78ab7a3308d1acfb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -9.878998
+      value: -69.95
       objectReference: {fileID: 0}
     - target: {fileID: 5837137999157480115, guid: ed681ab49fa8b48e78ab7a3308d1acfb, type: 3}
       propertyPath: m_LocalScale.x
