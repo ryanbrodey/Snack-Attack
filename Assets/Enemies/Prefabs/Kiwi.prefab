@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 8428654134661037613}
   - component: {fileID: 4015950837003051223}
   - component: {fileID: 8247624115613848154}
+  - component: {fileID: -7702889879899561476}
+  - component: {fileID: 6532913538906543170}
   m_Layer: 0
   m_Name: Kiwi
   m_TagString: Untagged
@@ -120,6 +122,47 @@ MonoBehaviour:
   playerMask:
     serializedVersion: 2
     m_Bits: 0
+--- !u!136 &-7702889879899561476
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3284472970200407762}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Height: 3
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6532913538906543170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3284472970200407762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd2125ee8b32845428c3a8bca6ede956, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 75
+  currentHealth: 75
+  destroyOnDeath: 1
+  deathVFX: {fileID: 0}
+  pointsPerDamage: 1
+  killBonusPoints: 50
 --- !u!1 &5839810379962673978
 GameObject:
   m_ObjectHideFlags: 0

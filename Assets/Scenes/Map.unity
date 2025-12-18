@@ -2105,6 +2105,8 @@ MonoBehaviour:
   currentHealth: 50
   destroyOnDeath: 1
   deathVFX: {fileID: 0}
+  pointsPerDamage: 1
+  killBonusPoints: 50
 --- !u!1001 &511548819
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7142,6 +7144,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1994367273 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6227990080510115811, guid: bba0bbded599d4085b6542556a789a29, type: 3}
+  m_PrefabInstance: {fileID: 2024348348}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1994367279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1994367273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0e58d01fb7f445fc9c3d86c1abae6eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  points: 0
 --- !u!1001 &2024348348
 PrefabInstance:
   m_ObjectHideFlags: 0
