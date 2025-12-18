@@ -31,3 +31,6 @@ Our current target is to build a kitchen / food-themed first-person shooter (FPS
 
 ## Halfway Project Review Video
 - https://youtu.be/4iM_WnU2kho
+
+## Final Project Video
+- https://drive.google.com/file/d/1sbCGEzpkG9h4zYVK6ngNdeHgwYjKub-b/view
