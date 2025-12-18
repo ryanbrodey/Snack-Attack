@@ -50,7 +50,7 @@ namespace SnackAttack.Weapons
             idleAnim = "rifle idle";
             walkAnim = "rifle walk";
             runAnim = "rifle run";
-            attackAnim = "rifle shoot"; // Will need to check actual animation names
+            attackAnim = "pistol shooting";
             
             // Initialize ammo
             currentAmmo = maxAmmo;
