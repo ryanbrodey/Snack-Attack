@@ -13,7 +13,6 @@ public class EggAnimationReceiver : MonoBehaviour
 
     public void OnAttackHitEvent()
     {
-        // simple overlap sphere to detect player
         Collider[] hits = Physics.OverlapSphere(attackPoint.position, hitRadius, playerMask);
         foreach (var hit in hits)
         {
@@ -21,7 +20,6 @@ public class EggAnimationReceiver : MonoBehaviour
             if (ph != null)
             {
                 ph.TakeDamage(damage);
-                Debug.Log("Player hit by Egg");
             }
         }
     }

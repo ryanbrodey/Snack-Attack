@@ -76,8 +76,6 @@ namespace SnackAttack.Setup
             
             // Create test enemy
             CreateTestEnemy();
-            
-            Debug.Log("Player setup complete! Use WASD to move, Mouse to look, F to attack, Space to jump.");
         }
         
         private void SetupAxeWeapon(GameObject cameraGO, WeaponManager weaponManager)
@@ -101,8 +99,6 @@ namespace SnackAttack.Setup
             
             // Set up weapon manager
             SetPrivateField(weaponManager, "weapons", new BaseWeapon[] { axeWeapon });
-            
-            Debug.Log("Axe weapon setup complete!");
         }
         
         private void CreateTestGround()
@@ -136,8 +132,6 @@ namespace SnackAttack.Setup
             {
                 enemyRenderer.material.color = Color.red;
             }
-            
-            Debug.Log("Test enemy created at (3, 0.5, 3). Attack it to test damage!");
         }
         
         private void SetPrivateField(object obj, string fieldName, object value)
@@ -152,7 +146,6 @@ namespace SnackAttack.Setup
             }
             else
             {
-                Debug.LogWarning($"Could not find field '{fieldName}' in {obj.GetType().Name}");
             }
         }
         
@@ -168,7 +161,6 @@ namespace SnackAttack.Setup
                 if (path.Contains("FPSAxe"))
                 {
                     knifePrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(path);
-                    Debug.Log($"Found axe prefab at: {path}");
                     break;
                 }
             }
@@ -179,7 +171,6 @@ namespace SnackAttack.Setup
             {
                 string controllerPath = UnityEditor.AssetDatabase.GUIDToAssetPath(controllerGuids[0]);
                 axeAnimatorController = UnityEditor.AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(controllerPath);
-                Debug.Log($"Found animator controller at: {controllerPath}");
             }
         }
 #endif

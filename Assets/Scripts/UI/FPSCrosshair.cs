@@ -45,8 +45,6 @@ namespace SnackAttack.UI
             
             // Create the crosshair UI
             CreateCrosshairUI();
-            
-            Debug.Log("[FPSCrosshair] FPS Crosshair initialized!");
         }
         
         void Update()
@@ -63,11 +61,9 @@ namespace SnackAttack.UI
                 UpdateDynamicCrosshair();
             }
             
-            // Toggle crosshair with 'C' key for testing
             if (Input.GetKeyDown(KeyCode.C))
             {
                 SetCrosshairVisible(!showCrosshair);
-                Debug.Log($"[FPSCrosshair] Crosshair visibility: {showCrosshair}");
             }
             
             // Escape key to unlock cursor (for testing)
@@ -76,12 +72,10 @@ namespace SnackAttack.UI
                 if (Cursor.lockState == CursorLockMode.Locked)
                 {
                     Cursor.lockState = CursorLockMode.None;
-                    Debug.Log("[FPSCrosshair] Cursor unlocked");
                 }
                 else
                 {
                     LockCursor();
-                    Debug.Log("[FPSCrosshair] Cursor locked");
                 }
             }
         }
@@ -89,15 +83,13 @@ namespace SnackAttack.UI
         void LockCursor()
         {
             Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false; // Hide the system cursor
-            Debug.Log("[FPSCrosshair] Cursor locked and hidden");
+            Cursor.visible = false;
         }
         
         void FindPlayerCamera()
         {
             if (playerCamera == null)
             {
-                // Try to find camera in parent or children
                 playerCamera = GetComponentInParent<Camera>();
                 if (playerCamera == null)
                     playerCamera = GetComponentInChildren<Camera>();
@@ -105,15 +97,6 @@ namespace SnackAttack.UI
                     playerCamera = FindObjectOfType<Camera>();
                 if (playerCamera == null)
                     playerCamera = Camera.main;
-                
-                if (playerCamera != null)
-                {
-                    Debug.Log($"[FPSCrosshair] Found camera: {playerCamera.name}");
-                }
-                else
-                {
-                    Debug.LogWarning("[FPSCrosshair] No camera found!");
-                }
             }
         }
         
@@ -171,8 +154,6 @@ namespace SnackAttack.UI
             
             // Set initial visibility
             SetCrosshairVisible(showCrosshair);
-            
-            Debug.Log("[FPSCrosshair] Crosshair UI created successfully!");
         }
         
         void CreateCanvas()
@@ -191,8 +172,6 @@ namespace SnackAttack.UI
             
             // Add GraphicRaycaster (required for UI)
             canvasGO.AddComponent<GraphicRaycaster>();
-            
-            Debug.Log("[FPSCrosshair] Canvas created");
         }
         
         void CreateCrosshairLine(string name, Vector2 size, Vector2 position, out Image lineImage)

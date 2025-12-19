@@ -154,15 +154,10 @@ namespace SnackAttack.Player
             horizVel = move * speed;
             cc.Move(horizVel * Time.deltaTime);
             
-            // jumping - only allow jump when grounded AND just landed (prevent spam)
+            // jumping
             if (jumpPressed && grounded && vel.y <= 0.1f)
             {
-                vel.y = Mathf.Sqrt(jumpHeight * -2f * gravity); // jump formula from physics class
-                Debug.Log($"[FPSController] Jump! Velocity Y: {vel.y}, Grounded: {grounded}");
-            }
-            else if (jumpPressed)
-            {
-                Debug.Log($"[FPSController] Jump blocked - Grounded: {grounded}, Vel.Y: {vel.y:F2}");
+                vel.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             }
             
             // gravity goes down (only if not grounded or falling)
@@ -191,12 +186,10 @@ namespace SnackAttack.Player
         {
             if (!enableCrosshair) return;
             
-            // Add CrosshairManager if it doesn't exist
             crosshairManager = GetComponent<CrosshairManager>();
             if (crosshairManager == null)
             {
                 crosshairManager = gameObject.AddComponent<CrosshairManager>();
-                Debug.Log("[FPSController] CrosshairManager added automatically");
             }
         }
         

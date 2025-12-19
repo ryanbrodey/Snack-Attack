@@ -3,9 +3,7 @@ using SnackAttack.Weapons;
 
 namespace SnackAttack.Testing
 {
-    /// <summary>
-    /// Simple test enemy for demonstrating weapon damage
-    /// </summary>
+    // Test enemy for weapon damage
     public class TestEnemy : MonoBehaviour, IDamageable
     {
         [Header("Enemy Settings")]
@@ -35,15 +33,12 @@ namespace SnackAttack.Testing
             currentHealth -= damage;
             currentHealth = Mathf.Max(0, currentHealth);
             
-            Debug.Log($"{gameObject.name} took {damage} damage. Health: {currentHealth}/{maxHealth}");
-            
-            // Flash red when taking damage
+            // Flash red on damage
             if (enemyRenderer != null && !isFlashing)
             {
                 StartCoroutine(FlashDamage());
             }
             
-            // Check if dead
             if (!IsAlive)
             {
                 Die();
@@ -54,13 +49,11 @@ namespace SnackAttack.Testing
         {
             isFlashing = true;
             
-            // Change to damage color
             if (enemyRenderer != null)
                 enemyRenderer.material.color = damageColor;
             
             yield return new WaitForSeconds(damageFlashDuration);
             
-            // Return to normal color
             if (enemyRenderer != null)
                 enemyRenderer.material.color = normalColor;
             
@@ -69,16 +62,10 @@ namespace SnackAttack.Testing
         
         private void Die()
         {
-            Debug.Log($"{gameObject.name} has died!");
-            
-            // You can add death effects, animations, etc. here
-            // For now, just disable the object
             gameObject.SetActive(false);
         }
         
-        /// <summary>
-        /// Reset the enemy to full health
-        /// </summary>
+        // Reset enemy to full health
         public void ResetHealth()
         {
             currentHealth = maxHealth;

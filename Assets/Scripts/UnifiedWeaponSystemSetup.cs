@@ -26,41 +26,22 @@ public class UnifiedWeaponSystemSetup : MonoBehaviour
     [ContextMenu("Setup Unified Weapon System")]
     public void SetupUnifiedWeaponSystem()
     {
-        Debug.Log("Setting up Unified Weapon System...");
-        
         // Get the main controller
         FPSPlayerControllerWithWeapons controller = GetComponent<FPSPlayerControllerWithWeapons>();
-        if (controller == null)
-        {
-            Debug.LogError("FPSPlayerControllerWithWeapons not found!");
-            return;
-        }
+        if (controller == null) return;
         
-        // Get the weapon configuration manager
         WeaponConfigurationManager configManager = GetComponent<WeaponConfigurationManager>();
-        if (configManager == null)
-        {
-            Debug.LogError("WeaponConfigurationManager not found!");
-            return;
-        }
+        if (configManager == null) return;
         
-        // Setup weapon configurations
         SetupWeaponConfigurations(configManager);
-        
-        // Find and setup weapons
         SetupWeapons(controller);
-        
-        Debug.Log("Unified Weapon System setup complete!");
-        Debug.Log("Controls: 1=Ketchup Pistol, 2=Assault Rifle, 3=Popcorn Launcher/Shotgun");
-        Debug.Log("Attack: Left Click or F key, Movement: WASD, Jump: Space, Run: Shift");
     }
     
     void SetupWeaponConfigurations(WeaponConfigurationManager configManager)
     {
-        // Initialize weapon configurations array
         configManager.weaponConfigs = new WeaponConfiguration[3];
         
-        // Load animation controllers if not assigned
+        // Load animation controllers
         if (pistolController == null)
             pistolController = Resources.Load<RuntimeAnimatorController>("Player-testing/Animations/PistolPlayer_Controller");
         if (rifleController == null)
@@ -68,7 +49,7 @@ public class UnifiedWeaponSystemSetup : MonoBehaviour
         if (shotgunController == null)
             shotgunController = Resources.Load<RuntimeAnimatorController>("Player-testing/Animations/ShotgunPlayer_Controller");
         
-        // Ketchup/Pistol configuration (index 0)
+        // Weapon configs
         configManager.weaponConfigs[0] = new WeaponConfiguration
         {
             weaponName = "Ketchup Pistol",
@@ -88,7 +69,6 @@ public class UnifiedWeaponSystemSetup : MonoBehaviour
             animatorController = rifleController
         };
         
-        // Shotgun/Popcorn Launcher configuration (index 2)
         configManager.weaponConfigs[2] = new WeaponConfiguration
         {
             weaponName = "Popcorn Launcher",
@@ -97,32 +77,21 @@ public class UnifiedWeaponSystemSetup : MonoBehaviour
             cameraRotation = new Vector3(5.624f, -44.278f, -0.456f),
             animatorController = shotgunController
         };
-        
-        Debug.Log("Weapon configurations setup complete");
     }
     
     void SetupWeapons(FPSPlayerControllerWithWeapons controller)
     {
-        // Find all weapon scripts in children
         BaseWeapon[] weapons = GetComponentsInChildren<BaseWeapon>(true);
         
-        if (weapons.Length == 0)
-        {
-            Debug.LogWarning("No weapons found in children!");
-            return;
-        }
+        if (weapons.Length == 0) return;
         
-        // Assign weapons to controller
         controller.weapons = weapons;
         
-        // Make sure all weapons are initially disabled except the first one
+        // Only first weapon active initially
         for (int i = 0; i < weapons.Length; i++)
         {
             weapons[i].gameObject.SetActive(i == 0);
-            Debug.Log($"Weapon {i}: {weapons[i].WeaponName} - Active: {i == 0}");
         }
-        
-        Debug.Log($"Setup {weapons.Length} weapons");
     }
     
     [ContextMenu("Test Weapon Switching")]
@@ -131,19 +100,15 @@ public class UnifiedWeaponSystemSetup : MonoBehaviour
         FPSPlayerControllerWithWeapons controller = GetComponent<FPSPlayerControllerWithWeapons>();
         if (controller == null) return;
         
-        Debug.Log("Testing weapon switching...");
-        
-        // Test switching to each weapon
+        // Test switching
         for (int i = 0; i < 3; i++)
         {
             controller.SwitchToWeapon(i);
-            Debug.Log($"Switched to weapon {i}: {controller.CurrentWeapon?.WeaponName ?? "None"}");
         }
     }
     
     void Update()
     {
-        // Debug info
         if (Input.GetKeyDown(KeyCode.H))
         {
             ShowHelpInfo();
@@ -152,22 +117,6 @@ public class UnifiedWeaponSystemSetup : MonoBehaviour
     
     void ShowHelpInfo()
     {
-        Debug.Log("=== UNIFIED WEAPON SYSTEM HELP ===");
-        Debug.Log("Controls:");
-        Debug.Log("1, 2, 3 - Switch weapons");
-        Debug.Log("Left Click / F - Attack");
-        Debug.Log("R - Reload");
-        Debug.Log("WASD - Move");
-        Debug.Log("Space - Jump");
-        Debug.Log("Shift - Run");
-        Debug.Log("H - Show this help");
-        Debug.Log("Escape - Toggle cursor lock");
-        
-        FPSPlayerControllerWithWeapons controller = GetComponent<FPSPlayerControllerWithWeapons>();
-        if (controller != null)
-        {
-            Debug.Log($"Current weapon: {controller.CurrentWeapon?.WeaponName ?? "None"}");
-            Debug.Log($"Weapon index: {controller.CurrentWeaponIndex}");
-        }
+        // Help info for testing
     }
 }

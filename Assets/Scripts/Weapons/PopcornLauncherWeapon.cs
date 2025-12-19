@@ -83,11 +83,6 @@ namespace SnackAttack.Weapons
                 {
                     bulletSpawn = transform.Find("BulletSpawn");
                 }
-                
-                if (bulletSpawn == null)
-                {
-                    Debug.LogWarning("Shotgun: BulletSpawn not found");
-                }
             }
         }
         
@@ -139,20 +134,17 @@ namespace SnackAttack.Weapons
         
         private void FireShotgunBlast()
         {
-            // pull the current damage from weapon stats (for upgrades)
             if (weaponStats != null)
                 pelletDamage = weaponStats.shotgunDamage;
             
             if (pelletPrefab == null || bulletSpawn == null) 
             {
-                Debug.LogWarning("Shotgun: Missing pellet prefab or spawn point");
                 return;
             }
             
             Camera playerCamera = GetPlayerCamera();
             if (playerCamera == null) 
             {
-                Debug.LogWarning("Shotgun: No player camera found");
                 return;
             }
             
@@ -180,7 +172,6 @@ namespace SnackAttack.Weapons
                     pelletScript.canPenetrate = true;
                     pelletScript.maxPenetrations = penetrationCount;
                     pelletScript.damage = pelletDamage;
-                    // maxRange is set in the prefab - don't override it here
                     pelletScript.speed = pelletSpeed;
                     pelletScript.Initialize(directions[i], spawnPosition, pelletSpeed);
                 }
@@ -246,7 +237,6 @@ namespace SnackAttack.Weapons
         
         private IEnumerator CompleteAttackAfterAnimation()
         {
-            // Wait for shotgun animation
             yield return new WaitForSeconds(0.5f);
             CompleteAttack();
         }
@@ -256,7 +246,6 @@ namespace SnackAttack.Weapons
             if (isReloading) return;
             
             isReloading = true;
-            Debug.Log("Shotgun: Reloading...");
             
             PlaySound(reloadSound);
             StartCoroutine(ReloadCoroutine());
@@ -268,8 +257,6 @@ namespace SnackAttack.Weapons
             
             currentAmmo = maxAmmo;
             isReloading = false;
-            
-            Debug.Log("Shotgun: Reload complete");
         }
         
         private void PlaySound(AudioClip clip)

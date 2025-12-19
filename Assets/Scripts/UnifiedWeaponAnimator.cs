@@ -52,24 +52,17 @@ public class UnifiedWeaponAnimator : MonoBehaviour
     
     void Start()
     {
-        // Check which parameters exist in the animator
         CheckAnimatorParameters();
-        
-        // Set initial weapon type
         SetWeaponType(currentWeaponType);
-        
-        Debug.Log($"UnifiedWeaponAnimator initialized with weapon type: {currentWeaponType}");
     }
     
     void CheckAnimatorParameters()
     {
         if (unifiedAnimator == null || unifiedAnimator.runtimeAnimatorController == null)
         {
-            Debug.LogWarning("UnifiedWeaponAnimator: No animator or controller found!");
             return;
         }
         
-        // Check which parameters exist
         foreach (AnimatorControllerParameter param in unifiedAnimator.parameters)
         {
             switch (param.name)
@@ -100,16 +93,9 @@ public class UnifiedWeaponAnimator : MonoBehaviour
                     break;
             }
         }
-        
-        Debug.Log($"Animator Parameters Found - WeaponType: {hasWeaponTypeParam}, MoveSpeed: {hasMoveSpeedParam}, Walking: {hasWalkingParam}, Running: {hasRunningParam}, Attack: {hasAttackParam}");
     }
     
-    /// <summary>
-    /// Switch to a specific weapon type
-    /// 0 = Pistol/Ketchup Gun
-    /// 1 = Assault Rifle
-    /// 2 = Shotgun/Popcorn Launcher
-    /// </summary>
+    // Switch weapon type (0=pistol, 1=rifle, 2=shotgun)
     public void SetWeaponType(int weaponType)
     {
         if (unifiedAnimator == null) return;
@@ -119,17 +105,10 @@ public class UnifiedWeaponAnimator : MonoBehaviour
         if (hasWeaponTypeParam)
         {
             unifiedAnimator.SetInteger(WEAPON_TYPE, weaponType);
-            Debug.Log($"Set weapon type to: {weaponType}");
-        }
-        else
-        {
-            Debug.LogWarning("WeaponType parameter not found in animator!");
         }
     }
     
-    /// <summary>
-    /// Update movement animations
-    /// </summary>
+    // Update movement animations
     public void UpdateMovement(bool isWalking, bool isRunning, bool isGrounded, bool isJumping)
     {
         if (unifiedAnimator == null) return;
@@ -142,11 +121,9 @@ public class UnifiedWeaponAnimator : MonoBehaviour
         else if (isWalking)
             moveSpeed = 0.5f;
         
-        // Set MoveSpeed parameter if it exists
         if (hasMoveSpeedParam)
             unifiedAnimator.SetFloat(MOVE_SPEED, moveSpeed);
         
-        // Also set bool parameters for backwards compatibility
         if (hasWalkingParam)
             unifiedAnimator.SetBool(IS_WALKING, isWalking);
             
@@ -160,9 +137,7 @@ public class UnifiedWeaponAnimator : MonoBehaviour
             unifiedAnimator.SetBool(IS_JUMPING, isJumping);
     }
     
-    /// <summary>
-    /// Trigger attack animation
-    /// </summary>
+    // Trigger attack animation
     public void TriggerAttack()
     {
         if (unifiedAnimator == null) return;
@@ -170,17 +145,10 @@ public class UnifiedWeaponAnimator : MonoBehaviour
         if (hasAttackParam)
         {
             unifiedAnimator.SetTrigger(ATTACK_TRIGGER);
-            Debug.Log($"Triggered attack for weapon type: {currentWeaponType}");
-        }
-        else
-        {
-            Debug.LogWarning("Attack trigger not found in animator!");
         }
     }
     
-    /// <summary>
-    /// Trigger reload animation
-    /// </summary>
+    // Trigger reload animation
     public void TriggerReload()
     {
         if (unifiedAnimator == null) return;
@@ -188,22 +156,15 @@ public class UnifiedWeaponAnimator : MonoBehaviour
         if (hasReloadParam)
         {
             unifiedAnimator.SetTrigger(RELOAD_TRIGGER);
-            Debug.Log($"Triggered reload for weapon type: {currentWeaponType}");
         }
     }
     
-    /// <summary>
-    /// Get current animation state info
-    /// </summary>
     public AnimatorStateInfo GetCurrentStateInfo()
     {
         if (unifiedAnimator == null) return new AnimatorStateInfo();
         return unifiedAnimator.GetCurrentAnimatorStateInfo(0);
     }
     
-    /// <summary>
-    /// Check if animator is in a specific state
-    /// </summary>
     public bool IsInState(string stateName)
     {
         if (unifiedAnimator == null) return false;
@@ -215,16 +176,12 @@ public class UnifiedWeaponAnimator : MonoBehaviour
     public Animator Animator => unifiedAnimator;
     public bool HasWeaponTypeParameter => hasWeaponTypeParam;
     
-    // Animation event callbacks (called from animation events)
+    // Animation event callbacks
     public void OnAttackComplete()
     {
-        // This can be called from animation events
-        Debug.Log("Attack animation completed");
     }
     
     public void OnReloadComplete()
     {
-        // This can be called from animation events
-        Debug.Log("Reload animation completed");
     }
 }

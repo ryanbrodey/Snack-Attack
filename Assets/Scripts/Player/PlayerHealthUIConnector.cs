@@ -30,15 +30,12 @@ public class PlayerHealthUIConnector : MonoBehaviour
 
         if (player == null)
         {
-            Debug.LogError("[PlayerHealthUIConnector] Player GameObject with 'Player' tag not found in scene!");
             return;
         }
 
-        // Get the PlayerHealth component from the player
         PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
         if (playerHealth == null)
         {
-            Debug.LogError("[PlayerHealthUIConnector] PlayerHealth component not found on player! Make sure the player has the PlayerHealth script attached.");
             return;
         }
 
@@ -55,29 +52,6 @@ public class PlayerHealthUIConnector : MonoBehaviour
         playerHealth.hearts[3] = FindChildByName(heartsContainer, "Heart (3)");
         playerHealth.hearts[4] = FindChildByName(heartsContainer, "Heart (4)");
 
-        // Verify all hearts were found and log results
-        bool allFound = true;
-        for (int i = 0; i < playerHealth.hearts.Length; i++)
-        {
-            if (playerHealth.hearts[i] == null)
-            {
-                Debug.LogError($"[PlayerHealthUIConnector] Heart at index {i} not found! Expected child name: {GetExpectedHeartName(i)}");
-                allFound = false;
-            }
-            else
-            {
-                Debug.Log($"[PlayerHealthUIConnector] Connected Heart {i}: {playerHealth.hearts[i].name}");
-            }
-        }
-
-        if (allFound)
-        {
-            Debug.Log("<color=green>[PlayerHealthUIConnector] ✓ Successfully connected all 5 hearts to PlayerHealth!</color>");
-        }
-        else
-        {
-            Debug.LogWarning("[PlayerHealthUIConnector] Some hearts were not found. Check the names of the heart GameObjects under HeartsUI.");
-        }
     }
 
     /// <summary>

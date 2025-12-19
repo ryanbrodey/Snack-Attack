@@ -63,7 +63,7 @@ namespace SnackAttack.Weapons
         
         protected virtual void Start()
         {
-            // Force reset attack state - stop any running coroutines
+            // Force reset attack state
             StopAllCoroutines();
             attacking = false;
             canAttack = true;
@@ -71,8 +71,6 @@ namespace SnackAttack.Weapons
             
             // start in idle
             PlayIdle();
-            
-            Debug.Log($"[{weaponName}] Started - FORCE RESET - CanAttack: {CanAttack}, Attacking: {attacking}");
         }
         
         protected virtual void Update()
@@ -83,10 +81,9 @@ namespace SnackAttack.Weapons
                 canAttack = true;
             }
             
-            // Debug key to reset weapon state if it gets stuck (using Backspace instead of R)
+            // Backspace to reset weapon if it gets stuck
             if (Input.GetKeyDown(KeyCode.Backspace))
             {
-                Debug.Log($"[{weaponName}] Backspace pressed - Force resetting weapon state");
                 ForceResetState();
             }
         }
@@ -94,7 +91,6 @@ namespace SnackAttack.Weapons
         // try to attack
         public virtual void Attack()
         {
-            Debug.Log($"[{weaponName}] Attack() called - CanAttack: {CanAttack}, attacking: {attacking}");
             if (!CanAttack) return;
             
             StartAttack();
@@ -103,7 +99,6 @@ namespace SnackAttack.Weapons
         // begin attack
         protected virtual void StartAttack()
         {
-            Debug.Log($"[{weaponName}] StartAttack() - Setting attacking=true");
             attacking = true;
             canAttack = false;
             lastAttackTime = Time.time;
@@ -179,12 +174,9 @@ namespace SnackAttack.Weapons
         
         protected virtual void PlayAttack()
         {
-            Debug.Log($"[{weaponName}] Playing attack animation: {attackAnim}");
-            
             // Use unified animator if available
             if (unifiedAnimator != null)
             {
-                Debug.Log($"[{weaponName}] Using unified animator for attack");
                 unifiedAnimator.TriggerAttack();
                 currentAnimationState = attackAnim;
                 lastAnimationTime = Time.time;
@@ -194,14 +186,13 @@ namespace SnackAttack.Weapons
             // Fallback to individual animator
             if (anim != null && !string.IsNullOrEmpty(attackAnim))
             {
-                // Try using trigger first (better method)
+                // Try using trigger first
                 if (anim.parameters != null)
                 {
                     foreach (var param in anim.parameters)
                     {
                         if (param.name == "Attack" && param.type == AnimatorControllerParameterType.Trigger)
                         {
-                            Debug.Log($"[{weaponName}] Using Attack trigger");
                             anim.SetTrigger("Attack");
                             currentAnimationState = attackAnim;
                             lastAnimationTime = Time.time;
@@ -210,15 +201,10 @@ namespace SnackAttack.Weapons
                     }
                 }
                 
-                // Fallback to direct animation play
-                Debug.Log($"[{weaponName}] No Attack trigger found, using Play() method");
+                // Fallback to direct play
                 anim.Play(attackAnim);
                 currentAnimationState = attackAnim;
                 lastAnimationTime = Time.time;
-            }
-            else
-            {
-                Debug.LogError($"[{weaponName}] Cannot play attack! Anim: {(anim != null ? "Found" : "NULL")}, AttackAnim: '{attackAnim}'");
             }
         }
         
@@ -258,14 +244,12 @@ namespace SnackAttack.Weapons
         [ContextMenu("Force Reset Weapon State")]
         public void ForceResetState()
         {
-            Debug.Log($"[{weaponName}] MANUAL RESET - Was attacking: {attacking}, canAttack: {canAttack}");
             StopAllCoroutines();
             attacking = false;
             canAttack = true;
             lastAttackTime = 0f;
             currentAnimationState = "";
             PlayIdle();
-            Debug.Log($"[{weaponName}] MANUAL RESET COMPLETE - CanAttack: {CanAttack}, Attacking: {attacking}");
         }
     }
 }

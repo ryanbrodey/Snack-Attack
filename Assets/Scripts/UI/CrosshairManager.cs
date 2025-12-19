@@ -44,11 +44,7 @@ namespace SnackAttack.Player
                     playerCamera = fpsController.PlayerCamera;
                 }
             }
-            
-            if (playerCamera == null)
-            {
-                Debug.LogWarning("[CrosshairManager] No camera found! Crosshair may not work properly.");
-            }
+        }
             
             // Create crosshair UI
             GameObject crosshairGO = new GameObject("CrosshairManager");
@@ -62,10 +58,6 @@ namespace SnackAttack.Player
             fpsCrosshair.showCrosshair = enableCrosshair;
             fpsCrosshair.playerCamera = playerCamera;
             fpsCrosshair.enableDynamicMovement = useDynamicCrosshair;
-            
-            Debug.Log("[CrosshairManager] FPS Crosshair initialized with proper cursor locking!");
-            
-            Debug.Log("[CrosshairManager] Crosshair system initialized!");
         }
         
         /// <summary>

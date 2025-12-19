@@ -26,7 +26,6 @@ public class StartButtonFlash : MonoBehaviour
     {
         if (startButton == null)
         {
-            Debug.LogError("StartButtonFlash: Please assign Start Button.");
             enabled = false;
             return;
         }
@@ -35,21 +34,14 @@ public class StartButtonFlash : MonoBehaviour
         if (cg == null)
             cg = startButton.gameObject.AddComponent<CanvasGroup>();
 
-        // Hook up click
         startButton.onClick.AddListener(OnStartPressed);
     }
 
     System.Collections.IEnumerator Start()
     {
-        // Hide initially
         SetVisible(false);
-
-        // Wait before showing
         yield return new WaitForSeconds(initialDelay);
-
-        // Show, then flash
         SetVisible(true);
-
         flashRoutine = StartCoroutine(FlashLoop());
     }
 
@@ -71,22 +63,16 @@ public class StartButtonFlash : MonoBehaviour
         cg.blocksRaycasts = interact;
     }
 
-    // 🔥 THIS IS THE IMPORTANT PART 🔥
+    // Start button clicked
     void OnStartPressed()
     {
-        // Stop flashing
         if (flashRoutine != null)
             StopCoroutine(flashRoutine);
 
-        // Disable UI
         if (startMenuCanvas != null)
             startMenuCanvas.SetActive(false);
 
-        // Disable start menu camera (removes blur / filters)
         if (startMenuCamera != null)
             startMenuCamera.enabled = false;
-
-        // Optional (later, not required now):
-        // SceneManager.UnloadSceneAsync("StartMenu");
     }
 }

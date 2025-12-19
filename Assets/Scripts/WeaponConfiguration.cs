@@ -145,26 +145,20 @@ public class WeaponConfigurationManager : MonoBehaviour
                 cameraRotation = new Vector3(5.624f, -44.278f, -0.456f)
             };
         }
-        
-        Debug.Log($"Initialized {weaponConfigs.Length} weapon configurations");
     }
     
     public bool SwitchToWeapon(int weaponIndex, bool forceImmediate = false)
     {
         if (weaponConfigs == null || weaponIndex < 0 || weaponIndex >= weaponConfigs.Length)
         {
-            Debug.LogWarning($"Invalid weapon index: {weaponIndex}");
             return false;
         }
         
         WeaponConfiguration config = weaponConfigs[weaponIndex];
         if (config == null)
         {
-            Debug.LogWarning($"Weapon configuration at index {weaponIndex} is null");
             return false;
         }
-        
-        Debug.Log($"Switching to weapon: {config.weaponName} (Index: {weaponIndex})");
         
         // Update current weapon index
         currentWeaponIndex = weaponIndex;
@@ -180,8 +174,6 @@ public class WeaponConfigurationManager : MonoBehaviour
         
         // Fire event
         OnWeaponSwitched?.Invoke(weaponIndex);
-        
-        Debug.Log($"Successfully switched to: {config.weaponName}");
         return true;
     }
     
@@ -212,15 +204,11 @@ public class WeaponConfigurationManager : MonoBehaviour
         
         // Switch the animator controller
         armsAnimator.runtimeAnimatorController = config.animatorController;
-        
-        Debug.Log($"Switched animation controller to: {config.animatorController.name}");
     }
     
     void SwitchWeaponModels(int weaponIndex)
     {
         // This will be handled by the main weapon system
-        // For now, just log the switch
-        Debug.Log($"Switching weapon models for weapon index: {weaponIndex}");
     }
     
     // Public getters

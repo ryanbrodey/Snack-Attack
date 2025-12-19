@@ -22,7 +22,6 @@ namespace SnackAttack.Setup
         {
             if (armsObject == null || knifeObject == null || mainCamera == null)
             {
-                Debug.LogError("Please assign your Arms object, knife object, and Main Camera!");
                 return;
             }
             
@@ -40,9 +39,6 @@ namespace SnackAttack.Setup
             
             // Create test enemy
             CreateTestEnemy();
-            
-            Debug.Log("Setup complete! Your existing Arms/knife setup is now connected to the FPS system!");
-            Debug.Log("Don't forget to add Animation Events to axe_ATK1 and axe_ATK2 animations!");
         }
         
         private void SetupArmsObject()
@@ -55,7 +51,6 @@ namespace SnackAttack.Setup
                 cc.height = 2f;
                 cc.radius = 0.5f;
                 cc.center = new Vector3(0, 1, 0);
-                Debug.Log("Added CharacterController to Arms");
             }
             
             // Add FPSController if not present
@@ -63,7 +58,6 @@ namespace SnackAttack.Setup
             if (fpsController == null)
             {
                 fpsController = armsObject.AddComponent<FPSController>();
-                Debug.Log("Added FPSController to Arms");
             }
             
             // Add WeaponManager if not present
@@ -71,7 +65,6 @@ namespace SnackAttack.Setup
             if (weaponManager == null)
             {
                 weaponManager = armsObject.AddComponent<WeaponManager>();
-                Debug.Log("Added WeaponManager to Arms");
             }
             
             // Set up FPS Controller references
@@ -92,7 +85,6 @@ namespace SnackAttack.Setup
             if (axeWeapon == null)
             {
                 axeWeapon = knifeObject.AddComponent<AxeWeapon>();
-                Debug.Log("Added AxeWeapon to knife");
             }
             
             // Set up animator controller
@@ -100,15 +92,6 @@ namespace SnackAttack.Setup
             if (animator != null && axeAnimatorController != null)
             {
                 animator.runtimeAnimatorController = axeAnimatorController;
-                Debug.Log("Assigned AxeAnimatorController to knife");
-            }
-            else if (animator == null)
-            {
-                Debug.LogWarning("No Animator found on knife object!");
-            }
-            else if (axeAnimatorController == null)
-            {
-                Debug.LogWarning("Please assign the AxeAnimatorController!");
             }
             
             // Set up weapon manager reference
@@ -116,7 +99,6 @@ namespace SnackAttack.Setup
             if (weaponManager != null)
             {
                 SetPrivateField(weaponManager, "weapons", new BaseWeapon[] { axeWeapon });
-                Debug.Log("Connected axe to weapon manager");
             }
         }
         
@@ -126,7 +108,6 @@ namespace SnackAttack.Setup
             Transform existingGroundCheck = armsObject.transform.Find("GroundCheck");
             if (existingGroundCheck != null)
             {
-                Debug.Log("GroundCheck already exists");
                 return;
             }
             
@@ -141,8 +122,6 @@ namespace SnackAttack.Setup
             {
                 SetPrivateField(fpsController, "groundCheck", groundCheckGO.transform);
             }
-            
-            Debug.Log("Created GroundCheck");
         }
         
         private void CreateTestGround()
@@ -150,7 +129,6 @@ namespace SnackAttack.Setup
             // Check if ground already exists
             if (GameObject.Find("Ground") != null)
             {
-                Debug.Log("Ground already exists");
                 return;
             }
             
@@ -164,8 +142,6 @@ namespace SnackAttack.Setup
             {
                 groundRenderer.material.color = Color.gray;
             }
-            
-            Debug.Log("Created test ground");
         }
         
         private void CreateTestEnemy()
@@ -173,7 +149,6 @@ namespace SnackAttack.Setup
             // Check if test enemy already exists
             if (GameObject.Find("TestEnemy") != null)
             {
-                Debug.Log("TestEnemy already exists");
                 return;
             }
             
@@ -189,8 +164,6 @@ namespace SnackAttack.Setup
             {
                 enemyRenderer.material.color = Color.red;
             }
-            
-            Debug.Log("Created test enemy at (3, 0.5, 3)");
         }
         
         private void SetPrivateField(object obj, string fieldName, object value)
@@ -205,7 +178,6 @@ namespace SnackAttack.Setup
             }
             else
             {
-                Debug.LogWarning($"Could not find field '{fieldName}' in {obj.GetType().Name}");
             }
         }
         
@@ -218,7 +190,6 @@ namespace SnackAttack.Setup
                 if (arms != null)
                 {
                     armsObject = arms;
-                    Debug.Log("Auto-found Arms object");
                 }
             }
             
@@ -233,7 +204,6 @@ namespace SnackAttack.Setup
                 if (knife != null)
                 {
                     knifeObject = knife.gameObject;
-                    Debug.Log("Auto-found knife object");
                 }
             }
             
@@ -243,7 +213,6 @@ namespace SnackAttack.Setup
                 if (cam != null)
                 {
                     mainCamera = cam;
-                    Debug.Log("Auto-found Main Camera");
                 }
             }
         }

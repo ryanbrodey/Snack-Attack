@@ -26,8 +26,6 @@ public class PlayerHealth : MonoBehaviour
         
         UpdateHeartsUI();
         
-        Debug.Log($"Player took {damage} damage. Health: {currentHealth}/{maxHealth}");
-        
         if (currentHealth <= 0)
         {
             Die();
@@ -38,7 +36,6 @@ public class PlayerHealth : MonoBehaviour
     {
         if (hearts == null || hearts.Length == 0) 
         {
-            Debug.LogWarning("[PlayerHealth] Hearts array is empty! Please assign heart GameObjects in the Inspector.");
             return;
         }
         
@@ -47,7 +44,6 @@ public class PlayerHealth : MonoBehaviour
         {
             if (hearts[i] != null)
             {
-                // Show heart if health is greater than this index
                 hearts[i].SetActive(i < currentHealth);
             }
         }
@@ -55,9 +51,6 @@ public class PlayerHealth : MonoBehaviour
 
     void Die()
     {
-        Debug.Log("Player died");
-        // Add respawn, game over screen, etc. here
-        // For now, just disable the player
         gameObject.SetActive(false);
     }
 }

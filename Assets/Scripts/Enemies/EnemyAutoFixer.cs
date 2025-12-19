@@ -39,23 +39,19 @@ public class EnemyAutoFixer : MonoBehaviour
     [ContextMenu("Fix All Enemies in Scene")]
     public void FixAllEnemiesInScene()
     {
-        // Auto-find player if needed
         if (playerTarget == null && autoFindPlayer)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             if (player == null)
             {
-                // Try finding by name
                 player = GameObject.Find("FPS_Player_Unified_v2");
             }
             if (player != null)
             {
                 playerTarget = player.transform;
-                Debug.Log($"Found player: {player.name}");
             }
             else
             {
-                Debug.LogError("Could not find player! Please assign manually.");
                 return;
             }
         }
@@ -82,7 +78,6 @@ public class EnemyAutoFixer : MonoBehaviour
             }
             
             EditorUtility.SetDirty(kiwi);
-            Debug.Log($"Fixed Kiwi: {kiwi.gameObject.name} - Player: {playerTarget.name}, Chase: {chaseRange}, Speed: {movementSpeed}");
             fixedCount++;
         }
 
@@ -106,7 +101,6 @@ public class EnemyAutoFixer : MonoBehaviour
             }
             
             EditorUtility.SetDirty(chili);
-            Debug.Log($"Fixed Chili: {chili.gameObject.name} - Player: {playerTarget.name}, Chase: {chaseRange}, Speed: {movementSpeed}");
             fixedCount++;
         }
 
@@ -130,13 +124,10 @@ public class EnemyAutoFixer : MonoBehaviour
             }
             
             EditorUtility.SetDirty(egg);
-            Debug.Log($"Fixed Egg: {egg.gameObject.name} - Player: {playerTarget.name}, Chase: {chaseRange}, Speed: {movementSpeed}");
             fixedCount++;
         }
-
-        Debug.Log($"<color=green>Successfully fixed {fixedCount} enemies!</color>");
         
-        // Mark scene as dirty so Unity knows to save changes
+        // Mark scene as dirty
         UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(
             UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene());
     }

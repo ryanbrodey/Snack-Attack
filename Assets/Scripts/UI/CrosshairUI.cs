@@ -64,11 +64,9 @@ namespace SnackAttack.UI
                 UpdateCrosshairPosition();
             }
             
-            // Toggle crosshair with 'C' key for testing
             if (Input.GetKeyDown(KeyCode.C))
             {
                 SetCrosshairVisible(!showCrosshair);
-                Debug.Log($"[CrosshairUI] Crosshair visibility: {showCrosshair}");
             }
         }
         
@@ -99,8 +97,6 @@ namespace SnackAttack.UI
             
             // Set initial visibility
             SetCrosshairVisible(showCrosshair);
-            
-            Debug.Log("[CrosshairUI] Crosshair created successfully!");
         }
         
         void CreateCanvas()
@@ -119,8 +115,6 @@ namespace SnackAttack.UI
             
             // Add GraphicRaycaster (required for UI)
             canvasGO.AddComponent<GraphicRaycaster>();
-            
-            Debug.Log("[CrosshairUI] Canvas created");
         }
         
         void CreateCrosshairLine(string name, Vector2 size, Vector2 position, out Image lineImage)
