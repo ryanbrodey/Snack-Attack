@@ -6,7 +6,7 @@ public class WaveManager : MonoBehaviour
     [Header("Spawners")]
     public EnemySpawner chiliSpawner;
     public EnemySpawner kiwiSpawner;
-    public EnemySpawner chickSpawner;   // 🆕 Round 3
+    public EnemySpawner chickSpawner;   // for round 3
 
     [Header("UI")]
     public RoundUIController roundUI;

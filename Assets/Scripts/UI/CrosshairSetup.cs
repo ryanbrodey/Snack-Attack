@@ -19,11 +19,9 @@ namespace SnackAttack.UI
         [ContextMenu("Add Crosshair To This Player")]
         public void AddCrosshairToPlayer()
         {
-            // Check if we already have a CrosshairManager
             CrosshairManager existing = GetComponent<CrosshairManager>();
             if (existing != null)
             {
-                Debug.Log("[CrosshairSetup] CrosshairManager already exists on this player!");
                 return;
             }
             
@@ -36,11 +34,7 @@ namespace SnackAttack.UI
             crosshairManager.crosshairThickness = crosshairThickness;
             crosshairManager.enableCrosshair = true;
             
-            Debug.Log("[CrosshairSetup] ✅ Crosshair added successfully!");
-            Debug.Log("[CrosshairSetup] The crosshair will appear when you play the scene.");
-            Debug.Log("[CrosshairSetup] Press 'C' during play to toggle crosshair visibility.");
-            
-            // Remove this setup script since we're done
+            // Remove this setup script
             if (Application.isPlaying)
             {
                 Destroy(this);
@@ -65,11 +59,6 @@ namespace SnackAttack.UI
                 {
                     DestroyImmediate(crosshairManager);
                 }
-                Debug.Log("[CrosshairSetup] Crosshair removed from player.");
-            }
-            else
-            {
-                Debug.Log("[CrosshairSetup] No crosshair found on this player.");
             }
         }
     }

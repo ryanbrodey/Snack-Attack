@@ -12,7 +12,6 @@ namespace SnackAttack.Setup
         [ContextMenu("Auto-Fix Everything")]
         public void AutoFixEverything()
         {
-            Debug.Log("=== Starting Auto-Fix ===");
             
             // Find Arms object (should have FPSController)
             GameObject arms = GameObject.Find("Arms");
@@ -23,16 +22,12 @@ namespace SnackAttack.Setup
             
             if (arms == null)
             {
-                Debug.LogError("Could not find 'Arms' or 'knife' object! Make sure your player object exists.");
                 return;
             }
             
             FixFPSController(arms);
             FixWeaponManager(arms);
             FixAxeWeapon();
-            
-            Debug.Log("=== Auto-Fix Complete! ===");
-            Debug.Log("Check the Inspector - all references should now be assigned.");
         }
         
         private void FixFPSController(GameObject playerObject)
@@ -40,7 +35,6 @@ namespace SnackAttack.Setup
             FPSController fpsController = playerObject.GetComponent<FPSController>();
             if (fpsController == null)
             {
-                Debug.LogWarning("FPSController not found on " + playerObject.name);
                 return;
             }
             
@@ -56,20 +50,13 @@ namespace SnackAttack.Setup
                 // Ensure camera is a child of the player object for proper movement
                 if (camera.transform.parent != playerObject.transform)
                 {
-                    Debug.LogWarning($"Camera '{camera.name}' is not a child of '{playerObject.name}'. Making it a child now...");
                     camera.transform.SetParent(playerObject.transform);
                     // Reset local position to typical FPS camera height
                     camera.transform.localPosition = new Vector3(0, 1.6f, 0);
                     camera.transform.localRotation = Quaternion.identity;
-                    Debug.Log("✓ Moved camera to be child of player object");
                 }
                 
                 SetPrivateField(fpsController, "playerCamera", camera);
-                Debug.Log("✓ Assigned Camera to FPSController: " + camera.name);
-            }
-            else
-            {
-                Debug.LogWarning("Could not find Camera! Make sure Main Camera exists.");
             }
             
             // Find or create GroundCheck
@@ -87,11 +74,9 @@ namespace SnackAttack.Setup
                 groundCheckGO.transform.SetParent(playerObject.transform);
                 groundCheckGO.transform.localPosition = new Vector3(0, -1f, 0);
                 groundCheck = groundCheckGO.transform;
-                Debug.Log("✓ Created GroundCheck");
             }
             
             SetPrivateField(fpsController, "groundCheck", groundCheck);
-            Debug.Log("✓ Assigned GroundCheck to FPSController");
         }
         
         private void FixWeaponManager(GameObject playerObject)
@@ -99,7 +84,6 @@ namespace SnackAttack.Setup
             WeaponManager weaponManager = playerObject.GetComponent<WeaponManager>();
             if (weaponManager == null)
             {
-                Debug.LogWarning("WeaponManager not found on " + playerObject.name);
                 return;
             }
             
@@ -108,11 +92,6 @@ namespace SnackAttack.Setup
             if (axeWeapon != null)
             {
                 SetPrivateField(weaponManager, "weapons", new BaseWeapon[] { axeWeapon });
-                Debug.Log("✓ Assigned AxeWeapon to WeaponManager: " + axeWeapon.name);
-            }
-            else
-            {
-                Debug.LogWarning("Could not find AxeWeapon! Make sure it's on the knife object.");
             }
         }
         
@@ -126,11 +105,9 @@ namespace SnackAttack.Setup
                 if (knife != null)
                 {
                     axeWeapon = knife.AddComponent<AxeWeapon>();
-                    Debug.Log("✓ Added AxeWeapon to knife object");
                 }
                 else
                 {
-                    Debug.LogWarning("Could not find 'knife' object to add AxeWeapon!");
                     return;
                 }
             }
@@ -140,7 +117,6 @@ namespace SnackAttack.Setup
             if (animator == null)
             {
                 animator = axeWeapon.gameObject.AddComponent<Animator>();
-                Debug.Log("✓ Added Animator to " + axeWeapon.name);
             }
             
             // Try to find and assign animator controller
@@ -158,7 +134,6 @@ namespace SnackAttack.Setup
             if (controller != null && animator.runtimeAnimatorController == null)
             {
                 animator.runtimeAnimatorController = controller;
-                Debug.Log("✓ Assigned Animator Controller: " + controller.name);
             }
         }
         
@@ -207,7 +182,6 @@ namespace SnackAttack.Setup
             }
             else
             {
-                Debug.LogWarning($"Could not set field '{fieldName}' in {obj.GetType().Name}");
             }
         }
     }

@@ -85,7 +85,6 @@ EXTENDING THE SYSTEM:
         [ContextMenu("Print Setup Instructions")]
         private void PrintSetupInstructions()
         {
-            Debug.Log(setupInstructions);
         }
         
         [ContextMenu("Quick Setup Player")]
@@ -127,8 +126,6 @@ EXTENDING THE SYSTEM:
             
             // Position player at origin
             player.transform.position = Vector3.zero;
-            
-            Debug.Log("Basic Player setup complete! Don't forget to add weapons and set up the ground.");
         }
     }
 }

@@ -69,9 +69,7 @@ namespace SnackAttack.Player
 
         void Start()
         {
-            Debug.Log("[WeaponManager] Start() - Setting up weapons");
             SetupWeapons();
-            Debug.Log($"[WeaponManager] Weapons array length: {weapons?.Length ?? 0}");
 
             // make sure we start on an unlocked weapon
             if (!IsWeaponUnlocked(currentWeaponIdx))
@@ -83,7 +81,6 @@ namespace SnackAttack.Player
             }
 
             SwitchToWeapon(currentWeaponIdx);
-            Debug.Log($"[WeaponManager] Current weapon after setup: {(currentWeapon != null ? currentWeapon.WeaponName : "NULL")}");
         }
 
         void Update()
@@ -118,12 +115,7 @@ namespace SnackAttack.Player
                 {
                     if (IsWeaponUnlocked(i))
                     {
-                        Debug.Log($"[WeaponManager] Number key {i + 1} pressed - switching to weapon {i}");
                         SwitchToWeapon(i);
-                    }
-                    else
-                    {
-                        Debug.Log($"[WeaponManager] Weapon at index {i} is locked.");
                     }
                     break;
                 }
@@ -200,43 +192,30 @@ namespace SnackAttack.Player
         {
             if (currentWeapon != null)
             {
-                Debug.Log($"[WeaponManager] DoAttack - Current weapon: {currentWeapon.WeaponName}, Can Attack: {currentWeapon.CanAttack}");
                 currentWeapon.Attack();
-            }
-            else
-            {
-                Debug.LogWarning("[WeaponManager] DoAttack - No current weapon!");
             }
         }
 
         public void SwitchToWeapon(int idx)
         {
-            Debug.Log($"[WeaponManager] SwitchToWeapon({idx}) called");
-
             if (weapons == null || idx < 0 || idx >= weapons.Length)
             {
-                Debug.LogWarning($"[WeaponManager] Invalid weapon index {idx} or weapons array is null. Array length: {weapons?.Length ?? 0}");
                 return;
             }
 
             if (!IsWeaponUnlocked(idx))
             {
-                Debug.LogWarning($"[WeaponManager] Tried to switch to locked weapon at index {idx}");
                 return;
             }
 
             if (weapons[idx] == null)
             {
-                Debug.LogWarning($"[WeaponManager] Weapon at index {idx} is null!");
                 return;
             }
-
-            Debug.Log($"[WeaponManager] Switching to weapon: {weapons[idx].WeaponName}");
 
             // turn off current weapon
             if (currentWeapon != null)
             {
-                Debug.Log($"[WeaponManager] Deactivating current weapon: {currentWeapon.WeaponName}");
                 currentWeapon.gameObject.SetActive(false);
             }
 
@@ -244,8 +223,6 @@ namespace SnackAttack.Player
             currentWeaponIdx = idx;
             currentWeapon = weapons[currentWeaponIdx];
             currentWeapon.gameObject.SetActive(true);
-
-            Debug.Log($"[WeaponManager] Successfully switched to: {currentWeapon.WeaponName}");
         }
 
         public void NextWeapon()
@@ -350,13 +327,11 @@ namespace SnackAttack.Player
         public void UnlockShotgun()
         {
             shotgunUnlocked = true;
-            Debug.Log("[WeaponManager] Shotgun unlocked!");
         }
 
         public void UnlockRifle()
         {
             rifleUnlocked = true;
-            Debug.Log("[WeaponManager] Rifle unlocked!");
         }
     }
 }

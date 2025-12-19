@@ -71,11 +71,6 @@ namespace SnackAttack.Weapons
                 {
                     bulletSpawn = ketchup.Find("BulletSpawn");
                 }
-                
-                if (bulletSpawn == null)
-                {
-                    // BulletSpawn not found
-                }
             }
         }
         
@@ -101,7 +96,6 @@ namespace SnackAttack.Weapons
             if (currentAmmo <= 0)
             {
                 PlaySound(emptySound);
-                // Auto-reload when empty
                 if (!isReloading)
                     StartReload();
                 return;
@@ -117,16 +111,11 @@ namespace SnackAttack.Weapons
             if (weaponStats != null)
                 dmg = weaponStats.pistolDamage;
             
-            // Consume ammo
             currentAmmo--;
             
-            // Fire single bullet with crosshair aiming
             FireBullet();
-            
-            // Play shoot sound
             PlaySound(shootSound);
             
-            // Complete attack immediately (projectile weapon)
             StartCoroutine(CompleteAttackAfterAnimation());
         }
         
@@ -134,16 +123,13 @@ namespace SnackAttack.Weapons
         {
             if (bulletPrefab == null || bulletSpawn == null) 
             {
-                Debug.LogWarning("KetchupWeapon: Missing bullet prefab or spawn point");
                 return;
             }
             
-            // Find player camera
             Camera playerCamera = GetPlayerCamera();
             if (playerCamera == null) 
             {
-                Debug.LogWarning("KetchupWeapon: No player camera found, using forward direction");
-                // Fallback to old behavior
+                // Fallback
                 GameObject bulletFallback = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
                 Rigidbody rb = bulletFallback.GetComponent<Rigidbody>();
                 if (rb != null)
@@ -153,8 +139,7 @@ namespace SnackAttack.Weapons
                 return;
             }
             
-            // Spawn from gun barrel, but travel toward crosshair target point
-            // This accounts for bullet spawn offset from camera center
+            // Spawn from gun barrel, travel toward crosshair
             Vector3 spawnPosition = bulletSpawn.position;
             Vector3 aimDirection = CrosshairAiming.GetBulletDirectionFromSpawnToCrosshair(
                 spawnPosition, 
@@ -239,7 +224,6 @@ namespace SnackAttack.Weapons
         
         private IEnumerator CompleteAttackAfterAnimation()
         {
-            // Wait a short time for animation to play
             yield return new WaitForSeconds(0.3f);
             CompleteAttack();
         }
@@ -249,7 +233,6 @@ namespace SnackAttack.Weapons
             if (isReloading) return;
             
             isReloading = true;
-            // Reloading weapon
             
             PlaySound(reloadSound);
             StartCoroutine(ReloadCoroutine());
@@ -261,8 +244,6 @@ namespace SnackAttack.Weapons
             
             currentAmmo = maxAmmo;
             isReloading = false;
-            
-            // Reload complete
         }
         
         private void PlaySound(AudioClip clip)
@@ -273,7 +254,7 @@ namespace SnackAttack.Weapons
             }
         }
         
-        // Public getters for UI or other systems
+        // Public getters
         public int CurrentAmmo => currentAmmo;
         public int MaxAmmo => maxAmmo;
         public bool IsReloading => isReloading;

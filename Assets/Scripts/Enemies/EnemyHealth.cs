@@ -34,8 +34,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         currentHealth = maxHealth;
 
-        Debug.Log($"[EnemyHealth] {name} initialized with {maxHealth} HP");
-
         FindPlayerPoints();
 
         audioSource = GetComponent<AudioSource>();
@@ -43,8 +41,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         {
             audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
-            audioSource.spatialBlend = 0f; // 2D audio
-            Debug.Log($"[EnemyHealth] AudioSource added to {name}");
+            audioSource.spatialBlend = 0f;
         }
     }
 
@@ -56,21 +53,13 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         if (playerPoints == null)
             playerPoints = FindObjectOfType<PlayerPoints>();
-
-        if (playerPoints == null)
-            Debug.LogWarning($"[EnemyHealth] PlayerPoints NOT FOUND for {name}");
     }
 
-    /// <summary>
-    /// Called by bullets / weapons via the IDamageable interface.
-    /// </summary>
+    // Called by bullets/weapons
     public void TakeDamage(float damage)
     {
-        Debug.Log($"[EnemyHealth] {name} TakeDamage called with {damage}");
-
         if (!IsAlive)
         {
-            Debug.Log($"[EnemyHealth] {name} already dead, ignoring damage");
             return;
         }
 
@@ -80,27 +69,19 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         float actualDamage = previousHealth - currentHealth;
 
-        Debug.Log($"[EnemyHealth] {name} HIT! Took {actualDamage} damage. HP now {currentHealth}/{maxHealth}");
-
-        // 🔊 HIT SOUND
+        // Hit sound
         if (actualDamage > 0f)
         {
             if (hitSound != null)
             {
                 audioSource.PlayOneShot(hitSound);
-                Debug.Log($"[EnemyHealth] Hit sound played on {name}");
-            }
-            else
-            {
-                Debug.LogWarning($"[EnemyHealth] Hit sound is NULL on {name}");
             }
         }
 
-        // 🎯 POINTS
+        // Points
         if (playerPoints != null && actualDamage > 0 && pointsPerHit > 0)
         {
             playerPoints.points += pointsPerHit;
-            Debug.Log($"[EnemyHealth] Awarded {pointsPerHit} hit points for {name}");
         }
 
         if (!IsAlive)
@@ -111,49 +92,37 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     private void Die()
     {
-        Debug.Log($"[EnemyHealth] {name} DIED");
-
-        // 💀 DEATH ANIMATION
+        // Death animation
         Animator animator = GetComponent<Animator>();
         if (animator != null)
         {
             animator.SetTrigger("Die");
-            Debug.Log($"[EnemyHealth] Death animation triggered on {name}");
         }
 
-        // 🏆 KILL POINTS
+        // Kill points
         if (playerPoints != null && killBonusPoints > 0)
         {
             playerPoints.points += killBonusPoints;
-            Debug.Log($"[EnemyHealth] Awarded {killBonusPoints} kill points for {name}");
         }
 
-        // 🔊 DEATH SOUND
+        // Death sound
         if (deathSound != null)
         {
             audioSource.PlayOneShot(deathSound);
-            Debug.Log($"[EnemyHealth] Death sound played on {name}");
-        }
-        else
-        {
-            Debug.LogWarning($"[EnemyHealth] Death sound is NULL on {name}");
         }
 
-        // 💥 VFX
+        // VFX
         if (deathVFX != null)
         {
             Instantiate(deathVFX, transform.position, Quaternion.identity);
-            Debug.Log($"[EnemyHealth] Death VFX spawned for {name}");
         }
 
         if (destroyOnDeath)
         {
-            Debug.Log($"[EnemyHealth] Destroying {name}");
-            Destroy(gameObject, 2f); // wait for death animation to play
+            Destroy(gameObject, 2f);
         }
         else
         {
-            Debug.Log($"[EnemyHealth] Disabling {name}");
             gameObject.SetActive(false);
         }
     }
@@ -162,6 +131,5 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         currentHealth = maxHealth;
         gameObject.SetActive(true);
-        Debug.Log($"[EnemyHealth] {name} health reset to {maxHealth}");
     }
 }

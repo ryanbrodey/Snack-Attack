@@ -40,14 +40,6 @@ namespace SnackAttack.Weapons
             if (anim == null)
             {
                 anim = GetComponent<Animator>();
-                if (anim == null)
-                {
-                    Debug.LogError($"[AxeWeapon] No Animator found on {gameObject.name}! Axe attacks won't work.");
-                }
-                else
-                {
-                    Debug.Log($"[AxeWeapon] Found Animator on {gameObject.name}");
-                }
             }
             
             // make attack point if we dont have one

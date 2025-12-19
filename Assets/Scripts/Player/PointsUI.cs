@@ -16,14 +16,9 @@ public class PointsUI : MonoBehaviour
             FindPlayerPoints();
         }
 
-        // Auto-find TMP_Text if not assigned
         if (pointsText == null)
         {
             pointsText = GetComponent<TMP_Text>();
-            if (pointsText == null)
-            {
-                Debug.LogWarning("[PointsUI] TMP_Text component not found on this GameObject!");
-            }
         }
     }
 
@@ -42,14 +37,6 @@ public class PointsUI : MonoBehaviour
             playerPoints = FindObjectOfType<PlayerPoints>();
         }
 
-        if (playerPoints == null)
-        {
-            Debug.LogWarning("[PointsUI] PlayerPoints not found! Points will not be displayed.");
-        }
-        else
-        {
-            Debug.Log("[PointsUI] Successfully found PlayerPoints component!");
-        }
     }
 
     private void Update()

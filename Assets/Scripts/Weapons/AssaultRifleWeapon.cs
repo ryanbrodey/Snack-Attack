@@ -72,7 +72,6 @@ namespace SnackAttack.Weapons
             // Auto-find bullet spawn if not assigned
             if (bulletSpawn == null)
             {
-                // Look for common bullet spawn names
                 bulletSpawn = transform.Find("BulletSpawn");
                 if (bulletSpawn == null)
                 {
@@ -81,11 +80,6 @@ namespace SnackAttack.Weapons
                     {
                         bulletSpawn = weapon.Find("BulletSpawn");
                     }
-                }
-                
-                if (bulletSpawn == null)
-                {
-                    // BulletSpawn not found
                 }
             }
         }
@@ -120,14 +114,12 @@ namespace SnackAttack.Weapons
             // Check if we can shoot
             if (isReloading)
             {
-                // Cannot shoot while reloading
                 return;
             }
             
             if (currentAmmo <= 0)
             {
                 PlaySound(emptySound);
-                // Out of ammo
                 if (!isReloading)
                     StartReload();
                 return;
@@ -142,11 +134,9 @@ namespace SnackAttack.Weapons
         {
             if (isFullAutoFiring || isReloading) return;
             
-            // Full-auto mode activated
             isFullAutoFiring = true;
-            cooldown = fullAutoRate; // Switch to full-auto rate
+            cooldown = fullAutoRate;
             
-            // Start continuous firing coroutine
             fullAutoCoroutine = StartCoroutine(FullAutoFiring());
         }
         
@@ -154,9 +144,8 @@ namespace SnackAttack.Weapons
         {
             if (!isFullAutoFiring) return;
             
-            // Full-auto mode deactivated
             isFullAutoFiring = false;
-            cooldown = semiAutoRate; // Switch back to semi-auto rate
+            cooldown = semiAutoRate;
             
             if (fullAutoCoroutine != null)
             {
@@ -178,8 +167,6 @@ namespace SnackAttack.Weapons
                 
                 if (CanAttack)
                 {
-                    // Call base.Attack() instead of FireBullet() directly
-                    // This ensures animations are properly triggered
                     base.Attack();
                 }
                 
@@ -203,19 +190,10 @@ namespace SnackAttack.Weapons
         
         private void FireBullet()
         {
-            // Consume ammo
             currentAmmo--;
             
-            Debug.Log($"[AssaultRifle] FireBullet called - Ammo: {currentAmmo}/{maxAmmo}, BulletPrefab: {(bulletPrefab != null ? bulletPrefab.name : "NULL")}, BulletSpawn: {(bulletSpawn != null ? "Found" : "NULL")}");
-            
-            // Note: Attack timing is handled by base.StartAttack() when called through base.Attack()
-            // These lines are kept for backwards compatibility if FireBullet() is called directly
-            // (though it should now go through base.Attack() for proper animation support)
-            
-            // Fire bullet with crosshair aiming
             if (bulletPrefab == null || bulletSpawn == null) 
             {
-                Debug.LogWarning("AssaultRifleWeapon: Missing bullet prefab or spawn point");
                 return;
             }
             
@@ -223,8 +201,7 @@ namespace SnackAttack.Weapons
             Camera playerCamera = GetPlayerCamera();
             if (playerCamera == null) 
             {
-                Debug.LogWarning("AssaultRifleWeapon: No player camera found, using forward direction");
-                // Fallback to old behavior
+                // Fallback
                 GameObject bulletFallback = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
                 Rigidbody rb = bulletFallback.GetComponent<Rigidbody>();
                 if (rb != null)
@@ -235,25 +212,19 @@ namespace SnackAttack.Weapons
                 return;
             }
             
-            // Spawn from gun barrel, but travel in camera forward direction (where crosshair points)
+            // Spawn from gun barrel, travel toward crosshair
             Vector3 spawnPosition = bulletSpawn.position;
-            Vector3 aimDirection = playerCamera.transform.forward; // Crosshair direction
-            
-            Debug.Log($"[AssaultRifle] Spawning bullet at {spawnPosition}, direction: {aimDirection}, speed: {bulletSpeed}");
+            Vector3 aimDirection = playerCamera.transform.forward;
             
             GameObject bulletObj = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity);
-            
-            Debug.Log($"[AssaultRifle] Bullet instantiated: {bulletObj.name}, Position: {bulletObj.transform.position}, Has BulletController: {(bulletObj.GetComponent<BulletController>() != null ? "YES" : "NO")}");
             
             BulletController bulletScript = bulletObj.GetComponent<BulletController>();
             if (bulletScript != null)
             {
-                Debug.Log($"[AssaultRifle] BulletController found, initializing with damage: {bulletScript.damage}");
                 bulletScript.Initialize(aimDirection, spawnPosition, bulletSpeed);
             }
             else
             {
-                Debug.LogWarning($"[AssaultRifle] No BulletController found! Using fallback Rigidbody.");
                 // Fallback
                 Rigidbody rb = bulletObj.GetComponent<Rigidbody>();
                 if (rb != null)
@@ -262,16 +233,13 @@ namespace SnackAttack.Weapons
                 }
             }
             
-            // Play shoot sound
             PlaySound(shootSound);
             
-            // Trigger animation
             if (anim != null)
             {
                 anim.SetTrigger("Shoot");
             }
             
-            // Debug visualization (only for semi-auto to avoid spam)
             if (!isFullAutoFiring)
             {
                 CrosshairAiming.DrawAimDebug(bulletSpawn.position, playerCamera, 1f);
@@ -345,11 +313,9 @@ namespace SnackAttack.Weapons
         {
             if (isReloading) return;
             
-            // Stop full-auto if reloading
             StopFullAuto();
             
             isReloading = true;
-            // Reloading weapon
             
             PlaySound(reloadSound);
             StartCoroutine(ReloadCoroutine());
@@ -361,8 +327,6 @@ namespace SnackAttack.Weapons
             
             currentAmmo = maxAmmo;
             isReloading = false;
-            
-            // Reload complete
         }
         
         private void PlaySound(AudioClip clip)

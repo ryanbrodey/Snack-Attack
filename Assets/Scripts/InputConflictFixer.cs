@@ -24,29 +24,12 @@ namespace SnackAttack.Setup
         [ContextMenu("Detect Input Conflicts")]
         public void DetectConflicts()
         {
-            // Check for conflicting components
             WeaponManager weaponManager = GetComponent<WeaponManager>();
             FPSPlayerControllerWithWeapons fpsWithWeapons = GetComponent<FPSPlayerControllerWithWeapons>();
             
             hasWeaponManager = weaponManager != null;
             hasFPSPlayerControllerWithWeapons = fpsWithWeapons != null;
             hasConflict = hasWeaponManager && hasFPSPlayerControllerWithWeapons;
-            
-            Debug.Log("=== INPUT CONFLICT DETECTION ===");
-            Debug.Log($"WeaponManager found: {hasWeaponManager}");
-            Debug.Log($"FPSPlayerControllerWithWeapons found: {hasFPSPlayerControllerWithWeapons}");
-            Debug.Log($"CONFLICT DETECTED: {hasConflict}");
-            
-            if (hasConflict)
-            {
-                Debug.LogError("🚨 INPUT CONFLICT DETECTED! Both WeaponManager and FPSPlayerControllerWithWeapons are handling mouse input!");
-                Debug.LogError("This will cause weapon spam and game freezing when clicking mouse/trackpad.");
-                Debug.LogError("Use 'Fix Input Conflicts' to resolve this automatically.");
-            }
-            else
-            {
-                Debug.Log("✅ No input conflicts detected.");
-            }
         }
         
         [ContextMenu("Fix Input Conflicts")]
@@ -54,24 +37,12 @@ namespace SnackAttack.Setup
         {
             DetectConflicts();
             
-            if (!hasConflict)
-            {
-                Debug.Log("✅ No conflicts to fix!");
-                return;
-            }
+            if (!hasConflict) return;
             
-            Debug.Log("🔧 Fixing input conflicts...");
-            
-            // The fix: Disable WeaponManager since FPSPlayerControllerWithWeapons is more complete
             WeaponManager weaponManager = GetComponent<WeaponManager>();
             if (weaponManager != null)
             {
-                Debug.Log("🔧 Disabling WeaponManager to prevent input conflict...");
                 weaponManager.enabled = false;
-                
-                Debug.Log("✅ Input conflict fixed!");
-                Debug.Log("WeaponManager has been disabled. FPSPlayerControllerWithWeapons will handle all input.");
-                Debug.Log("Controls: F key or Left Click = Attack, 1/2/3 = Switch weapons");
             }
         }
         
@@ -82,16 +53,6 @@ namespace SnackAttack.Setup
             if (weaponManager != null)
             {
                 weaponManager.enabled = true;
-                Debug.Log("WeaponManager re-enabled. WARNING: This may cause input conflicts again!");
-            }
-        }
-        
-        void Update()
-        {
-            // Monitor for conflicts during gameplay
-            if (hasConflict && Input.GetButtonDown("Fire1"))
-            {
-                Debug.LogWarning("🚨 Mouse click detected with input conflict! This may cause issues.");
             }
         }
     }

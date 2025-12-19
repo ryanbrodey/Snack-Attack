@@ -23,7 +23,6 @@ namespace SnackAttack.Setup
         {
             if (knifePrefab == null)
             {
-                Debug.LogError("Please assign the knife prefab from Assets/_ThirdParty/FPSAxe/ folder!");
                 return;
             }
             
@@ -65,8 +64,6 @@ namespace SnackAttack.Setup
             {
                 CreateTestEnvironment();
             }
-            
-            Debug.Log("Player setup complete! Use WASD to move, Mouse to look, F to attack, Space to jump.");
         }
         
         private void SetupAxeWeapon(GameObject cameraGO, WeaponManager weaponManager)
@@ -86,21 +83,10 @@ namespace SnackAttack.Setup
             if (animator != null && axeAnimatorController != null)
             {
                 animator.runtimeAnimatorController = axeAnimatorController;
-                Debug.Log("Animator controller assigned to axe.");
-            }
-            else if (animator == null)
-            {
-                Debug.LogWarning("No Animator component found on axe prefab. Animations may not work.");
-            }
-            else if (axeAnimatorController == null)
-            {
-                Debug.LogWarning("No Animator Controller assigned. Please assign AxeAnimatorController.");
             }
             
             // Set up weapon manager
             SetPrivateField(weaponManager, "weapons", new BaseWeapon[] { axeWeapon });
-            
-            Debug.Log("Axe weapon setup complete!");
         }
         
         private void CreateTestEnvironment()
@@ -133,8 +119,6 @@ namespace SnackAttack.Setup
             {
                 enemyRenderer.material.color = Color.red;
             }
-            
-            Debug.Log("Test environment created! Red cube at (3, 0.5, 3) can be attacked.");
         }
         
         private void SetPrivateField(object obj, string fieldName, object value)
@@ -149,7 +133,6 @@ namespace SnackAttack.Setup
             }
             else
             {
-                Debug.LogWarning($"Could not find field '{fieldName}' in {obj.GetType().Name}");
             }
         }
         
@@ -158,7 +141,6 @@ namespace SnackAttack.Setup
             // Help text in inspector
             if (knifePrefab == null)
             {
-                Debug.Log("Please assign the 'knife' prefab from Assets/_ThirdParty/FPSAxe/ folder to the Knife Prefab field.");
             }
         }
     }

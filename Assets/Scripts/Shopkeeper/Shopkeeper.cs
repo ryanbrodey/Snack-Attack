@@ -208,12 +208,6 @@ public class Shopkeeper : MonoBehaviour
 
                     if (weaponController != null)
                         weaponController.UnlockRifle();
-
-                    Debug.Log("Purchased Glizzy Rifle!");
-                }
-                else
-                {
-                    Debug.Log("Not enough points for Glizzy Rifle.");
                 }
                 break;
 
@@ -224,51 +218,30 @@ public class Shopkeeper : MonoBehaviour
 
                     if (weaponController != null)
                         weaponController.UnlockShotgun();
-
-                    Debug.Log("Purchased Shotgun!");
-                }
-                else
-                {
-                    Debug.Log("Not enough points for Shotgun.");
                 }
                 break;
 
-            case 2: // Pistol damage upgrade
+            case 2: // Pistol upgrade
                 if (playerPoints.points >= pistolUpgradeCost)
                 {
                     playerPoints.points -= pistolUpgradeCost;
                     weaponStats.UpgradePistol();
-                    Debug.Log("Upgraded Pistol Damage to: " + weaponStats.pistolDamage);
-                }
-                else
-                {
-                    Debug.Log("Not enough points for Pistol upgrade.");
                 }
                 break;
 
-            case 3: // Shotgun damage upgrade
+            case 3: // Shotgun upgrade
                 if (playerPoints.points >= shotgunUpgradeCost)
                 {
                     playerPoints.points -= shotgunUpgradeCost;
                     weaponStats.UpgradeShotgun();
-                    Debug.Log("Upgraded Shotgun Damage to: " + weaponStats.shotgunDamage);
-                }
-                else
-                {
-                    Debug.Log("Not enough points for Shotgun upgrade.");
                 }
                 break;
 
-            case 4: // Rifle damage upgrade
+            case 4: // Rifle upgrade
                 if (playerPoints.points >= rifleUpgradeCost)
                 {
                     playerPoints.points -= rifleUpgradeCost;
                     weaponStats.UpgradeRifle();
-                    Debug.Log("Upgraded Rifle Damage to: " + weaponStats.rifleDamage);
-                }
-                else
-                {
-                    Debug.Log("Not enough points for Rifle upgrade.");
                 }
                 break;
         }
