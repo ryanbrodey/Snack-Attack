@@ -44,7 +44,6 @@ namespace SnackAttack.Player
                     playerCamera = fpsController.PlayerCamera;
                 }
             }
-        }
             
             // Create crosshair UI
             GameObject crosshairGO = new GameObject("CrosshairManager");

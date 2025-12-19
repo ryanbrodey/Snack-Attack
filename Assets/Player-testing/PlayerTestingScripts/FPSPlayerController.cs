@@ -128,10 +128,12 @@ public class FPSPlayerController : MonoBehaviour
     
     void HandleInput()
     {
+        // Handle W key double-click for auto-run
         if (Input.GetKeyDown(KeyCode.W))
         {
             float currentTime = Time.time;
             
+            // If we're auto-running and W is pressed, stop auto-run
             if (autoRunning)
             {
                 autoRunning = false;
@@ -156,6 +158,7 @@ public class FPSPlayerController : MonoBehaviour
             lastWKeyTime = currentTime;
         }
         
+        // Get movement input
         moveInput = Vector2.zero;
         
         if (autoRunning)
